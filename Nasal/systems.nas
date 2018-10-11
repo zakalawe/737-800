@@ -16,3 +16,19 @@ var altAlertModeSwitch = func {
 	}
 }
 setlistener( "/b737/warnings/altitude-alert", altAlertModeSwitch, 0, 0);
+
+var gearlvr = getprop("/b737/controls/gear/lever");
+var airgnd = getprop("/b737/sensors/air-ground");
+
+setlistener("/b737/controls/gear/lever", func {
+	gearlvr = getprop("/b737/controls/gear/lever");
+	wow = getprop("/gear/gear[1]/wow");
+	if (gearlvr == 0 and !wow) {  # in air, put gear down
+		setprop("/controls/gear/gear-down", 1);
+	} else if (gearlvr == 1 and !wow) { # in air put gear up
+		setprop("/controls/gear/gear-down", 0);
+	} else if (gearlvr == 1 or gearlvr == 2 and wow) { # on ground inhibit lever movement. 
+		setprop("/controls/gear/gear-down", 1);
+		setprop("/b737/controls/gear/lever", 0);
+	} 
+});

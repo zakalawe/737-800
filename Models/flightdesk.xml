@@ -2,7 +2,17 @@
 <PropertyList>
     <path>flightdesk.ac</path>
 
-
+    <model>
+        <name>WARNINGS</name>
+        <path>Models/Instruments/WEU/warning-unit.xml</path>
+        <offsets>
+            <x-m>0.0</x-m>
+            <y-m>0.00</y-m>
+            <z-m>0.000</z-m>
+            <pitch-deg>0</pitch-deg>
+        </offsets>
+    </model>
+    
     <model>
         <name>AUTOPILOT</name>
         <path>Models/Instruments/autopilot-panel.xml</path>
@@ -188,12 +198,11 @@
     <animation>
         <type>rotate</type>
         <object-name>lghandle</object-name>
-        <property>/gear/gear[1]/position-norm</property>
+        <property>b737/controls/gear/lever</property>
         <interpolation>
-            <entry><ind>  1.0</ind><dep> 0.0</dep></entry>
-            <entry><ind>  0.999</ind><dep>-45</dep></entry>
-            <entry><ind>  0.001</ind><dep>-45</dep></entry>
-            <entry><ind>  0.0</ind><dep>-24.0</dep></entry>
+            <entry><ind>  0</ind><dep> 10.0</dep></entry>
+            <entry><ind>  1</ind><dep>-45.0</dep></entry>
+            <entry><ind>  2</ind><dep>-22.0</dep></entry>
         </interpolation>
         <center>
             <x-m>-0.102</x-m>
@@ -205,6 +214,73 @@
             <y>1.0</y>
             <z>0.0</z>
         </axis>
+    </animation>
+	
+    <animation>
+        <type>knob</type>
+        <object-name>Circle.230</object-name>
+        <center>
+            <x-m>0.0</x-m>
+            <y-m>-0.030001</y-m>
+            <z-m>0.087512</z-m>
+        </center>
+        <axis>
+            <x>-1.0</x>
+            <y>0.0</y>
+            <z>0.0</z>
+        </axis>
+		<property>/controls/fmc/v-speed-mode</property>
+        <factor>45</factor>
+	    <action>
+            <binding>
+                <command>property-adjust</command>
+                <property>/controls/fmc/v-speed-mode</property>
+                <offset>1</offset>
+				<min>0</min>
+				<max>6</max>
+                <wrap>0</wrap>
+            </binding>
+        </action>
+		<hovered>
+            <binding>
+                <command>set-tooltip</command>
+                <tooltip-id>v-speed-mode</tooltip-id>
+                <label>VSpeed Mode</label>
+            </binding>
+        </hovered>
+    </animation>
+	
+    <animation>
+        <type>knob</type>
+        <object-name>Circle.229</object-name>
+        <center>
+            <x-m>0.0</x-m>
+            <y-m>-0.030001</y-m>
+            <z-m>0.087512</z-m>
+        </center>
+        <axis>
+            <x>-1.0</x>
+            <y>0.0</y>
+            <z>0.0</z>
+        </axis><property>/controls/fmc/v-speed-bug</property>
+        <factor>4.32</factor>
+        <action>
+            <binding>
+                <command>property-adjust</command>
+                <property>/controls/fmc/v-speed-bug</property>
+                <offset>1</offset>
+                <min>0</min>
+                <max>400</max>                
+                <wrap>0</wrap>
+            </binding>
+        </action>
+		<hovered>
+            <binding>
+                <command>set-tooltip</command>
+                <tooltip-id>v-speed-selector</tooltip-id>
+                <label>VSpeed Selector</label>
+            </binding>
+        </hovered>
     </animation>
 
 </PropertyList>

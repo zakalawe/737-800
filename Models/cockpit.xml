@@ -775,7 +775,7 @@
         <step>1</step>
         <min>-1</min>
         <max>4</max>                
-        <wrap>false</wrap>       
+        <wrap>true</wrap>       
       </binding>
     </action> 
   </animation> 
@@ -794,7 +794,7 @@
         <step>-1</step>
         <min>-1</min>
         <max>4</max>                
-        <wrap>false</wrap>       
+        <wrap>true</wrap>       
       </binding>
     </action> 
   </animation> 
@@ -1433,40 +1433,36 @@
   </animation>
 
   <animation>
-    <type>pick</type>
-    <object-name>lghandle</object-name>
-    <action>
-      <button>0</button>
-      <repeatable>true</repeatable>
-      <binding>
-        <command>property-assign</command>
-        <property>/controls/gear/gear-down</property>  
-        <value type="bool">false</value>      
-        <step>1</step>
-        <min>0</min>
-        <max>1</max>    		  
-        <wrap>false</wrap>
-      </binding>
-    </action>
-  </animation>
+  <type>pick</type>
+  <object-name>lghandle</object-name>
+  <action>
+    <button>0</button>
+    <repeatable>true</repeatable>
+    <binding>
+      <command>property-cycle</command>
+      <property>b737/controls/gear/lever</property>  
+      <value>0</value>
+	  <value>1</value>
+	  <value>2</value>
+    </binding>
+  </action>
+</animation>
 
-  <animation>
-    <type>pick</type>
-    <object-name>lghandle</object-name>
-    <action>
-      <button>1</button>
-      <repeatable>true</repeatable>
-      <binding>
-        <command>property-assign</command>
-        <property>/controls/gear/gear-down</property> 
-        <value type="bool">true</value>       
-        <step>-1</step>
-        <min>0</min>
-        <max>1</max>    		  
-        <wrap>false</wrap>
-      </binding>
-    </action>
-  </animation>
+<animation>
+  <type>pick</type>
+  <object-name>lghandle</object-name>
+  <action>
+    <button>1</button>
+    <repeatable>true</repeatable>
+    <binding>
+       <command>property-cycle</command>
+       <property>b737/controls/gear/lever</property>  
+       <value>2</value>
+	   <value>1</value>
+	   <value>0</value>
+    </binding>
+  </action>
+</animation>
 
   <animation>
     <type>pick</type>
@@ -1711,7 +1707,187 @@
       <z>0</z>
     </axis>
   </animation>
-
+  
+  <animation>
+    <type>rotate</type>
+    <object-name>Circle.220</object-name>
+    <property>/controls/fuel/tank[0]/pump-aft</property>
+	<offset>90</offset>
+    <factor>30</factor>
+    <center>
+      <x-m>0.673537</x-m>
+      <y-m>-0.310108</y-m>
+      <z-m>1.45188</z-m>
+    </center>
+    <axis>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis>
+  </animation>
+  
+  <animation>
+    <type>pick</type>
+    <object-name>Circle.220</object-name>
+    <action>
+		<button>0</button>
+		<binding>
+			<command>property-toggle</command>
+			<property>/controls/fuel/tank[0]/pump-aft</property>
+		</binding>
+	</action>
+  </animation>
+  
+  <animation>
+    <type>rotate</type>
+    <object-name>Cylinder</object-name>
+    <property>/controls/fuel/tank[0]/pump-fwd</property>
+	<offset>90</offset>
+    <factor>30</factor>
+    <center>
+      <x-m>0.674034</x-m>
+      <y-m>-0.284875</y-m>
+      <z-m>1.45171</z-m>
+    </center>
+    <axis>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis>
+  </animation>
+  
+  <animation>
+    <type>pick</type>
+    <object-name>Cylinder</object-name>
+    <action>
+		<button>0</button>
+		<binding>
+			<command>property-toggle</command>
+			<property>/controls/fuel/tank[0]/pump-fwd</property>
+		</binding>
+	</action>
+  </animation>
+  
+  <animation>
+    <type>rotate</type>
+    <object-name>Cylinder.001</object-name>
+    <property>/controls/fuel/tank[1]/pump-fwd</property>
+	<offset>90</offset>
+    <factor>30</factor>
+    <center>
+      <x-m>0.674034</x-m>
+      <y-m>-0.284875</y-m>
+      <z-m>1.45171</z-m>
+    </center>
+    <axis>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis>
+  </animation>
+  
+  <animation>
+    <type>pick</type>
+    <object-name>Cylinder.001</object-name>
+    <action>
+		<button>0</button>
+		<binding>
+			<command>property-toggle</command>
+			<property>/controls/fuel/tank[1]/pump-fwd</property>
+		</binding>
+	</action>
+  </animation>
+  
+  <animation>
+    <type>rotate</type>
+    <object-name>Circle.217</object-name>
+    <property>/controls/fuel/tank[1]/pump-aft</property>
+	<offset>90</offset>
+    <factor>30</factor>
+    <center>
+      <x-m>0.674034</x-m>
+      <y-m>-0.284875</y-m>
+      <z-m>1.45171</z-m>
+    </center>
+    <axis>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis>
+  </animation>
+  
+  <animation>
+    <type>pick</type>
+    <object-name>Circle.217</object-name>
+    <action>
+		<button>0</button>
+		<binding>
+			<command>property-toggle</command>
+			<property>/controls/fuel/tank[1]/pump-aft</property>
+		</binding>
+	</action>
+  </animation>
+  
+  <animation>
+    <type>rotate</type>
+    <object-name>Circle.221</object-name>
+    <property>/controls/fuel/tank[2]/pump-left</property>
+	<offset>90</offset>
+    <factor>30</factor>
+    <center>
+      <x-m>0.72362</x-m>
+      <y-m>-0.276939</y-m>
+      <z-m>1.47325</z-m>
+    </center>
+    <axis>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis>
+  </animation>
+  
+  <animation>
+    <type>pick</type>
+    <object-name>Circle.221</object-name>
+    <action>
+		<button>0</button>
+		<binding>
+			<command>property-toggle</command>
+			<property>/controls/fuel/tank[2]/pump-left</property>
+		</binding>
+	</action>
+  </animation>
+  
+  <animation>
+    <type>rotate</type>
+    <object-name>Circle.222</object-name>
+    <property>/controls/fuel/tank[2]/pump-right</property>
+	<offset>90</offset>
+    <factor>30</factor>
+    <center>
+      <x-m>0.72362</x-m>
+      <y-m>-0.276939</y-m>
+      <z-m>1.47325</z-m>
+    </center>
+    <axis>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis>
+  </animation>
+  
+  <animation>
+    <type>pick</type>
+    <object-name>Circle.222</object-name>
+    <action>
+		<button>0</button>
+		<binding>
+			<command>property-toggle</command>
+			<property>/controls/fuel/tank[2]/pump-right</property>
+		</binding>
+	</action>
+  </animation>
+  
   <model>
     <name>ldglightleftretr</name>
     <path>landinglight.ac</path>
