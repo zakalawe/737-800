@@ -34,7 +34,7 @@
       <autopilot>
         <path>Aircraft/737-800/Systems/aircraft-systems-logic.xml</path>
       </autopilot>
-
+      
       <path>Aircraft/737-800/Systems/systems.xml</path>
 
       <property-rule n="101">
@@ -127,15 +127,25 @@
               <script>aircraft.livery.dialog.toggle()</script>
             </binding>
           </item>
-		  <item>
-		      <label>Announcements</label>
-		      <binding>
-					<command>nasal</command>
-					<script>
-						var mal = gui.Dialog.new("/sim/gui/dialogs/announcements/menu/dialog", "Aircraft/737-800/Dialogs/announcements-dialog.xml");
-						mal.open();
-		       </script>
-		      </binding>
+          <item>
+              <label>Announcements</label>
+              <binding>
+                    <command>nasal</command>
+                    <script>
+                        var mal = gui.Dialog.new("/sim/gui/dialogs/announcements/menu/dialog", "Aircraft/737-800/Dialogs/announcements-dialog.xml");
+                        mal.open();
+               </script>
+              </binding>
+          </item> 
+          <item>
+              <label>Failures</label>
+              <binding>
+                    <command>nasal</command>
+                    <script>
+                        var fail = gui.Dialog.new("/sim/gui/dialogs/failures/menu/dialog", "Aircraft/737-800/Dialogs/fail.xml");
+                        fail.open();
+               </script>
+              </binding>
           </item> 
           <item>
               <label>Show/Hide Yokes</label>
@@ -233,6 +243,26 @@
         <binding>
           <command>nasal</command>
           <script>autopilot737.toga_button();</script>
+        </binding>
+      </key>
+      
+      <key n="71">
+        <name>G</name>
+        <desc>Gear Down Custom Binding</desc>
+        <binding>
+            <command>property-assign</command>
+            <property>/b737/controls/gear/lever</property>
+            <value>0</value>
+        </binding>
+      </key>
+            
+      <key n="103">
+        <name>g</name>
+        <desc>Gear Up Custom Binding</desc>
+        <binding>
+            <command>property-assign</command>
+            <property>/b737/controls/gear/lever</property>
+            <value>1</value>
         </binding>
       </key>
 
@@ -663,6 +693,10 @@
     <static n="3">
       <serviceable type="bool">true</serviceable>
     </static>
+    
+    <weu>
+        <fuel-failed type="bool">true</fuel-failed> <!-- properties must be init here to use in jsb -->
+    </weu>
   </systems>
 
   <nasal>
@@ -678,10 +712,13 @@
       <file>Aircraft/737-800/Nasal/autostart.nas</file>
       <file>Aircraft/737-800/Nasal/air-ground.nas</file>
       <file>Aircraft/737-800/Nasal/controls.nas</file>
+      <file>Aircraft/737-800/Nasal/warnings.nas</file>
       <file>Aircraft/737-800/Nasal/friction.nas</file>
       <file>Aircraft/737-800/Nasal/liveries.nas</file>
       <file>Aircraft/737-800/Nasal/systems.nas</file>
       <file>Aircraft/737-800/Nasal/tire-smoke.nas</file>
+      <file>Aircraft/737-800/Nasal/v-speed.nas</file>
+      <file>Aircraft/737-800/Nasal/engine-fire.nas</file> 
     </boeing737>
 
     <autopilot737>
@@ -781,15 +818,15 @@
       <serviceable>true</serviceable>     <!-- EGPWS_ENABLE -->
       <configuration-module>
         <category-1>  255 </category-1>
-        <category-3>   2 </category-3>  <!-- POSITION_INPUT_SELECT -->		
-        <category-4>  13 </category-4>  <!-- ALTITUDE_CALLOUTS -->		
-        <category-5>   0 </category-5>  <!-- AUDIO_MENU_SELECT -->		
-        <category-6>   1 </category-6>  <!-- TERRAIN_DISPLAY_SELECT -->		
-        <category-7> 124 </category-7>  <!-- OPTIONS_SELECT_GROUP_1 -->		
+        <category-3>   2 </category-3>  <!-- POSITION_INPUT_SELECT -->      
+        <category-4>  13 </category-4>  <!-- ALTITUDE_CALLOUTS -->      
+        <category-5>   0 </category-5>  <!-- AUDIO_MENU_SELECT -->      
+        <category-6>   1 </category-6>  <!-- TERRAIN_DISPLAY_SELECT -->     
+        <category-7> 124 </category-7>  <!-- OPTIONS_SELECT_GROUP_1 -->     
         <category-8>   4 </category-8>  <!-- RADIO_ALTITUDE_INPUT_SELECT-->
-        <category-9>   3 </category-9>  <!-- NAVIGATION_INPUT_SELECT -->		
-        <category-10>  6 </category-10> <!-- ATTITUDE_INPUT_SELECT -->		
-        <category-13>  7 </category-13> <!-- INPUT_OUTPUT_DISCRETE_TYPE_SELECT -->		
+        <category-9>   3 </category-9>  <!-- NAVIGATION_INPUT_SELECT -->        
+        <category-10>  6 </category-10> <!-- ATTITUDE_INPUT_SELECT -->      
+        <category-13>  7 </category-13> <!-- INPUT_OUTPUT_DISCRETE_TYPE_SELECT -->      
         <category-14>  0 </category-14> <!-- AUDIO_OUTPUT_LEVEL -->
       </configuration-module>
       <inputs>                            <!-- Module I/O -->
@@ -797,10 +834,10 @@
           <decision-height-ncd> true </decision-height-ncd>
           <decision-height> 200 </decision-height>
         </arinc429>
-        <rs-232>		
-          <present-status>		
-            <landing-flaps type="double">0.5</landing-flaps>		
-          </present-status>		
+        <rs-232>        
+          <present-status>      
+            <landing-flaps type="double">0.5</landing-flaps>        
+          </present-status>     
         </rs-232>
       </inputs>
       <speaker>                           <!-- Speaker Configuration -->

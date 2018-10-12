@@ -519,7 +519,6 @@
    <system file="fuel"/>
    <system file="fmc"/>
 
-
     <flight_control name="FCS: 737">
 
         <channel name="Pitch">
@@ -724,7 +723,6 @@
                 <input>fcs/yaw-wf</input>
                 <gain>5</gain>
             </pure_gain>
-
 
             <!--Slip stabilizer-->
             <switch name="accelerations/Ny-switched">
