@@ -693,10 +693,6 @@
     <static n="3">
       <serviceable type="bool">true</serviceable>
     </static>
-    
-    <weu>
-        <fuel-failed type="bool">true</fuel-failed> <!-- properties must be init here to use in jsb -->
-    </weu>
   </systems>
 
   <nasal>
@@ -716,6 +712,7 @@
       <file>Aircraft/737-800/Nasal/friction.nas</file>
       <file>Aircraft/737-800/Nasal/liveries.nas</file>
       <file>Aircraft/737-800/Nasal/systems.nas</file>
+	  <file>Aircraft/737-800/Nasal/hydraulics.nas</file>
       <file>Aircraft/737-800/Nasal/tire-smoke.nas</file>
       <file>Aircraft/737-800/Nasal/v-speed.nas</file>
       <file>Aircraft/737-800/Nasal/engine-fire.nas</file> 
