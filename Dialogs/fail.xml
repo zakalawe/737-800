@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- B738 Failures Dialog -->
+
+<PropertyList>
+
+	<name>aircraft-config-fail</name>
+	<layout>vbox</layout>
+
+<!-- System Failures By Gabriel Hernandez(YV-3399) -->
+
+    <group>
+        <layout>hbox</layout>
+        <text>
+            <halign>left</halign>
+            <label>Failures</label>
+        </text>
+        <button>
+            <halign>right</halign>
+            <pref-width>20</pref-width>
+            <pref-height>20</pref-height>
+            <legend>X</legend>
+            <key>Esc</key>
+            <binding>
+                <command>dialog-close</command>
+            </binding>
+        </button>
+    </group>
+	
+    <hrule/>
+	
+		<group>
+		<layout>vbox</layout>
+		
+			<text>
+				<label>Engine Failures</label>
+			</text>
+			
+			<group>
+			<layout>hbox</layout>
+			
+				<group>
+				<layout>vbox</layout>
+				
+					<text>
+						<label>Left Engine</label>
+					</text>
+			
+					<button>
+						<legend>Flame-out</legend>
+						<padding>1</padding>
+						<binding>
+							<command>nasal</command>
+							<script>
+								setprop("/controls/engines/engine[0]/cutoff", 1);
+							</script>
+						</binding>
+					</button>
+					
+					<button>
+						<legend>Fail</legend>
+						<padding>1</padding>
+						<binding>
+							<command>nasal</command>
+							<script>
+								setprop("/sim/failure-manager/engines/engine/serviceable", 0);
+							</script>
+						</binding>
+					</button>
+					
+					<button>
+						<legend>Fire</legend>
+						<padding>1</padding>
+						<binding>
+							<command>nasal</command>
+							<script>
+								setprop("/controls/fires/fire/on-fire", 1);
+							</script>
+						</binding>
+					</button>
+				
+				</group>
+				
+				<vrule />
+				
+				<group>
+				<layout>vbox</layout>
+				
+					<text>
+						<label>Right Engine</label>
+					</text>
+			
+					<button>
+						<legend>Flame-out</legend>
+						<padding>1</padding>
+						<binding>
+							<command>nasal</command>
+							<script>
+								setprop("/controls/engines/engine[1]/cutoff", 1);
+							</script>
+						</binding>
+					</button>
+					
+					<button>
+						<legend>Fail</legend>
+						<padding>1</padding>
+						<binding>
+							<command>nasal</command>
+							<script>
+								setprop("/sim/failure-manager/engines/engine[1]/serviceable", 0);
+							</script>
+						</binding>
+					</button>
+					
+					<button>
+						<legend>Fire</legend>
+						<padding>1</padding>
+						<binding>
+							<command>nasal</command>
+							<script>
+								setprop("/controls/fires/fire[1]/on-fire", 1);
+							</script>
+						</binding>
+					</button>
+					</group>
+					
+					<hrule />
+				
+<checkbox>
+		<label>Fail Flaps</label>
+		<binding>
+			<command>dialog-apply</command>
+		</binding>
+		<binding>
+			<command>nasal</command>
+			<script>
+			setprop("/sim/failure-manager/controls/flight/flaps/serviceable", 0);
+			</script>
+		</binding>
+		<live>true</live>
+	</checkbox>
+	
+	<checkbox>
+		<label>APU fire</label>
+		<binding>
+			<command>dialog-apply</command>
+		</binding>
+		<binding>
+			<command>nasal</command>
+			<script>
+			setprop("/controls/fires/fire[2]/on-fire", 1);
+			</script>
+		</binding>
+		<live>true</live>
+	</checkbox>
+</group>
+
+	<hrule />
+<button>
+		<legend>Reset All (must restart engines)</legend>
+		<padding>1</padding>
+			<binding>
+				<command>dialog-apply</command>
+			</binding>
+		<binding>
+			<command>nasal</command>
+			<script>
+			setprop("/sim/failure-manager/controls/flight/flaps/serviceable", 1);
+			setprop("/controls/fires/fire[1]/on-fire", 0);
+			setprop("/controls/fires/fire/on-fire", 0);
+			setprop("/sim/failure-manager/engines/engine[1]/serviceable", 1);
+			setprop("/sim/failure-manager/engines/engine[0]/serviceable", 1);
+			</script>
+		</binding>
+	</button>
+</group>
+
+</PropertyList>
