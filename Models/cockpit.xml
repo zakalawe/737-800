@@ -1442,8 +1442,8 @@
       <command>property-cycle</command>
       <property>b737/controls/gear/lever</property>  
       <value>0</value>
-	  <value>1</value>
-	  <value>2</value>
+      <value>1</value>
+      <value>2</value>
     </binding>
   </action>
 </animation>
@@ -1458,8 +1458,8 @@
        <command>property-cycle</command>
        <property>b737/controls/gear/lever</property>  
        <value>2</value>
-	   <value>1</value>
-	   <value>0</value>
+       <value>1</value>
+       <value>0</value>
     </binding>
   </action>
 </animation>
@@ -1474,7 +1474,7 @@
         <command>property-toggle</command>
         <property>/controls/gear/brake-parking</property> 
         <min>0</min>
-        <max>1</max>    		  
+        <max>1</max>              
         <wrap>false</wrap>
       </binding>
     </action>
@@ -1507,7 +1507,7 @@
 
   <animation>
     <type>textranslate</type>
-    <object-name>RGDN</object-name>	        
+    <object-name>RGDN</object-name>         
     <property>gear/gear[2]/position-norm</property>       
     <interpolation>
       <entry>
@@ -1532,7 +1532,7 @@
 
   <animation>
     <type>textranslate</type>
-    <object-name>NGDN</object-name>	        
+    <object-name>NGDN</object-name>         
     <property>gear/gear[0]/position-norm</property>       
     <interpolation>
       <entry>
@@ -1712,7 +1712,7 @@
     <type>rotate</type>
     <object-name>Circle.220</object-name>
     <property>/controls/fuel/tank[0]/pump-aft</property>
-	<offset>90</offset>
+    <offset>90</offset>
     <factor>30</factor>
     <center>
       <x-m>0.673537</x-m>
@@ -1730,19 +1730,19 @@
     <type>pick</type>
     <object-name>Circle.220</object-name>
     <action>
-		<button>0</button>
-		<binding>
-			<command>property-toggle</command>
-			<property>/controls/fuel/tank[0]/pump-aft</property>
-		</binding>
-	</action>
+        <button>0</button>
+        <binding>
+            <command>property-toggle</command>
+            <property>/controls/fuel/tank[0]/pump-aft</property>
+        </binding>
+    </action>
   </animation>
   
   <animation>
     <type>rotate</type>
     <object-name>Cylinder</object-name>
     <property>/controls/fuel/tank[0]/pump-fwd</property>
-	<offset>90</offset>
+    <offset>90</offset>
     <factor>30</factor>
     <center>
       <x-m>0.674034</x-m>
@@ -1760,19 +1760,19 @@
     <type>pick</type>
     <object-name>Cylinder</object-name>
     <action>
-		<button>0</button>
-		<binding>
-			<command>property-toggle</command>
-			<property>/controls/fuel/tank[0]/pump-fwd</property>
-		</binding>
-	</action>
+        <button>0</button>
+        <binding>
+            <command>property-toggle</command>
+            <property>/controls/fuel/tank[0]/pump-fwd</property>
+        </binding>
+    </action>
   </animation>
   
   <animation>
     <type>rotate</type>
     <object-name>Cylinder.001</object-name>
     <property>/controls/fuel/tank[1]/pump-fwd</property>
-	<offset>90</offset>
+    <offset>90</offset>
     <factor>30</factor>
     <center>
       <x-m>0.674034</x-m>
@@ -1790,19 +1790,19 @@
     <type>pick</type>
     <object-name>Cylinder.001</object-name>
     <action>
-		<button>0</button>
-		<binding>
-			<command>property-toggle</command>
-			<property>/controls/fuel/tank[1]/pump-fwd</property>
-		</binding>
-	</action>
+        <button>0</button>
+        <binding>
+            <command>property-toggle</command>
+            <property>/controls/fuel/tank[1]/pump-fwd</property>
+        </binding>
+    </action>
   </animation>
   
   <animation>
     <type>rotate</type>
     <object-name>Circle.217</object-name>
     <property>/controls/fuel/tank[1]/pump-aft</property>
-	<offset>90</offset>
+    <offset>90</offset>
     <factor>30</factor>
     <center>
       <x-m>0.674034</x-m>
@@ -1820,19 +1820,19 @@
     <type>pick</type>
     <object-name>Circle.217</object-name>
     <action>
-		<button>0</button>
-		<binding>
-			<command>property-toggle</command>
-			<property>/controls/fuel/tank[1]/pump-aft</property>
-		</binding>
-	</action>
+        <button>0</button>
+        <binding>
+            <command>property-toggle</command>
+            <property>/controls/fuel/tank[1]/pump-aft</property>
+        </binding>
+    </action>
   </animation>
   
   <animation>
     <type>rotate</type>
     <object-name>Circle.221</object-name>
     <property>/controls/fuel/tank[2]/pump-left</property>
-	<offset>90</offset>
+    <offset>90</offset>
     <factor>30</factor>
     <center>
       <x-m>0.72362</x-m>
@@ -1850,19 +1850,19 @@
     <type>pick</type>
     <object-name>Circle.221</object-name>
     <action>
-		<button>0</button>
-		<binding>
-			<command>property-toggle</command>
-			<property>/controls/fuel/tank[2]/pump-left</property>
-		</binding>
-	</action>
+        <button>0</button>
+        <binding>
+            <command>property-toggle</command>
+            <property>/controls/fuel/tank[2]/pump-left</property>
+        </binding>
+    </action>
   </animation>
   
   <animation>
     <type>rotate</type>
     <object-name>Circle.222</object-name>
     <property>/controls/fuel/tank[2]/pump-right</property>
-	<offset>90</offset>
+    <offset>90</offset>
     <factor>30</factor>
     <center>
       <x-m>0.72362</x-m>
@@ -1880,12 +1880,165 @@
     <type>pick</type>
     <object-name>Circle.222</object-name>
     <action>
-		<button>0</button>
-		<binding>
-			<command>property-toggle</command>
-			<property>/controls/fuel/tank[2]/pump-right</property>
-		</binding>
-	</action>
+        <button>0</button>
+        <binding>
+            <command>property-toggle</command>
+            <property>/controls/fuel/tank[2]/pump-right</property>
+        </binding>
+    </action>
+  </animation>
+  
+  <!-- Hydraulic Switches -->
+  <animation>
+    <type>rotate</type>
+    <object-name>Circle.211</object-name>
+    <property>/controls/hydraulic/a-eng1-pump</property>
+    <offset>40</offset>
+    <factor>20</factor>
+    <center>
+      <x-m>0.91046</x-m>
+      <y-m>0.049932</y-m>
+      <z-m>1.55502</z-m>
+    </center>
+    <axis>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis>
+  </animation>
+  
+  <animation>
+    <type>pick</type>
+    <object-name>Circle.211</object-name>
+    <action>
+        <button>0</button>
+        <binding>
+            <command>property-toggle</command>
+            <property>/controls/hydraulic/a-eng1-pump</property>
+        </binding>
+    </action>
+  </animation>
+  
+  <animation>
+    <type>rotate</type>
+    <object-name>Circle.210</object-name>
+    <property>/controls/hydraulic/a-elec2-pump</property>
+    <offset>80</offset>
+    <factor>20</factor>
+    <center>
+      <x-m>0.91090</x-m>
+      <y-m>0.073609</y-m>
+      <z-m>1.55553</z-m>
+    </center>
+    <axis>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis>
+  </animation>
+  
+  <animation>
+    <type>pick</type>
+    <object-name>Circle.210</object-name>
+    <action>
+        <button>0</button>
+        <binding>
+            <command>property-toggle</command>
+            <property>/controls/hydraulic/a-elec2-pump</property>
+        </binding>
+    </action>
+  </animation>
+  
+   <animation>
+    <type>rotate</type>
+    <object-name>Circle.209</object-name>
+    <property>/controls/hydraulic/b-elec1-pump</property>
+    <offset>80</offset>
+    <factor>20</factor>
+    <center>
+      <x-m>0.91081</x-m>
+      <y-m>0.114636</y-m>
+      <z-m>1.55558</z-m>
+    </center>
+    <axis>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis>
+  </animation>
+  
+  <animation>
+    <type>pick</type>
+    <object-name>Circle.209</object-name>
+    <action>
+        <button>0</button>
+        <binding>
+            <command>property-toggle</command>
+            <property>/controls/hydraulic/b-elec1-pump</property>
+        </binding>
+    </action>
+  </animation>
+  
+  <animation>
+    <type>rotate</type>
+    <object-name>Circle.208</object-name>
+    <property>/controls/hydraulic/b-eng2-pump</property>
+    <offset>80</offset>
+    <factor>20</factor>
+    <center>
+      <x-m>0.910326</x-m>
+      <y-m>0.137376</y-m>
+      <z-m>1.55513</z-m>
+    </center>
+    <axis>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis>
+  </animation>
+  
+  <animation>
+    <type>pick</type>
+    <object-name>Circle.208</object-name>
+    <action>
+        <button>0</button>
+        <binding>
+            <command>property-toggle</command>
+            <property>/controls/hydraulic/b-eng2-pump</property>
+        </binding>
+    </action>
+  </animation>
+  
+  <!-- Light Switches -->
+  
+  <animation>
+    <type>rotate</type>
+    <object-name>Circle.184</object-name>
+    <property>/controls/lighting/logo-lights</property>
+    <offset>80</offset>
+    <factor>20</factor>
+    <center>
+      <x-m>0.61164</x-m>
+      <y-m>0.134415</y-m>
+      <z-m>1.42415</z-m>
+    </center>
+    <axis>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis>
+  </animation>
+  
+  <animation>
+    <type>pick</type>
+    <object-name>Circle.184</object-name>
+    <action>
+        <button>0</button>
+        <binding>
+            <command>property-toggle</command>
+            <property>/controls/lighting/logo-lights</property>
+        </binding>
+    </action>
   </animation>
   
   <model>

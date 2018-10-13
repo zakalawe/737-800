@@ -22,7 +22,19 @@
       <autopilot>
         <path>Aircraft/737-800/Systems/737-fcc-b.xml</path>
       </autopilot>
-
+	  
+	  <autopilot>
+		<path>Aircraft/737-800/Systems/hydraulics.xml</path>
+	  </autopilot>
+	  
+	  <autopilot>
+		<path>Aircraft/737-800/Systems/autospeedbrake.xml</path>
+      </autopilot>
+	  
+	  <autopilot>
+		<path>Aircraft/737-800/Systems/fadec.xml</path>
+      </autopilot>
+	  
       <autopilot>
         <path>Aircraft/737-800/Systems/737_pfd.xml</path>
       </autopilot>
@@ -174,8 +186,19 @@
 
     <multiplay>
       <generic>
-        <float n="0" alias="/fdm/jsbsim/fcs/stab"/>
         <short n="0" alias="/gear/gear[0]/steering-multiplay"/>
+		<float n="0" alias="/gear/gear[0]/compression-m"/>
+		<float n="1" alias="/gear/gear[1]/compression-m"/>
+		<float n="2" alias="/gear/gear[2]/compression-m"/>
+		<float n="3" alias="/gear/gear[1]/compression-m"/>
+		<float n="4" alias="/gear/gear[2]/compression-m"/>
+		<float n="5" alias="/surface-positions/speedbrake-norm"/>
+		<float n="6" alias="/surface-positions/reverser-norm"/>
+		<float n="7" alias="/controls/flight/aileron-left"/>
+		<float n="8" alias="/controls/flight/aileron-right"/>
+		<float n="9" alias="/controls/flight/elevator-left"/>
+		<float n="10" alias="/controls/flight/elevator-right"/>
+		<float n="11" alias="/controls/flight/rudder-sum"/>
       </generic>
     </multiplay>
 
@@ -289,6 +312,27 @@
           <max type="double">6</max>
         </binding>
       </key>
+	  
+	  <key n="2">
+			<name>Ctrl-b</name>
+			<desc>Cycle speedbrake setting</desc>
+			<binding>
+				<command>property-assign</command>
+				<property>/controls/flight/autospeedbrake</property>
+				<value>0</value>
+			</binding>
+			<binding>
+				<command>property-cycle</command>
+				<property>/b737/controls/flight/spoilers-lever-pos</property>
+				<value>0</value>
+				<value>1</value>
+				<value>2</value>
+				<value>3</value>
+				<value>4</value>
+				<value>5</value>
+				<value>6</value>
+			</binding>
+		</key>
 
       <key n="113">
         <name>q</name>
@@ -586,6 +630,30 @@
       <autobrakes type="int">0</autobrakes>
       <!-- 0=off, 1=1, 2=2, 3=3, 4=MAX, -1=RTO -->
     </gear>
+	
+	<flight n="0">
+		<aileron-sum>0</aileron-sum>
+		<elevator-sum>0</elevator-sum>
+		<rudder-sum>0</rudder-sum>
+		<spoiler-1>0.0</spoiler-1>
+		<spoiler-2>0.0</spoiler-2>
+		<spoiler-3>0.0</spoiler-3>
+		<spoiler-4>0.0</spoiler-4>
+		<spoiler-5>0.0</spoiler-5>
+		<spoiler-6>0.0</spoiler-6>
+		<spoiler-l-sum>0.0</spoiler-l-sum>
+		<spoiler-7>0.0</spoiler-7>
+		<spoiler-8>0.0</spoiler-8>
+		<spoiler-9>0.0</spoiler-9>
+		<spoiler-10>0.0</spoiler-10>
+		<spoiler-11>0.0</spoiler-11>
+		<spoiler-12>0.0</spoiler-12>
+		<spoiler-r-sum>0.0</spoiler-r-sum>
+		<speedbrake-output>0.0</speedbrake-output>
+		<speedbrake-arm>0</speedbrake-arm>
+		<ground-spoilers-armed type="bool">0</ground-spoilers-armed>
+		<speedbrake-lever type="double">0</speedbrake-lever>
+	</flight>
 
     <fuel>
       <crossfeed type="bool">0</crossfeed>
@@ -712,6 +780,7 @@
       <file>Aircraft/737-800/Nasal/friction.nas</file>
       <file>Aircraft/737-800/Nasal/liveries.nas</file>
       <file>Aircraft/737-800/Nasal/systems.nas</file>
+	  <file>Aircraft/737-800/Nasal/hydraulics.nas</file>
       <file>Aircraft/737-800/Nasal/tire-smoke.nas</file>
       <file>Aircraft/737-800/Nasal/v-speed.nas</file>
       <file>Aircraft/737-800/Nasal/engine-fire.nas</file> 
