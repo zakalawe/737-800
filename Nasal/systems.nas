@@ -32,3 +32,8 @@ setlistener("/b737/controls/gear/lever", func {
 		setprop("/b737/controls/gear/lever", 0);
 	} 
 });
+
+
+setlistener("/sim/signals/fdm-initialized", func {
+	boeing737.hyd_init();
+});

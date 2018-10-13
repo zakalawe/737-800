@@ -20,7 +20,7 @@ var autostart = func {
 	setprop("/controls/fuel/tank[1]/pump-fwd",1);
 	setprop("/controls/fuel/tank[2]/pump-left",1);
 	setprop("/controls/fuel/tank[2]/pump-right",1);
-
+	
   setprop("/controls/engines/engine[0]/starter",1);
 	setprop("/controls/engines/engine[1]/starter",1);
 	setprop("/controls/engines/engine[0]/cutoff",1);

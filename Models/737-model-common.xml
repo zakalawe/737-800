@@ -228,7 +228,7 @@
         <value>fire</value>
       </equals>
     </condition>
-    <name>fire_1</name>
+    <name>fire_left</name>
     <offsets>
       <x-m>-3.3</x-m>
       <y-m>-4.73</y-m>
@@ -245,7 +245,7 @@
         <value>fire</value>
       </equals>
     </condition>
-    <name>~fire_1</name>
+    <name>fire_right</name>
     <offsets>
       <x-m>-3.3</x-m>
       <y-m>4.73</y-m>
@@ -262,7 +262,7 @@
         <value>fire</value>
       </equals>
     </condition>
-    <name>~fire_2</name>
+    <name>~fire_apu</name>
     <offsets>
        <x-m>18.63</x-m>
        <y-m>0.0</y-m>
