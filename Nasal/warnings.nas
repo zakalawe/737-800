@@ -134,6 +134,8 @@ var createFailedListener = func(system) {
 	setlistener("/systems/weu/" ~ system ~ "-failed", func {
 		if (getprop("/systems/weu/" ~ system ~ "-failed") == 1) {
 			activeWarnings.append(system);
+		} elsif (storedWarnings.contains(system) == 1 and getprop("/systems/weu/" ~ system ~ "-failed") == 0) {
+			storedWarnings.remove(system);
 		}
 	}, 0, 0);
 }
