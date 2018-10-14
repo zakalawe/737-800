@@ -375,6 +375,15 @@ var efis_ctrl = func(n, knob, action) {
 		setprop("instrumentation/efis[0]/outputs/mins-color", "g"); # meant to be unit 0!
 	} elsif (knob == "MINS") {
 		var minimums_setting = getprop("instrumentation/efis["~n~"]/minimums");
+		if (n == 0) {
+			if (getprop("instrumentation/efis[0]/minimums") != getprop("instrumentation/efis[1]/minimums")) {
+				setprop("instrumentation/efis[0]/minimums", getprop("instrumentation/efis[1]/minimums"));
+			} 
+		} elsif (n == 1) {
+			if (getprop("instrumentation/efis[1]/minimums") != getprop("instrumentation/efis[0]/minimums")) {
+				setprop("instrumentation/efis[1]/minimums", getprop("instrumentation/efis[0]/minimums"));
+			}
+		} 
 		setprop("instrumentation/efis["~n~"]/minimums", minimums_setting + action);
 		setprop("instrumentation/mk-viii/inputs/arinc429/decision-height", getprop("instrumentation/efis["~n~"]/minimums"));
 	}

@@ -1003,7 +1003,7 @@ var canvas_PFD = {
 			me["minimums"].show();
 			me["minimums"].setTranslation(0,-dh*0.9132);
 			me["dhReference"].setText("BARO");
-			if (alt < dh) {
+			if (alt < dh and air_ground == 0) {
 				me["dhText"].setColor(0.7333,0.3803,0);
 				me["minimums"].setColor(0.7333,0.3803,0);
 			} elsif (alt > dh or air_ground == 1 or rst == "g") {
@@ -1013,7 +1013,7 @@ var canvas_PFD = {
 		} else {	
 			me["minimums"].hide();
 			me["dhReference"].setText("RADIO");
-			if (radioAlt < dh) {
+			if (radioAlt < dh and air_ground == 1) {
 				me["dhText"].setColor(0.7333,0.3803,0);
 			} elsif (radioAlt > (dh + 75) or air_ground == 1 or rst == "g") {
 				me["dhText"].setColor(0,1,0);
