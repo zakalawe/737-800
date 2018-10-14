@@ -527,9 +527,56 @@
     <input>/autopilot/internal/at-throttle</input>
     <output>
       <prop>/autopilot/internal/servo-throttle[0]</prop>
+    </output>
+  </filter>
+
+<!-- JMT simpit mode: duplicate autothrotle SERVO-DRIVER for right throttle -->
+
+  <filter>
+    <name>SERVO-DRIVER:autothrottle-right</name>	
+    <type>noise-spike</type>
+    <max-rate-of-change>
+      <condition>
+        <and>
+          <property>/autopilot/internal/toga-20-sec</property>
+          <greater-than-equals>
+            <property>/autopilot/internal/at-throttle</property>
+            <property>/fdm/jsbsim/fcs/throttle-pos-norm[0]</property>
+          </greater-than-equals>
+          <property>/autopilot/internal/SPD</property>
+          <property>/autopilot/internal/THROTTLE-ACTIVE</property>
+        </and>
+      </condition>
+      <value>0.233</value> <!-- 13.5 deg/s TLA. Max TLA = 58 deg -->
+    </max-rate-of-change>
+    <max-rate-of-change>
+      <condition>
+        <and>
+          <property>/autopilot/internal/SPD</property>
+          <property>/autopilot/internal/THROTTLE-ACTIVE</property>
+        </and>
+      </condition>
+      <value>0.0517</value> <!-- 3 deg/s TLA -->
+    </max-rate-of-change>
+    <max-rate-of-change>10</max-rate-of-change>
+    <input>
+      <condition>
+        <not>
+          <and>
+            <property>/autopilot/internal/SPD</property>
+            <property>/autopilot/internal/THROTTLE-ACTIVE</property>
+          </and>
+        </not>
+      </condition>
+      <prop>/controls/engines/engine[1]/throttle</prop>
+    </input>
+    <input>/autopilot/internal/at-throttle</input>
+    <output>
       <prop>/autopilot/internal/servo-throttle[1]</prop>
     </output>
   </filter>
+
+<!-- end of JMT simpit mod -->
 
   <filter>
     <type>gain</type>
