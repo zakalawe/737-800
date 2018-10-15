@@ -393,12 +393,13 @@
                 <property>/instrumentation/efis[1]/inputs/alt-meters</property>
             </binding>
         </action>
-    </animation>    
-    
+    </animation> 
+	
+    <!-- meant to be unit 0! -->
 	<animation>
         <type>knob</type>
         <object-name>MINS.knob</object-name>
-        <property>instrumentation/efis[1]/inputs/minimums-mode</property>
+        <property>instrumentation/efis[0]/inputs/minimums-mode</property>
         <factor>60</factor>
         <offset-deg>-30</offset-deg>
         <center>
@@ -414,13 +415,13 @@
         <increase>
             <binding>
                 <command>nasal</command>
-                <script>boeing737.efis_ctrl(1,"MINSTYPE",1);</script>
+                <script>boeing737.efis_ctrl(0,"MINSTYPE",1);</script>
             </binding>
         </increase>
         <decrease>
             <binding>
                 <command>nasal</command>
-                <script>boeing737.efis_ctrl(1,"MINSTYPE",-1);</script>
+                <script>boeing737.efis_ctrl(0,"MINSTYPE",-1);</script>
             </binding>
         </decrease>
     </animation>
@@ -428,7 +429,7 @@
 	<animation>
         <type>knob</type>
         <object-name>MINS.knob2</object-name>
-        <property>instrumentation/efis[1]/minimums-knob</property>
+        <property>instrumentation/efis[0]/minimums-knob</property>
         <factor>360</factor>
         <offset-deg>0</offset-deg>
         <center>
@@ -444,13 +445,13 @@
         <increase>
             <binding>
                 <command>nasal</command>
-                <script>boeing737.efis_ctrl(1,"MINS",1);</script>
+                <script>boeing737.efis_ctrl(0,"MINS",1);</script>
             </binding>
         </increase>
         <decrease>
             <binding>
                 <command>nasal</command>
-                <script>boeing737.efis_ctrl(1,"MINS",-1);</script>
+                <script>boeing737.efis_ctrl(0,"MINS",-1);</script>
             </binding>
         </decrease>
     </animation>
@@ -478,7 +479,7 @@
         <object-name>DH.reset</object-name>
 		<binding>
 			<command>nasal</command>
-			<script>boeing737.efis_ctrl(1,"RST",0);</script>
+			<script>boeing737.efis_ctrl(0,"RST",0);</script>
 		</binding>
     </animation>
 </PropertyList>

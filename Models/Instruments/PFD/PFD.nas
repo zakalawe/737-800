@@ -815,7 +815,7 @@ var canvas_PFD = {
 		var alt = getprop("instrumentation/altimeter/indicated-altitude-ft");
 		var radioAlt = getprop("instrumentation/radar-altimeter/radar-altitude-ft");
 		var apSpd = getprop("autopilot/settings/target-speed-kt");
-		var dh = getprop("instrumentation/mk-viii/inputs/arinc429/decision-height");
+		var dh = getprop("instrumentation/efis[0]/minimums");
 		
 		var mode = getprop("controls/fmc/v-speed-mode-text");
 		var pfd_spd_value = getprop("controls/fmc/v-speed-pfd-text");
@@ -996,26 +996,32 @@ var canvas_PFD = {
 		}
 		me["maxSpdInd"].setTranslation(0,maxIAS*-6.145425);
 		
-		var dhMode = getprop("instrumentation/mk-viii/inputs/arinc429/decision-height-mode");
-		var rst = getprop("instrumentation/efis[0]/outputs/mins-color");
+		var dhMode = getprop("instrumentation/efis[0]/inputs/minimums-mode");
+		var modeTxt = getprop("instrumentation/efis[0]/minimums-mode-text");
+		var rst = getprop("instrumentation/efis[0]/minimums-reset");
+		var baroPointer = getprop("instrumentation/efis[0]/baro-pointer");
+		
+		if (baroPointer == 1) {
+			me["minimums"].show();
+		} else {
+			me["minimums"].hide();
+		}
+		
+		me["dhReference"].setText(modeTxt);
 		
 		if (dhMode == 1) {
-			me["minimums"].show();
 			me["minimums"].setTranslation(0,-dh*0.9132);
-			me["dhReference"].setText("BARO");
 			if (alt < dh and air_ground == 0) {
 				me["dhText"].setColor(0.7333,0.3803,0);
 				me["minimums"].setColor(0.7333,0.3803,0);
-			} elsif (alt > dh or air_ground == 1 or rst == "g") {
+			} elsif (alt > dh or air_ground == 1 or rst == 1) {
 				me["dhText"].setColor(0,1,0);
 				me["minimums"].setColor(0,1,0);
 			}
 		} else {	
-			me["minimums"].hide();
-			me["dhReference"].setText("RADIO");
-			if (radioAlt < dh and air_ground == 1) {
+			if (radioAlt < dh and air_ground == 0) {
 				me["dhText"].setColor(0.7333,0.3803,0);
-			} elsif (radioAlt > (dh + 75) or air_ground == 1 or rst == "g") {
+			} elsif (radioAlt > (dh + 75) or air_ground == 1 or rst == 1) {
 				me["dhText"].setColor(0,1,0);
 			}
 		}
