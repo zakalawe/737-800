@@ -53,7 +53,7 @@
         <min>
             <condition>
                 <equals>
-                    <property>/systems/hydraulic/ail-active</property>
+                    <property>/systems/hydraulic/aileron-active</property>
                     <value>0</value>
                 </equals>
             </condition>
@@ -64,7 +64,7 @@
         <max>
             <condition>
                 <equals>
-                    <property>/systems/hydraulic/ail-active</property>
+                    <property>/systems/hydraulic/aileron-active</property>
                     <value>0</value>
                 </equals>
             </condition>
@@ -83,7 +83,7 @@
         <min>
             <condition>
                 <equals>
-                    <property>/systems/hydraulic/elev-active</property>
+                    <property>/systems/hydraulic/elevator-active</property>
                     <value>0</value>
                 </equals>
             </condition>
@@ -94,7 +94,7 @@
         <max>
             <condition>
                 <equals>
-                    <property>/systems/hydraulic/elev-active</property>
+                    <property>/systems/hydraulic/elevator-active</property>
                     <value>0</value>
                 </equals>
             </condition>
@@ -112,7 +112,7 @@
         <input>
             <condition>
                 <equals>
-                    <property>/systems/hydraulic/ail-active</property>
+                    <property>/systems/hydraulic/aileron-active</property>
                     <value>0</value>
                 </equals>
             </condition>
@@ -128,7 +128,7 @@
         <input>
             <condition>
                 <equals>
-                    <property>/systems/hydraulic/ail-active</property>
+                    <property>/systems/hydraulic/aileron-active</property>
                     <value>1</value>
                 </equals>
             </condition>
@@ -163,7 +163,7 @@
         <input>
             <condition>
                 <equals>
-                    <property>/systems/hydraulic/ail-active</property>
+                    <property>/systems/hydraulic/aileron-active</property>
                     <value>0</value>
                 </equals>
             </condition>
@@ -179,7 +179,7 @@
         <input>
             <condition>
                 <equals>
-                    <property>/systems/hydraulic/ail-active</property>
+                    <property>/systems/hydraulic/aileron-active</property>
                     <value>1</value>
                 </equals>
             </condition>
@@ -957,7 +957,7 @@
         <input>
             <condition>
                 <equals>
-                    <property>/systems/hydraulic/elev-active</property>
+                    <property>/systems/hydraulic/elevator-active</property>
                     <value>0</value>
                 </equals>
             </condition>
@@ -973,7 +973,7 @@
         <input>
             <condition>
                 <equals>
-                    <property>/systems/hydraulic/elev-active</property>
+                    <property>/systems/hydraulic/elevator-active</property>
                     <value>1</value>
                 </equals>
             </condition>
@@ -1006,7 +1006,7 @@
         <input>
             <condition>
                 <equals>
-                    <property>/systems/hydraulic/elev-active</property>
+                    <property>/systems/hydraulic/elevator-active</property>
                     <value>0</value>
                 </equals>
             </condition>
@@ -1022,7 +1022,7 @@
         <input>
             <condition>
                 <equals>
-                    <property>/systems/hydraulic/elev-active</property>
+                    <property>/systems/hydraulic/elevator-active</property>
                     <value>1</value>
                 </equals>
             </condition>

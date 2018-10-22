@@ -50,7 +50,7 @@ var canvas_PFD = {
 		"curAltDig3","curAltDig3Low","curAltDig3High",
 		"curAltDig45","curAltDig45High1","curAltDig45High2","curAltDig45Low1","curAltDig45Low2",
 		"curAltBox","curAltMtrTxt","curSpdDig1","curSpdDig2","curSpdDig3",
-		"dhText","dmeDist","fdX","fdY",
+		"dhText", "dhReference", "dmeDist","fdX","fdY",
 		"compassLMark1","compassLMark2","compassLMark3","compassLMark4","compassLMark5","compassLMark6","compassLMark7","compassLMark8",
 		"compassSMark1","compassSMark2","compassSMark3","compassSMark4","compassSMark5","compassSMark6","compassSMark7","compassSMark8",
 		"compassLNmbr1","compassLNmbr2","compassLNmbr3",
@@ -813,8 +813,9 @@ var canvas_PFD = {
 		var air_ground = getprop("/b737/sensors/air-ground");
 		var flaps = getprop("/controls/flight/flaps");
 		var alt = getprop("instrumentation/altimeter/indicated-altitude-ft");
+		var radioAlt = getprop("instrumentation/radar-altimeter/radar-altitude-ft");
 		var apSpd = getprop("autopilot/settings/target-speed-kt");
-		var dh = getprop("instrumentation/mk-viii/inputs/arinc429/decision-height");
+		var dh = getprop("instrumentation/efis[0]/minimums");
 		
 		var mode = getprop("controls/fmc/v-speed-mode-text");
 		var pfd_spd_value = getprop("controls/fmc/v-speed-pfd-text");
@@ -994,8 +995,37 @@ var canvas_PFD = {
 			maxIAS = getprop("limits/max-flap-extension-speed[7]/speed");
 		}
 		me["maxSpdInd"].setTranslation(0,maxIAS*-6.145425);
-		if (dh != nil)
+		
+		var dhMode = getprop("instrumentation/efis[0]/inputs/minimums-mode");
+		var modeTxt = getprop("instrumentation/efis[0]/minimums-mode-text");
+		var rst = getprop("instrumentation/efis[0]/minimums-reset");
+		var baroPointer = getprop("instrumentation/efis[0]/baro-pointer");
+		
+		if (baroPointer == 1) {
+			me["minimums"].show();
+		} else {
+			me["minimums"].hide();
+		}
+		
+		me["dhReference"].setText(modeTxt);
+		
+		if (dhMode == 1) {
 			me["minimums"].setTranslation(0,-dh*0.9132);
+			if (alt < dh and air_ground == 0) {
+				me["dhText"].setColor(0.7333,0.3803,0);
+				me["minimums"].setColor(0.7333,0.3803,0);
+			} elsif (alt > dh or air_ground == 1 or rst == 1) {
+				me["dhText"].setColor(0,1,0);
+				me["minimums"].setColor(0,1,0);
+			}
+		} else {	
+			if (radioAlt < dh and air_ground == 0) {
+				me["dhText"].setColor(0.7333,0.3803,0);
+			} elsif (radioAlt > (dh + 75) or air_ground == 1 or rst == 1) {
+				me["dhText"].setColor(0,1,0);
+			}
+		}
+		
 		if (getprop("autopilot/route-manager/destination/field-elevation-ft") != nil) {
 			me["touchdown"].setTranslation(0,-getprop("autopilot/route-manager/destination/field-elevation-ft")*0.9132);
 			me["touchdown"].show();

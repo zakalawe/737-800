@@ -286,6 +286,7 @@ timer_parking_brake.singleShot = 1;
 timer_parking_brake.start();
 
 # EFIS controls
+setprop("instrumentation/efis[0]/minimums-knob", 1);
 
 var efis_ctrl = func(n, knob, action) {
 	if (knob == "RANGE") {
@@ -357,6 +358,25 @@ var efis_ctrl = func(n, knob, action) {
 			setprop("instrumentation/efis["~n~"]/inputs/baro-previous", getprop("instrumentation/efis["~n~"]/inputs/baro-previous")/0.0295300586467);
 			setprop("instrumentation/efis["~n~"]/inputs/kpa-mode", 1);
 		}
+	} elsif (knob == "MINSTYPE") {  # meant to be unit 0 for the minimums!
+		var minimumsType = getprop("instrumentation/efis[0]/inputs/minimums-mode");
+		if (action == -1 and minimumsType == 1) {
+			setprop("instrumentation/efis[0]/inputs/minimums-mode", 0);
+			setprop("instrumentation/efis[0]/minimums-mode-text", "RADIO");
+			setprop("instrumentation/efis[0]/minimums-reset", 0);
+		} elsif (action == 1 and minimumsType == 0) {
+			setprop("instrumentation/efis[0]/inputs/minimums-mode", 1);
+			setprop("instrumentation/efis[0]/minimums-mode-text", "BARO");
+			setprop("instrumentation/efis[0]/minimums-reset", 0);
+			setprop("instrumentation/efis[0]/baro-pointer", 1);
+		}
+	} elsif (knob == "RST") {
+		setprop("instrumentation/efis[0]/baro-pointer", 0);
+		setprop("instrumentation/efis[0]/minimums-reset", 1);
+	} elsif (knob == "MINS") {
+		var minimums_setting = getprop("instrumentation/efis[0]/minimums");
+		setprop("instrumentation/efis[0]/minimums", minimums_setting + action);
+		setprop("instrumentation/mk-viii/inputs/arinc429/decision-height", getprop("instrumentation/efis[0]/minimums"));
 	}
 }
 
