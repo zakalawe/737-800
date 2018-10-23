@@ -1,0 +1,18 @@
+<PropertyList>
+
+ <path>EFIS.ac</path>
+
+<animation>
+	<type>pick</type>
+	<object-name>lowerEICASScreen</object-name>
+	<action>
+		<button>0</button>
+		<repeatable>false</repeatable>
+		<binding>
+			<command>nasal</command>
+			<script>boeing737.showlowerEICAS();</script>
+		</binding>
+	</action>
+</animation>
+    
+</PropertyList>
