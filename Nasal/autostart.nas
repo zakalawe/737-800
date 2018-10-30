@@ -8,9 +8,10 @@ var autostart = func {
 	setprop("/sim/input/selected/engine[0]",1);
 	setprop("/sim/input/selected/engine[1]",1);
   
-	setprop("/controls/electric/battery-switch",1);
-	setprop("/controls/electric/apugen1",1);
-	setprop("/controls/electric/apugen2",1);
+	setprop("/controls/electric/battery-switch", 1);
+	setprop("/controls/APU/master", 2);
+	setprop("/controls/electrical/apu/Lsw", 1);
+	setprop("/controls/electrical/apu/Rsw", 1);
 
 	setprop("/systems/electrical/outputs/efis",28); #for central eicas function
 	
@@ -21,7 +22,7 @@ var autostart = func {
 	setprop("/controls/fuel/tank[2]/pump-left",1);
 	setprop("/controls/fuel/tank[2]/pump-right",1);
 	
-  setprop("/controls/engines/engine[0]/starter",1);
+    setprop("/controls/engines/engine[0]/starter",1);
 	setprop("/controls/engines/engine[1]/starter",1);
 	setprop("/controls/engines/engine[0]/cutoff",1);
 	setprop("/controls/engines/engine[1]/cutoff",1);
@@ -32,6 +33,15 @@ var autostart = func {
 		setprop("/controls/engines/autostart",0);
 	}
 	if (getprop("/engines/engine[0]/n2") < 25) settimer(autostart,0);
+	
+	
+	setprop("/controls/electrical/eng/Lsw", 1);
+	setprop("/controls/electrical/eng/Rsw", 1);
+	
+	setprop("/controls/hydraulic/a-eng1-pump", 1);
+	setprop("/controls/hydraulic/a-elec2-pump", 1);
+	setprop("/controls/hydraulic/b-eng2-pump", 1);
+	setprop("/controls/hydraulic/b-elec1-pump", 1);
 }
 
 # Shutdown #

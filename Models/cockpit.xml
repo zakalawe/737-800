@@ -1712,7 +1712,7 @@
     <type>rotate</type>
     <object-name>Circle.220</object-name>
     <property>/controls/fuel/tank[0]/pump-aft</property>
-    <offset>90</offset>
+    <offset-deg>-10</offset-deg>
     <factor>30</factor>
     <center>
       <x-m>0.673537</x-m>
@@ -1742,7 +1742,7 @@
     <type>rotate</type>
     <object-name>Cylinder</object-name>
     <property>/controls/fuel/tank[0]/pump-fwd</property>
-    <offset>90</offset>
+    <offset-deg>-10</offset-deg>
     <factor>30</factor>
     <center>
       <x-m>0.674034</x-m>
@@ -1772,7 +1772,7 @@
     <type>rotate</type>
     <object-name>Cylinder.001</object-name>
     <property>/controls/fuel/tank[1]/pump-fwd</property>
-    <offset>90</offset>
+    <offset-deg>-10</offset-deg>
     <factor>30</factor>
     <center>
       <x-m>0.674034</x-m>
@@ -1802,7 +1802,7 @@
     <type>rotate</type>
     <object-name>Circle.217</object-name>
     <property>/controls/fuel/tank[1]/pump-aft</property>
-    <offset>90</offset>
+    <offset-deg>-10</offset-deg>
     <factor>30</factor>
     <center>
       <x-m>0.674034</x-m>
@@ -1832,7 +1832,7 @@
     <type>rotate</type>
     <object-name>Circle.221</object-name>
     <property>/controls/fuel/tank[2]/pump-left</property>
-    <offset>90</offset>
+    <offset-deg>-10</offset-deg>
     <factor>30</factor>
     <center>
       <x-m>0.72362</x-m>
@@ -1862,7 +1862,7 @@
     <type>rotate</type>
     <object-name>Circle.222</object-name>
     <property>/controls/fuel/tank[2]/pump-right</property>
-    <offset>90</offset>
+    <offset-deg>-10</offset-deg>
     <factor>30</factor>
     <center>
       <x-m>0.72362</x-m>
@@ -1893,7 +1893,7 @@
     <type>rotate</type>
     <object-name>Circle.211</object-name>
     <property>/controls/hydraulic/a-eng1-pump</property>
-    <offset>40</offset>
+    <offset-deg>-10</offset-deg>
     <factor>20</factor>
     <center>
       <x-m>0.91046</x-m>
@@ -1923,7 +1923,7 @@
     <type>rotate</type>
     <object-name>Circle.210</object-name>
     <property>/controls/hydraulic/a-elec2-pump</property>
-    <offset>80</offset>
+    <offset-deg>-10</offset-deg>
     <factor>20</factor>
     <center>
       <x-m>0.91090</x-m>
@@ -1953,7 +1953,7 @@
     <type>rotate</type>
     <object-name>Circle.209</object-name>
     <property>/controls/hydraulic/b-elec1-pump</property>
-    <offset>80</offset>
+    <offset-deg>-10</offset-deg>
     <factor>20</factor>
     <center>
       <x-m>0.91081</x-m>
@@ -1983,7 +1983,7 @@
     <type>rotate</type>
     <object-name>Circle.208</object-name>
     <property>/controls/hydraulic/b-eng2-pump</property>
-    <offset>80</offset>
+    <offset-deg>-10</offset-deg>
     <factor>20</factor>
     <center>
       <x-m>0.910326</x-m>
@@ -2009,13 +2009,239 @@
     </action>
   </animation>
   
+  <!-- Electrical Panel -->
+   <animation>
+    <type>rotate</type>
+    <object-name>Circle.216</object-name>
+    <property>/controls/electrical/ext/sw</property>
+    <offset-deg>-20</offset-deg>
+    <factor>40</factor>
+    <center>
+      <x-m>0.816342</x-m>
+      <y-m>-0.121355</y-m>
+      <z-m>1.51385</z-m>
+    </center>
+    <axis>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis>
+  </animation>
+  
+  <animation>
+	<type>pick</type>
+	<object-name>Circle.216</object-name>
+	<action>
+        <button>0</button>
+        <binding>
+            <command>property-toggle</command>
+            <property>/controls/electrical/ext/sw</property>
+        </binding>
+    </action>
+  </animation>
+  
+  <animation>
+    <type>rotate</type>
+    <object-name>Circle.177</object-name>
+    <property>/controls/electrical/apu/Lsw</property>
+    <offset-deg>-10</offset-deg>
+    <factor>30</factor>
+    <center>
+      <x-m>0.732219</x-m>
+      <y-m>-0.142816</y-m>
+      <z-m>1.47663</z-m>
+    </center>
+    <axis>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis>
+  </animation>
+  
+  <animation>
+	<type>pick</type>
+	<object-name>Circle.177</object-name>
+	<action>
+        <button>0</button>
+        <binding>
+            <command>property-toggle</command>
+            <property>/controls/electrical/apu/Lsw</property>
+        </binding>
+    </action>
+  </animation>
+  
+  <animation>
+    <type>rotate</type>
+    <object-name>Circle.175</object-name>
+    <property>/controls/electrical/apu/Rsw</property>
+    <offset-deg>-10</offset-deg>
+    <factor>30</factor>
+    <center>
+      <x-m>0.732054</x-m>
+      <y-m>-0.102184</y-m>
+      <z-m>1.47685</z-m>
+    </center>
+    <axis>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis>
+  </animation>
+  
+  <animation>
+	<type>pick</type>
+	<object-name>Circle.175</object-name>
+	<action>
+        <button>0</button>
+        <binding>
+            <command>property-toggle</command>
+            <property>/controls/electrical/apu/Rsw</property>
+        </binding>
+    </action>
+  </animation>
+  
+  <animation>
+    <type>rotate</type>
+    <object-name>Circle.178</object-name>
+    <property>/controls/electrical/eng/Lsw</property>
+    <offset-deg>-10</offset-deg>
+    <factor>30</factor>
+    <center>
+      <x-m>0.73192</x-m>
+      <y-m>-0.167106</y-m>
+      <z-m>1.47688</z-m>
+    </center>
+    <axis>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis>
+  </animation>
+  
+  <animation>
+	<type>pick</type>
+	<object-name>Circle.178</object-name>
+	<action>
+        <button>0</button>
+        <binding>
+            <command>property-toggle</command>
+            <property>/controls/electrical/eng/Lsw</property>
+        </binding>
+    </action>
+  </animation>
+  
+  <animation>
+    <type>rotate</type>
+    <object-name>Circle.176</object-name>
+    <property>/controls/electrical/eng/Rsw</property>
+    <offset-deg>-10</offset-deg>
+    <factor>30</factor>
+    <center>
+      <x-m>0.731846</x-m>
+      <y-m>-0.07746</y-m>
+      <z-m>1.47696</z-m>
+    </center>
+    <axis>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis>
+  </animation>
+  
+  <animation>
+	<type>pick</type>
+	<object-name>Circle.176</object-name>
+	<action>
+        <button>0</button>
+        <binding>
+            <command>property-toggle</command>
+            <property>/controls/electrical/eng/Rsw</property>
+        </binding>
+    </action>
+  </animation>
+  
+  <animation>
+    <type>rotate</type>
+    <object-name>BatterySw</object-name>
+    <property>/controls/electric/battery-switch</property>
+    <offset-deg>-10</offset-deg>
+    <factor>30</factor>
+    <center>
+      <x-m>0.890165</x-m>
+      <y-m>-0.161979</y-m>
+      <z-m>1.55022</z-m>
+    </center>
+    <axis>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis>
+  </animation>
+  
+  <animation>
+	<type>pick</type>
+	<object-name>BatterySw</object-name>
+	<action>
+        <button>0</button>
+        <binding>
+            <command>property-toggle</command>
+            <property>/controls/electric/battery-switch</property>
+        </binding>
+    </action>
+  </animation>
+  
+  <animation>
+    <type>rotate</type>
+    <object-name>Circle.182</object-name>
+    <property>/controls/APU/master</property>
+    <offset-deg>-30</offset-deg>
+    <factor>30</factor>
+    <center>
+      <x-m>0.594146</x-m>
+      <y-m>-0.090111</y-m>
+      <z-m>1.41648</z-m>
+    </center>
+    <axis>
+      <x>0</x>
+      <y>1</y>
+      <z>0</z>
+    </axis>
+  </animation>
+  
+  <animation>
+	<type>pick</type>
+	<object-name>Circle.182</object-name>
+	<action>
+        <button>0</button>
+        <button>3</button>
+        <binding>
+            <command>property-adjust</command>
+            <property>/controls/APU/master</property>
+			<step>1</step>
+			<min>0</min>
+			<max>2</max>
+        </binding>
+    </action>
+	<action>
+        <button>2</button>
+        <button>4</button>
+        <binding>
+            <command>property-adjust</command>
+            <property>/controls/APU/master</property>
+			<step>-1</step>
+			<min>0</min>
+			<max>2</max>
+        </binding>
+    </action>
+  </animation>
+  
   <!-- Light Switches -->
   
   <animation>
     <type>rotate</type>
     <object-name>Circle.184</object-name>
     <property>/controls/lighting/logo-lights</property>
-    <offset>80</offset>
+    <offset-deg>-10</offset-deg>
     <factor>20</factor>
     <center>
       <x-m>0.61164</x-m>
