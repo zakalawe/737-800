@@ -796,6 +796,7 @@
     </nd>
 
     <isfd>
+      <file>Aircraft/Instruments-3d/ISFD/ISFDGenericController.nas</file>
       <file>Aircraft/Instruments-3d/ISFD/ISFD.nas</file>
       <file>Aircraft/737-800/Nasal/ISFD_install.nas</file>
     </isfd>
