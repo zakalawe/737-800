@@ -170,7 +170,7 @@
     <property>sim/current-view/z-offset-m</property>
     <offset>1</offset>
     <factor>0.4</factor>
-    <min>-1</min>
+    <min>0.0</min>
     <max>0.6</max>
    </volume>
   </flap>
