@@ -273,7 +273,7 @@ var master_elec_loop = func {
 		ac_electricBuses[0].volts = 0;
 	}
 	
-	if (ac_electricBuses[0].volts) >= ac_volt_min) {
+	if (ac_electricBuses[0].volts >= ac_volt_min) {
 		setprop("/systems/electrical/trans1-avail", 1);
 	} else {
 		setprop("/systems/electrical/trans1-avail", 0);
@@ -292,7 +292,7 @@ var master_elec_loop = func {
 		ac_electricBuses[1].volts = 0;
 	}
 	
-	if (ac_electricBuses[1].volts) >= ac_volt_min) {
+	if (ac_electricBuses[1].volts >= ac_volt_min) {
 		setprop("/systems/electrical/trans2-avail", 1);
 	} else {
 		setprop("/systems/electrical/trans2-avail", 0);
@@ -321,7 +321,7 @@ var master_elec_loop = func {
 		ac_electricBuses[3].volts = 0;
 	}
 	
-	if (ac_electricBuses[3].volts) >= ac_volt_min) {
+	if (ac_electricBuses[3].volts >= ac_volt_min) {
 		setprop("/systems/electrical/ac2-avail", 1);
 	} else {
 		setprop("/systems/electrical/ac2-avail", 0);
@@ -338,7 +338,7 @@ var master_elec_loop = func {
 		ac_electricBuses[4].volts = 0;
 	}
 	
-	if (ac_electricBuses[4].volts) >= ac_volt_min) {
+	if (ac_electricBuses[4].volts >= ac_volt_min) {
 		setprop("/systems/electrical/ac-galyab-avail", 1);
 	} else {
 		setprop("/systems/electrical/ac-galyab-avail", 0);
@@ -377,7 +377,7 @@ var master_elec_loop = func {
 		ac_electricBuses[6].volts = 0;
 	}
 	
-	if (ac_electricBuses[6].volts) >= ac_volt_min) {
+	if (ac_electricBuses[6].volts >= ac_volt_min) {
 		setprop("/systems/electrical/ac-gndsvc1-avail", 1);
 	} else {
 		setprop("/systems/electrical/ac-gndsvc1-avail", 0);
@@ -392,7 +392,7 @@ var master_elec_loop = func {
 		ac_electricBuses[7].volts = 0;
 	}
 	
-	if (ac_electricBuses[7].volts) >= ac_volt_min) {
+	if (ac_electricBuses[7].volts >= ac_volt_min) {
 		setprop("/systems/electrical/ac-gndsvc2-avail", 1);
 	} else {
 		setprop("/systems/electrical/ac-gndsvc2-avail", 0);
@@ -413,7 +413,7 @@ var master_elec_loop = func {
 		ac_electricBuses[8].volts = 0;
 	}
 	
-	if (ac_electricBuses[6].volts) >= ac_volt_min) {
+	if (ac_electricBuses[6].volts >= ac_volt_min) {
 		setprop("/systems/electrical/ac-stby-avail", 1);
 	} else {
 		setprop("/systems/electrical/ac-stby-avail", 0);
@@ -568,7 +568,7 @@ var master_elec_loop = func {
 		dc_electricBuses[0].volts = 0;
 	}
 	
-	if (dc_electricBuses[0].volts) >= dc_volt_min) {
+	if (dc_electricBuses[0].volts >= dc_volt_min) {
 		setprop("/systems/electrical/dc1-avail", 1);
 	} else {
 		setprop("/systems/electrical/dc1-avail", 0);
@@ -585,7 +585,7 @@ var master_elec_loop = func {
 		dc_electricBuses[1].volts = 0;
 	}
 	
-	if (dc_electricBuses[1].volts) >= dc_volt_min) {
+	if (dc_electricBuses[1].volts >= dc_volt_min) {
 		setprop("/systems/electrical/dc2-avail", 1);
 	} else {
 		setprop("/systems/electrical/dc2-avail", 0);
@@ -610,7 +610,7 @@ var master_elec_loop = func {
 		dc_electricBuses[2].volts = 0;
 	}
 	
-	if (dc_electricBuses[2].volts) >= dc_volt_min) {
+	if (dc_electricBuses[2].volts >= dc_volt_min) {
 		setprop("/systems/electrical/dc-stby-avail", 1);
 	} else {
 		setprop("/systems/electrical/dc-stby-avail", 0);
@@ -627,7 +627,7 @@ var master_elec_loop = func {
 		dc_electricBuses[3].volts = 0;
 	}
 	
-	if (dc_electricBuses[3].volts) >= dc_volt_min) {
+	if (dc_electricBuses[3].volts >= dc_volt_min) {
 		setprop("/systems/electrical/dc-bat-avail", 1);
 	} else {
 		setprop("/systems/electrical/dc-bat-avail", 0);
@@ -643,7 +643,7 @@ var master_elec_loop = func {
 		dc_electricBuses[4].volts = 0;
 	}
 	
-	if (dc_electricBuses[4].volts) >= dc_volt_min) {
+	if (dc_electricBuses[4].volts >= dc_volt_min) {
 		setprop("/systems/electrical/dc-hot-bat-avail", 1);
 	} else {
 		setprop("/systems/electrical/dc-hot-bat-avail", 0);
@@ -658,7 +658,7 @@ var master_elec_loop = func {
 		dc_electricBuses[5].volts = 0;
 	}
 	
-	if (dc_electricBuses[5].volts) >= dc_volt_min) {
+	if (dc_electricBuses[5].volts >= dc_volt_min) {
 		setprop("/systems/electrical/dc-hot-bat-sw-avail", 1);
 	} else {
 		setprop("/systems/electrical/dc-hot-bat-sw-avail", 0);
