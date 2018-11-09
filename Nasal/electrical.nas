@@ -36,6 +36,7 @@ setlistener("/sim/signals/fdm-initialized", func {
 	var mainAC1shed = getprop("/systems/electrical/shed/mainAC1");
 	var mainAC2shed = getprop("/systems/electrical/shed/mainAC2");
 	var stbyPwSw = getprop("/controls/electrical/stby-pw-sw");
+	var batOnly = 0;
 });
 
 ######################
@@ -259,6 +260,7 @@ var master_elec_loop = func {
 	apuR = getprop("/controls/electrical/apu/Rsw");
 	engL = getprop("/controls/electrical/eng/Lsw");
 	engR = getprop("/controls/electrical/eng/Rsw");
+	rpmapu = getprop("/systems/apu/rpm");
 	
 	# TRANS 1 Bus
 	if (sourceL == "ext" and relays[0].state == 1) {
@@ -592,17 +594,42 @@ var master_elec_loop = func {
 	}
 	
 	# DC STBY Bus
-	if (stbyPwSw != 0) {
-		if (dc_electricSources[2].volts >= dc_volt_min) {
-			dc_electricBuses[2].volts = dc_electricSources[2].volts;
-		} elsif ((dc_electricSources[3].volts >= dc_volt_min) and relays[8].state == 1) {
-			dc_electricBuses[2].volts = dc_electricSources[3].volts;
-		} elsif ((dc_electricSources[4].volts >= dc_volt_min) and relays[8].state == 1) {
-			dc_electricBuses[2].volts = dc_electricSources[4].volts;
-		} elsif (dc_electricSources[0].volts >= dc_volt_min and ((getprop("/controls/electrical/stby-pw-sw") == -1) or (getprop("/systems/electrical/stbyMode") == 1 and getprop("/controls/electrical/stby-pw-sw") == 1))) {
-			dc_electricBuses[2].volts = dc_electricSources[0].volts;
-		} elsif (dc_electricSources[1].volts >= dc_volt_min and ((getprop("/controls/electrical/stby-pw-sw") == -1) or (getprop("/systems/electrical/stbyMode") == 1 and getprop("/controls/electrical/stby-pw-sw") == 1))) {
-			dc_electricBuses[2].volts = dc_electricSources[1].volts;
+	
+	if (ac_electricSources[0].volts == 0 and ac_electricSources[1].volts == 0 and ac_electricSources[2].volts == 0 and ac_electricSources[3].volts == 0 and ac_electricSources[4].volts == 0) {
+		batOnly = 1;
+	} else {
+		batOnly = 0;
+	}
+	
+	if (stbyPwSw != 0) {	
+		if (batOnly == 1 and getprop("/controls/electrical/battery-switch") == 1) {
+			if (dc_electricSources[2].volts >= dc_volt_min) {
+				dc_electricBuses[2].volts = dc_electricSources[2].volts;
+			} elsif ((dc_electricSources[3].volts >= dc_volt_min) and relays[8].state == 1) {
+				dc_electricBuses[2].volts = dc_electricSources[3].volts;
+			} elsif ((dc_electricSources[4].volts >= dc_volt_min) and relays[8].state == 1) {
+				dc_electricBuses[2].volts = dc_electricSources[4].volts;
+			} elsif (dc_electricSources[0].volts >= dc_volt_min and ((getprop("/controls/electrical/stby-pw-sw") == -1) or (getprop("/systems/electrical/stbyMode") == 1 and getprop("/controls/electrical/stby-pw-sw") == 1))) {
+				dc_electricBuses[2].volts = dc_electricSources[0].volts;
+			} elsif (dc_electricSources[1].volts >= dc_volt_min and ((getprop("/controls/electrical/stby-pw-sw") == -1) or (getprop("/systems/electrical/stbyMode") == 1 and getprop("/controls/electrical/stby-pw-sw") == 1))) {
+				dc_electricBuses[2].volts = dc_electricSources[1].volts;
+			} else {
+				dc_electricBuses[2].volts = 0;
+			}
+		} elsif (batOnly == 0) {
+			if (dc_electricSources[2].volts >= dc_volt_min) {
+				dc_electricBuses[2].volts = dc_electricSources[2].volts;
+			} elsif ((dc_electricSources[3].volts >= dc_volt_min) and relays[8].state == 1) {
+				dc_electricBuses[2].volts = dc_electricSources[3].volts;
+			} elsif ((dc_electricSources[4].volts >= dc_volt_min) and relays[8].state == 1) {
+				dc_electricBuses[2].volts = dc_electricSources[4].volts;
+			} elsif (dc_electricSources[0].volts >= dc_volt_min and ((getprop("/controls/electrical/stby-pw-sw") == -1) or (getprop("/systems/electrical/stbyMode") == 1 and getprop("/controls/electrical/stby-pw-sw") == 1))) {
+				dc_electricBuses[2].volts = dc_electricSources[0].volts;
+			} elsif (dc_electricSources[1].volts >= dc_volt_min and ((getprop("/controls/electrical/stby-pw-sw") == -1) or (getprop("/systems/electrical/stbyMode") == 1 and getprop("/controls/electrical/stby-pw-sw") == 1))) {
+				dc_electricBuses[2].volts = dc_electricSources[1].volts;
+			} else {
+				dc_electricBuses[2].volts = 0;
+			}
 		} else {
 			dc_electricBuses[2].volts = 0;
 		}
@@ -617,12 +644,16 @@ var master_elec_loop = func {
 	}
 	
 	# DC Battery Bus
-	if (dc_electricSources[4].volts >= dc_volt_min and getprop("/controls/electrical/stby-pw-sw") == 1) {
-		dc_electricBuses[3].volts = dc_electricSources[4].volts;
-	} elsif (dc_electricSources[0].volts >= dc_volt_min and ((getprop("/controls/electrical/stby-pw-sw") == -1) or (getprop("/systems/electrical/stbyMode") == 1 and getprop("/controls/electrical/stby-pw-sw") == 1))) {
-		dc_electricBuses[3].volts = dc_electricSources[0].volts;
-	} elsif (dc_electricSources[1].volts >= dc_volt_min and ((getprop("/controls/electrical/stby-pw-sw") == -1) or (getprop("/systems/electrical/stbyMode") == 1 and getprop("/controls/electrical/stby-pw-sw") == 1))) {
-		dc_electricBuses[3].volts = dc_electricSources[1].volts;
+	if (getprop("/controls/electrical/battery-switch") == 1) {
+		if (dc_electricSources[4].volts >= dc_volt_min and getprop("/controls/electrical/stby-pw-sw") == 1) {
+			dc_electricBuses[3].volts = dc_electricSources[4].volts;
+		} elsif (dc_electricSources[0].volts >= dc_volt_min and ((getprop("/controls/electrical/stby-pw-sw") == -1) or (getprop("/systems/electrical/stbyMode") == 1 and getprop("/controls/electrical/stby-pw-sw") == 1))) {
+			dc_electricBuses[3].volts = dc_electricSources[0].volts;
+		} elsif (dc_electricSources[1].volts >= dc_volt_min and ((getprop("/controls/electrical/stby-pw-sw") == -1) or (getprop("/systems/electrical/stbyMode") == 1 and getprop("/controls/electrical/stby-pw-sw") == 1))) {
+			dc_electricBuses[3].volts = dc_electricSources[1].volts;
+		} else {
+			dc_electricBuses[3].volts = 0;
+		}
 	} else {
 		dc_electricBuses[3].volts = 0;
 	}
