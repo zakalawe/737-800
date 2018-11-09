@@ -308,7 +308,7 @@ var master_elec_loop = func {
 		ac_electricBuses[2].volts = 0;
 	}
 	
-	if (ac_electricBuses[2].volts) >= ac_volt_min) {
+	if (ac_electricBuses[2].volts >= ac_volt_min) {
 		setprop("/systems/electrical/ac1-avail", 1);
 	} else {
 		setprop("/systems/electrical/ac1-avail", 0);
