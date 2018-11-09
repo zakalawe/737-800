@@ -2010,162 +2010,198 @@
   </animation>
   
   <!-- Electrical Panel -->
-   <animation>
-    <type>rotate</type>
-    <object-name>Circle.216</object-name>
-    <property>/controls/electrical/ext/sw</property>
-    <offset-deg>-20</offset-deg>
+	
+  <!-- ext -->
+  <animation>
+	<type>knob</type>
+	<object-name>Circle.216</object-name>
+	<property>/controls/electrical/ext/sw</property>
     <factor>40</factor>
     <center>
-      <x-m>0.816342</x-m>
-      <y-m>-0.121355</y-m>
-      <z-m>1.51385</z-m>
+		  <x-m>0.816342</x-m>
+		  <y-m>-0.121355</y-m>
+		  <z-m>1.51385</z-m>
     </center>
     <axis>
-      <x>0</x>
-      <y>1</y>
-      <z>0</z>
+		  <x>0</x>
+		  <y>1</y>
+		  <z>0</z>
     </axis>
-  </animation>
-  
-  <animation>
-	<type>pick</type>
-	<object-name>Circle.216</object-name>
 	<action>
-        <button>0</button>
-        <binding>
-            <command>property-toggle</command>
+		<binding>
+            <command>property-adjust</command>
             <property>/controls/electrical/ext/sw</property>
+			<factor>-1</factor>
+			<min>-1</min>
+			<max>1</max>
+			<wrap>false</wrap>
         </binding>
-    </action>
+	</action>
+	<release>
+        <binding>
+            <command>property-assign</command>
+            <property>/controls/electrical/ext/sw</property>
+			<value>0</value>
+        </binding>
+    </release>
+	<drag-direction>vertical</drag-direction>
+	<drag-scale-px>0.1</drag-scale-px>
   </animation>
   
+  <!-- apu -->
   <animation>
-    <type>rotate</type>
-    <object-name>Circle.177</object-name>
-    <property>/controls/electrical/apu/Lsw</property>
-    <offset-deg>-10</offset-deg>
-    <factor>30</factor>
-    <center>
-      <x-m>0.732219</x-m>
-      <y-m>-0.142816</y-m>
-      <z-m>1.47663</z-m>
-    </center>
-    <axis>
-      <x>0</x>
-      <y>1</y>
-      <z>0</z>
-    </axis>
-  </animation>
-  
-  <animation>
-	<type>pick</type>
+	<type>knob</type>
 	<object-name>Circle.177</object-name>
+	<property>/controls/electrical/apu/Lsw</property>
+    <factor>40</factor>
+    <center>
+		  <x-m>0.732219</x-m>
+		  <y-m>-0.142816</y-m>
+		  <z-m>1.47663</z-m>
+    </center>
+    <axis>
+		  <x>0</x>
+		  <y>1</y>
+		  <z>0</z>
+    </axis>
 	<action>
-        <button>0</button>
-        <binding>
-            <command>property-toggle</command>
+		<binding>
+            <command>property-adjust</command>
             <property>/controls/electrical/apu/Lsw</property>
+			<factor>-1</factor>
+			<min>-1</min>
+			<max>1</max>
+			<wrap>false</wrap>
         </binding>
-    </action>
+	</action>
+	<release>
+        <binding>
+            <command>property-assign</command>
+            <property>/controls/electrical/apu/Lsw</property>
+			<value>0</value>
+        </binding>
+    </release>
+	<drag-direction>vertical</drag-direction>
+	<drag-scale-px>0.1</drag-scale-px>
   </animation>
   
   <animation>
-    <type>rotate</type>
-    <object-name>Circle.175</object-name>
-    <property>/controls/electrical/apu/Rsw</property>
-    <offset-deg>-10</offset-deg>
-    <factor>30</factor>
-    <center>
-      <x-m>0.732054</x-m>
-      <y-m>-0.102184</y-m>
-      <z-m>1.47685</z-m>
-    </center>
-    <axis>
-      <x>0</x>
-      <y>1</y>
-      <z>0</z>
-    </axis>
-  </animation>
-  
-  <animation>
-	<type>pick</type>
+	<type>knob</type>
 	<object-name>Circle.175</object-name>
+	<property>/controls/electrical/apu/Rsw</property>
+    <factor>40</factor>
+    <center>
+		  <x-m>0.732054</x-m>
+		  <y-m>-0.102184</y-m>
+		  <z-m>1.47685</z-m>
+    </center>
+    <axis>
+		  <x>0</x>
+		  <y>1</y>
+		  <z>0</z>
+    </axis>
 	<action>
-        <button>0</button>
-        <binding>
-            <command>property-toggle</command>
+		<binding>
+            <command>property-adjust</command>
             <property>/controls/electrical/apu/Rsw</property>
+			<factor>-1</factor>
+			<min>-1</min>
+			<max>1</max>
+			<wrap>false</wrap>
         </binding>
-    </action>
+	</action>
+	<release>
+        <binding>
+            <command>property-assign</command>
+            <property>/controls/electrical/apu/Rsw</property>
+			<value>0</value>
+        </binding>
+    </release>
+	<drag-direction>vertical</drag-direction>
+	<drag-scale-px>0.1</drag-scale-px>
   </animation>
   
-  <animation>
-    <type>rotate</type>
-    <object-name>Circle.178</object-name>
-    <property>/controls/electrical/eng/Lsw</property>
-    <offset-deg>-10</offset-deg>
-    <factor>30</factor>
-    <center>
-      <x-m>0.73192</x-m>
-      <y-m>-0.167106</y-m>
-      <z-m>1.47688</z-m>
-    </center>
-    <axis>
-      <x>0</x>
-      <y>1</y>
-      <z>0</z>
-    </axis>
-  </animation>
+  
+  <!-- engine -->
   
   <animation>
-	<type>pick</type>
+	<type>knob</type>
 	<object-name>Circle.178</object-name>
-	<action>
-        <button>0</button>
-        <binding>
-            <command>property-toggle</command>
-            <property>/controls/electrical/eng/Lsw</property>
-        </binding>
-    </action>
-  </animation>
-  
-  <animation>
-    <type>rotate</type>
-    <object-name>Circle.176</object-name>
-    <property>/controls/electrical/eng/Rsw</property>
-    <offset-deg>-10</offset-deg>
-    <factor>30</factor>
+	<property>/controls/electrical/eng/Lsw</property>
+    <factor>40</factor>
     <center>
-      <x-m>0.731846</x-m>
-      <y-m>-0.07746</y-m>
-      <z-m>1.47696</z-m>
+		  <x-m>0.73192</x-m>
+		  <y-m>-0.167106</y-m>
+		  <z-m>1.47688</z-m>
     </center>
     <axis>
-      <x>0</x>
-      <y>1</y>
-      <z>0</z>
+		  <x>0</x>
+		  <y>1</y>
+		  <z>0</z>
     </axis>
+	<action>
+		<binding>
+            <command>property-adjust</command>
+            <property>/controls/electrical/eng/Lsw</property>
+			<factor>-1</factor>
+			<min>-1</min>
+			<max>1</max>
+			<wrap>false</wrap>
+        </binding>
+	</action>
+	<release>
+        <binding>
+            <command>property-assign</command>
+            <property>/controls/electrical/eng/Lsw</property>
+			<value>0</value>
+        </binding>
+    </release>
+	<drag-direction>vertical</drag-direction>
+	<drag-scale-px>0.1</drag-scale-px>
   </animation>
   
   <animation>
-	<type>pick</type>
+	<type>knob</type>
 	<object-name>Circle.176</object-name>
+	<property>/controls/electrical/eng/Rsw</property>
+    <factor>40</factor>
+    <center>
+		  <x-m>0.731846</x-m>
+		  <y-m>-0.07746</y-m>
+		  <z-m>1.47696</z-m>
+    </center>
+    <axis>
+		  <x>0</x>
+		  <y>1</y>
+		  <z>0</z>
+    </axis>
 	<action>
-        <button>0</button>
-        <binding>
-            <command>property-toggle</command>
+		<binding>
+            <command>property-adjust</command>
             <property>/controls/electrical/eng/Rsw</property>
+			<factor>-1</factor>
+			<min>-1</min>
+			<max>1</max>
+			<wrap>false</wrap>
         </binding>
-    </action>
+	</action>
+	<release>
+        <binding>
+            <command>property-assign</command>
+            <property>/controls/electrical/eng/Rsw</property>
+			<value>0</value>
+        </binding>
+    </release>
+	<drag-direction>vertical</drag-direction>
+	<drag-scale-px>0.1</drag-scale-px>
   </animation>
   
   <animation>
     <type>rotate</type>
     <object-name>BatterySw</object-name>
-    <property>/controls/electric/battery-switch</property>
+    <property>/controls/electrical/battery-switch</property>
     <offset-deg>-10</offset-deg>
-    <factor>30</factor>
+    <factor>40</factor>
     <center>
       <x-m>0.890165</x-m>
       <y-m>-0.161979</y-m>
@@ -2185,7 +2221,7 @@
         <button>0</button>
         <binding>
             <command>property-toggle</command>
-            <property>/controls/electric/battery-switch</property>
+            <property>/controls/electrical/battery-switch</property>
         </binding>
     </action>
   </animation>

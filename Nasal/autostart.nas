@@ -37,6 +37,8 @@ var autostart = func {
 	
 	setprop("/controls/electrical/eng/Lsw", 1);
 	setprop("/controls/electrical/eng/Rsw", 1);
+	setprop("/controls/electrical/eng/Lsw", 0);
+	setprop("/controls/electrical/eng/Rsw", 0);
 	
 	setprop("/controls/hydraulic/a-eng1-pump", 1);
 	setprop("/controls/hydraulic/a-elec2-pump", 1);
