@@ -424,7 +424,7 @@ var master_elec_loop = func {
 	# Bus Transfer logic
 	bustransfersw = getprop("/controls/electrical/bus-transfer-sw");
 	
-	if (bustransfersw == 0) {
+	if (bustransfersw == 1) {
 		if ((ac_electricBuses[0].volts < ac_volt_min and ac_electricBuses[1].volts >= ac_volt_min) or (ac_electricBuses[0].volts >= ac_volt_min and ac_electricBuses[1].volts < ac_volt_min)) {
 			relays[0].relayClose();
 			relays[1].relayClose();
@@ -553,7 +553,7 @@ var master_elec_loop = func {
 	}
 	
 	# Cross Bus Tie Relay
-	if (getprop("/autopilot/display/pitch-mode") == "G/S" or getprop("/controls/electrical/bus-transfer-sw") == 1) {
+	if (getprop("/autopilot/display/pitch-mode") == "G/S" or getprop("/controls/electrical/bus-transfer-sw") == 0) {
 		relays[8].relayOpen();
 	} else {
 		relays[8].relayClose();
@@ -734,6 +734,16 @@ setlistener("/systems/electrical/bus/DC1", func {
 });
 
 ######################
+# Guarded Switches   #
+######################
+
+setlistener("/controls/electrical/battery-switch-cvr", func() {
+	if (getprop("/controls/electrical/battery-switch-cvr") == 0) {
+		setprop("/controls/electrical/battery-switch", 1);
+	}
+}, 0, 0);
+
+######################
 # Warning lights     #
 ######################
 
@@ -767,6 +777,7 @@ var elec_init = func {
 	setprop("/systems/electrical/dc-hot-bat-avail", 0);
 	setprop("/systems/electrical/dc-hot-bat-sw-avail", 0);
 	setprop("/controls/electrical/battery-switch", 0);
+	setprop("/controls/electrical/battery-switch-cvr", 1);
 	setprop("/systems/electrical/battery-avail", 1);
 	setprop("/systems/electrical/aux-battery-avail", 1);
 	setprop("/controls/electrical/gnd-svc-switch", 0);
@@ -778,7 +789,7 @@ var elec_init = func {
 	setprop("/controls/electrical/xtie/xtieL", 0);
 	setprop("/controls/electrical/xtie/xtieR", 0);
 	setprop("/controls/electrical/stby-pw-sw", 1);
-	setprop("/controls/electrical/bus-transfer-sw", 0); # 0 = auto, 1 = off
+	setprop("/controls/electrical/bus-transfer-sw", 1);
 	setprop("/controls/electrical/apu/Lsw", 0);
 	setprop("/controls/electrical/apu/Rsw", 0);
 	setprop("/controls/electrical/eng/Lsw", 0);

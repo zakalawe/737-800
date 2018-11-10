@@ -2197,35 +2197,155 @@
   </animation>
   
   <animation>
-    <type>rotate</type>
-    <object-name>BatterySw</object-name>
-    <property>/controls/electrical/battery-switch</property>
-    <offset-deg>-10</offset-deg>
+	<type>knob</type>
+	<object-name>BatterySw</object-name>
+	<property>/controls/electrical/battery-switch</property>
+	<condition>
+		<equals>
+			<property>/controls/electrical/battery-switch-cvr</property>
+			<value>1</value>
+		</equals>
+	</condition>
+	<offset-deg>-20</offset-deg>
     <factor>40</factor>
     <center>
-      <x-m>0.890165</x-m>
-      <y-m>-0.161979</y-m>
-      <z-m>1.55022</z-m>
+		  <x-m>0.982785</x-m>
+		  <y-m>-0.157719</y-m>
+		  <z-m>1.59158</z-m>
     </center>
     <axis>
-      <x>0</x>
-      <y>1</y>
-      <z>0</z>
+		  <x>0</x>
+		  <y>1</y>
+		  <z>0</z>
     </axis>
+	<action>
+		<binding>
+            <command>property-adjust</command>
+            <property>/controls/electrical/battery-switch</property>
+			<factor>-1</factor>
+			<min>0</min>
+			<max>1</max>
+			<wrap>false</wrap>
+        </binding>
+	</action>
+	<drag-direction>vertical</drag-direction>
+	<drag-scale-px>0.1</drag-scale-px>
   </animation>
   
   <animation>
-	<type>pick</type>
-	<object-name>BatterySw</object-name>
+	<type>knob</type>
+	<object-name>batt-cover</object-name>
+	<property>/controls/electrical/battery-switch-cvr</property>
+    <factor>-60</factor>
+    <center>
+		  <x-m>1.00325</x-m>
+		  <y-m>-0.157065</y-m>
+		  <z-m>1.59559</z-m>
+    </center>
+    <axis>
+		  <x>0</x>
+		  <y>1</y>
+		  <z>0</z>
+    </axis>
 	<action>
-        <button>0</button>
-        <binding>
-            <command>property-toggle</command>
-            <property>/controls/electrical/battery-switch</property>
+		<binding>
+            <command>property-adjust</command>
+            <property>/controls/electrical/battery-switch-cvr</property>
+			<min>0</min>
+			<max>1</max>
+			<wrap>false</wrap>
         </binding>
-    </action>
+	</action>
+	<drag-direction>vertical</drag-direction>
+	<drag-scale-px>0.1</drag-scale-px>
   </animation>
   
+  <animation>
+	<type>knob</type>
+	<object-name>GalleySw</object-name>
+	<property>/controls/electrical/galley</property>
+	<offset-deg>-20</offset-deg>
+    <factor>40</factor>
+    <center>
+		  <x-m>0.980599</x-m>
+		  <y-m>-0.109058</y-m>
+		  <z-m>1.59158</z-m>
+    </center>
+    <axis>
+		  <x>0</x>
+		  <y>1</y>
+		  <z>0</z>
+    </axis>
+	<action>
+		<binding>
+            <command>property-adjust</command>
+            <property>/controls/electrical/galley</property>
+			<factor>-1</factor>
+			<min>0</min>
+			<max>1</max>
+			<wrap>false</wrap>
+        </binding>
+	</action>
+	<drag-direction>vertical</drag-direction>
+	<drag-scale-px>0.1</drag-scale-px>
+  </animation>
+  
+  <animation>
+	<type>knob</type>
+	<object-name>StbyPwSw</object-name>
+	<property>/controls/electrical/stby-pw-sw</property>
+    <factor>40</factor>
+    <center>
+		  <x-m>0.912819</x-m>
+		  <y-m>-0.121302</y-m>
+		  <z-m>1.55712</z-m>
+    </center>
+    <axis>
+		  <x>1</x>
+		  <y>0</y>
+		  <z>0</z>
+    </axis>
+	<action>
+		<binding>
+            <command>property-adjust</command>
+            <property>/controls/electrical/stby-pw-sw</property>
+			<min>-1</min>
+			<max>1</max>
+			<wrap>false</wrap>
+        </binding>
+	</action>
+	<drag-scale-px>2</drag-scale-px>
+  </animation>
+  
+  <animation>
+	<type>knob</type>
+	<object-name>BusTransferSw</object-name>
+	<property>/controls/electrical/bus-transfer-sw</property>
+	<offset-deg>-40</offset-deg>
+    <factor>40</factor>
+    <center>
+		  <x-m>0.780339</x-m>
+		  <y-m>-0.121355</y-m>
+		  <z-m>1.49982</z-m>
+    </center>
+    <axis>
+		  <x>1</x>
+		  <y>0</y>
+		  <z>0</z>
+    </axis>
+	<action>
+		<binding>
+            <command>property-adjust</command>
+            <property>/controls/electrical/bus-transfer-sw</property>
+			<min>0</min>
+			<max>1</max>
+			<wrap>false</wrap>
+        </binding>
+	</action>
+	<drag-scale-px>2</drag-scale-px>
+  </animation>
+  
+  <!-- apu switch -->
   <animation>
     <type>rotate</type>
     <object-name>Circle.182</object-name>
