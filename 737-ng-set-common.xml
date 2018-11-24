@@ -7,9 +7,9 @@
 
     <systems>
 
-      <!--<electrical>
-        <path>Aircraft/Generic/generic-electrical.xml</path>
-      </electrical>-->
+      <electrical>
+        <path></path> <!-- disable -->
+      </electrical>
 	  
       <autopilot>
         <path>Aircraft/737-800/Systems/737-afds.xml</path>
@@ -677,7 +677,6 @@
         <pump-right type="bool">0</pump-right>
       </tank>
     </fuel>
-
   </controls>
 
 

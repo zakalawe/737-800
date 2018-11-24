@@ -805,55 +805,31 @@
     <visible>1</visible>
     <action>
       <button>0</button>
+      <button>3</button>
       <repeatable>true</repeatable>           
       <binding>   
         <command>property-assign</command>
-        <property>/controls/engines/engine[0]/cutoff</property>        
-        <value type="bool">false</value>      
+        <property>/controls/engines/engine[0]/cutoff</property>
         <step>1</step>
         <min>0</min>
-        <max>3</max>                
+        <max>1</max>                
         <wrap>false</wrap>       
       </binding>
+    </action> 
+	<action>
+      <button>1</button>
+      <button>4</button>
+      <repeatable>true</repeatable>           
       <binding>   
         <command>property-assign</command>
-        <property>/controls/electric/engine[0]/generator</property>       
-        <value type="bool">true</value>      
+        <property>/controls/engines/engine[0]/cutoff</property>
         <step>-1</step>
         <min>0</min>
-        <max>3</max>                
+        <max>1</max>                
         <wrap>false</wrap>       
       </binding>
     </action> 
   </animation>
-
-  <animation>
-    <type>pick</type>
-    <object-name>cutoffNo1</object-name>         
-    <visible>1</visible>
-    <action>
-      <button>1</button>
-      <repeatable>true</repeatable>           
-      <binding>   
-        <command>property-assign</command>
-        <property>/controls/engines/engine[0]/cutoff</property>       
-        <value type="bool">true</value>      
-        <step>-1</step>
-        <min>0</min>
-        <max>3</max>                
-        <wrap>false</wrap>       
-      </binding>
-      <binding>   
-        <command>property-assign</command>
-        <property>/controls/electric/engine[0]/generator</property>       
-        <value type="bool">false</value>      
-        <step>-1</step>
-        <min>0</min>
-        <max>3</max>                
-        <wrap>false</wrap>       
-      </binding>
-    </action> 
-  </animation> 
 
   <animation>
     <type>pick</type>
@@ -861,55 +837,31 @@
     <visible>1</visible>
     <action>
       <button>0</button>
+      <button>3</button>
       <repeatable>true</repeatable>           
       <binding>   
         <command>property-assign</command>
-        <property>/controls/engines/engine[1]/cutoff</property>        
-        <value type="bool">false</value>      
+        <property>/controls/engines/engine[1]/cutoff</property>  
         <step>1</step>
         <min>0</min>
-        <max>3</max>                
+        <max>1</max>                
         <wrap>false</wrap>       
       </binding>
+    </action> 
+	<action>
+      <button>1</button>
+      <button>4</button>
+      <repeatable>true</repeatable>           
       <binding>   
         <command>property-assign</command>
-        <property>/controls/electric/engine[1]/generator</property>       
-        <value type="bool">true</value>      
+        <property>/controls/engines/engine[1]/cutoff</property>   
         <step>-1</step>
         <min>0</min>
-        <max>3</max>                
+        <max>1</max>                
         <wrap>false</wrap>       
       </binding>
     </action> 
   </animation>
-
-  <animation>
-    <type>pick</type>
-    <object-name>cutoffNo2</object-name>         
-    <visible>1</visible>
-    <action>
-      <button>1</button>
-      <repeatable>true</repeatable>           
-      <binding>   
-        <command>property-assign</command>
-        <property>/controls/engines/engine[1]/cutoff</property>       
-        <value type="bool">true</value>      
-        <step>-1</step>
-        <min>0</min>
-        <max>3</max>                
-        <wrap>false</wrap>       
-      </binding>
-      <binding>   
-        <command>property-assign</command>
-        <property>/controls/electric/engine[1]/generator</property>       
-        <value type="bool">false</value>      
-        <step>-1</step>
-        <min>0</min>
-        <max>3</max>                
-        <wrap>false</wrap>       
-      </binding>
-    </action> 
-  </animation> 
 
   <animation>
     <type>pick</type>

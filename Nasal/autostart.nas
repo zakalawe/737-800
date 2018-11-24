@@ -46,6 +46,9 @@ var autostart = func {
 	setprop("/controls/hydraulic/a-elec2-pump", 1);
 	setprop("/controls/hydraulic/b-eng2-pump", 1);
 	setprop("/controls/hydraulic/b-elec1-pump", 1);
+	
+	
+	setprop("/controls/APU/master", 0);
 }
 
 # Shutdown #

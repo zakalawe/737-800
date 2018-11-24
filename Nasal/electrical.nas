@@ -37,6 +37,7 @@ setlistener("/sim/signals/fdm-initialized", func {
 	var mainAC2shed = getprop("/systems/electrical/shed/mainAC2");
 	var stbyPwSw = getprop("/controls/electrical/stby-pw-sw");
 	var batOnly = 0;
+	var crossbus = getprop("/controls/electrical/crossbus");
 });
 
 ######################
@@ -435,18 +436,31 @@ var master_elec_loop = func {
 	
 	# Bus Transfer logic
 	bustransfersw = getprop("/controls/electrical/bus-transfer-sw");
+	crossbus = getprop("/controls/electrical/crossbus");
+	
+	if (ac_electricBuses[0].volts < ac_volt_min and ac_electricBuses[1].volts >= ac_volt_min and sourceL == "") {
+		setprop("/controls/electrical/crossbus", -1);
+	} elsif (ac_electricBuses[0].volts >= ac_volt_min and ac_electricBuses[1].volts < ac_volt_min and sourceR == "") { 
+		setprop("/controls/electrical/crossbus", 1);
+	} elsif (crossbus == -1 and (ac_electricSources[0].volts > ac_volt_min and sourceL == "engL") or (ac_electricSources[2].volts > ac_volt_min and (sourceL == "apuL" or sourceL == "apuR")) or (ac_electricSources[3].volts > ac_volt_min and sourceL == "ext")) {
+		setprop("/controls/electrical/crossbus", 0);
+	} elsif (crossbus == 1 and (ac_electricSources[1].volts > ac_volt_min and sourceR == "engR") or (ac_electricSources[2].volts > ac_volt_min and (sourceR == "apuL" or sourceR == "apuR")) or (ac_electricSources[3].volts > ac_volt_min and sourceR == "ext")) {
+		setprop("/controls/electrical/crossbus", 0);
+	}
+	
+	print("crossbus", crossbus);
 	
 	if (bustransfersw == 1) {
-		if ((ac_electricBuses[0].volts < ac_volt_min and ac_electricBuses[1].volts >= ac_volt_min) or (ac_electricBuses[0].volts >= ac_volt_min and ac_electricBuses[1].volts < ac_volt_min)) {
+		if (crossbus == 1 or crossbus == -1) {
 			relays[0].relayClose();
 			relays[1].relayClose();
 		} elsif ((sourceL == "ext" or sourceR == "ext" or sourceL == "apuL" or sourceR == "apuL" or sourceL == "apuR" or sourceR == "apuR") and (sourceL != "engL" and sourceR != "engR")) {
 			relays[0].relayClose();
 			relays[1].relayClose();
-		} elsif (sourceL == "engL" and sourceR != "engL") {
+		} elsif (sourceL == "engL" and sourceR != "engL" and sourceR != "") {
 			relays[0].relayOpen();
 			relays[1].relayClose();
-		} elsif (sourceL != "engL" and sourceR == "engL") {
+		} elsif (sourceL != "engL" and sourceR == "engL" and sourceL != "") {
 			relays[0].relayClose();
 			relays[1].relayOpen();
 		} else {
@@ -464,14 +478,14 @@ var master_elec_loop = func {
 	# GCB1
 	if (engL == 1 and sourceL == "engL") {
 		relays[2].relayClose();
-	} else {
+	} elsif (engL == -1) {
 		relays[2].relayOpen();
 	}
 	
 	# GCB2
 	if (engR == 1 and sourceR == "engR") {
 		relays[3].relayClose();
-	} else {
+	} elsif (engR == -1) {
 		relays[3].relayOpen();
 	}
 	
@@ -767,39 +781,39 @@ setlistener("/controls/electrical/battery-switch-cvr", func() {
 var warnlights = ["driveL", "driveR", "stby-off", "transL-off", "transR-off", "srcL-off", "srcR-off", "tr-unit", "bat-dischg", "elec", "apu-gen-off", "engL-gen-off", "engR-gen-off", "gnd-pwr-avail"];
 
 var warningLoop = func {
-	if (ac_electricBuses[0].volts > ac_volt_min) {
-		setprop("/systems/electrical/warnings-lights/transL-off", 1);
+	if (ac_electricBuses[0].volts < ac_volt_min) {
+		setprop("/systems/electrical/warning-lights/transL-off", 1);
 	} else {
-		setprop("/systems/electrical/warnings-lights/transL-off", 0);
+		setprop("/systems/electrical/warning-lights/transL-off", 0);
 	}
 	
-	if (ac_electricBuses[1].volts > ac_volt_min) {
-		setprop("/systems/electrical/warnings-lights/transR-off", 1);
+	if (ac_electricBuses[1].volts < ac_volt_min) {
+		setprop("/systems/electrical/warning-lights/transR-off", 1);
 	} else {
-		setprop("/systems/electrical/warnings-lights/transR-off", 0);
+		setprop("/systems/electrical/warning-lights/transR-off", 0);
 	}
 	
 	sourceL = getprop("/systems/electrical/sourceL");
 	sourceR = getprop("/systems/electrical/sourceR");
 	
 	if (sourceL == "" or (sourceL == "engL" and ac_electricSources[0].volts < ac_volt_min) or ((sourceL == "apuL" or sourceL == "apuR") and ac_electricSources[2].volts < ac_volt_min) or (sourceL == "ext" and ac_electricSources[3].volts < ac_volt_min)) {
-		setprop("/systems/electrical/warnings-lights/srcL-off", 1);
+		setprop("/systems/electrical/warning-lights/srcL-off", 1);
 	} else {
-		setprop("/systems/electrical/warnings-lights/srcL-off", 0);
+		setprop("/systems/electrical/warning-lights/srcL-off", 0);
 	}
 	
 	if (sourceR == "" or (sourceR == "engR" and ac_electricSources[1].volts < ac_volt_min) or ((sourceR == "apuL" or sourceR == "apuR") and ac_electricSources[2].volts < ac_volt_min) or (sourceR == "ext" and ac_electricSources[3].volts < ac_volt_min)) {
-		setprop("/systems/electrical/warnings-lights/srcR-off", 1);
+		setprop("/systems/electrical/warning-lights/srcR-off", 1);
 	} else {
-		setprop("/systems/electrical/warnings-lights/srcR-off", 0);
+		setprop("/systems/electrical/warning-lights/srcR-off", 0);
 	}
 	
 	rpmapu = getprop("/systems/apu/rpm");
 	
 	if (sourceL != "apuL" and sourceR != "apuL" and sourceL != "apuR" and sourceR != "apuR" and rpmapu > 94.9) {
-		setprop("/systems/electrical/warnings-lights/apu-gen-off", 1);
+		setprop("/systems/electrical/warning-lights/apu-gen-off", 1);
 	} else {
-		setprop("/systems/electrical/warnings-lights/apu-gen-off", 0);
+		setprop("/systems/electrical/warning-lights/apu-gen-off", 0);
 	}
 	
 	extpwr_on = getprop("/services/ext-pwr/enable");
@@ -810,7 +824,7 @@ var warningLoop = func {
 		setprop("/systems/electrical/warning-lights/gnd-pwr-avail", 0);
 	}
 	
-	if (ac_electricBuses[8].volts > ac_volt_min or dc_electricBuses[2].volts > dc_volt_min or dc_electricBuses[3].volts > dc_volt_min) {
+	if (ac_electricBuses[8].volts < ac_volt_min or dc_electricBuses[2].volts < dc_volt_min or dc_electricBuses[3].volts < dc_volt_min) {
 		setprop("/systems/electrical/warning-lights/stby-off", 1);
 	} else {
 		setprop("/systems/electrical/warning-lights/stby-off", 0);
@@ -828,8 +842,8 @@ var warningLoop = func {
 		setprop("/systems/electrical/warning-lights/driveR", 0);
 	}
 	
-	if ((getprop("/b737/sensors/air-ground") == 1 and (dc_electricSources[2].volts > dc_volt_min or dc_electricSources[3].volts > dc_volt_min or dc_electricSources[4].volts > dc_volt_min))
-		or (getprop("/b737/sensors/air-ground") == 0 and (dc_electricSources[2].volts > dc_volt_min or (dc_electricSources[3].volts > dc_volt_min and dc_electricSources[4].volts > dc_volt_min)))) {
+	if ((getprop("/b737/sensors/air-ground") == 1 and (dc_electricSources[2].volts < dc_volt_min or dc_electricSources[3].volts < dc_volt_min or dc_electricSources[4].volts < dc_volt_min))
+		or (getprop("/b737/sensors/air-ground") == 0 and (dc_electricSources[2].volts < dc_volt_min or (dc_electricSources[3].volts < dc_volt_min and dc_electricSources[4].volts < dc_volt_min)))) {
 		setprop("/systems/electrical/warning-lights/tr-unit", 1);
 	} else {
 		setprop("/systems/electrical/warning-lights/tr-unit", 0);
@@ -838,7 +852,7 @@ var warningLoop = func {
 	
 	if (getprop("/systems/electrical/warning-lights/driveL") == 1 or getprop("/systems/electrical/warning-lights/driveR") == 1
 		or getprop("/systems/electrical/warning-lights/stby-off") == 1 or getprop("/systems/electrical/warning-lights/tr-unit") == 1
-		or getprop("/systems/electrical/warnings-lights/transL-off") == 1 or getprop("/systems/electrical/warnings-lights/transR-off") == 1) {
+		or getprop("/systems/electrical/warning-lights/transL-off") == 1 or getprop("/systems/electrical/warning-lights/transR-off") == 1) {
 		setprop("/systems/weu/elec-failed", 1);
 	} else {
 		setprop("/systems/weu/elec-failed", 0);
@@ -901,13 +915,14 @@ var elec_init = func {
 	setprop("/systems/electrical/IDG-discL", 0);
 	setprop("/systems/electrical/IDG-discR", 0);
 	setprop("/b737/sounds/relay", 0);
+	setprop("/controls/electrical/crossbus", 0);
 	
 	foreach(var outputName; outputs) {
 		setprop("systems/electrical/outputs/"~outputName, 0);
 	}
 	
 	foreach(var lightName; warnlights) {
-		setprop("/systems/electrical/warnings-lights/"~lightName, 0);
+		setprop("/systems/electrical/warning-lights/"~lightName, 0);
 	}
 	
 	elec_timer.start();
