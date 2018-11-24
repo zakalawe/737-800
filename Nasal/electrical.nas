@@ -448,8 +448,6 @@ var master_elec_loop = func {
 		setprop("/controls/electrical/crossbus", 0);
 	}
 	
-	print("crossbus", crossbus);
-	
 	if (bustransfersw == 1) {
 		if (crossbus == 1 or crossbus == -1) {
 			relays[0].relayClose();
