@@ -766,7 +766,7 @@
   <nasal>
 
     <Boeing>
-      <file>Aircraft/Instruments-3d/cdu2/boeing.nas</file> <!-- old CDU-->
+      <file>Aircraft/Instruments-3d/cdu2/boeing.nas</file>
     </Boeing>
 
     <boeing737>
@@ -939,13 +939,21 @@
     </turn-indicator>
 
     <cdu>
-      <display>IDENT</display>
-      <ident>
-        <model>737-800</model>
-        <engines>CFM56-7B26</engines>
-      </ident>
-      <input type="string"/>
       <serviceable type="bool">true</serviceable>
+      <brightness-norm type="float">1</brightness-norm>
+      <display-brightness-norm type="float">1</display-brightness-norm>
+      <settings>
+          <!-- pick display settings, use 'lcd' or 'crt' -->
+          <display type="string">lcd</display>
+          <page type="string">Systems/CDUPages/root.nas</page>
+          <page type="string" n="1">Systems/CDUPages/navdata.nas</page>
+          <page type="string" n="2">Systems/CDUPages/preflight.nas</page>
+          <page type="string" n="3">Systems/CDUPages/flight.nas</page>
+          <page type="string" n="4">Systems/CDUPages/progress.nas</page>
+          <page type="string" n="5">Systems/CDUPages/performance.nas</page>
+          <page type="string" n="6">Systems/CDUPages/maintenance.nas</page>
+          <boot-page type="string">ident</boot-page>
+      </settings>
     </cdu>
 
     <fmc>
