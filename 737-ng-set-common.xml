@@ -8,9 +8,9 @@
     <systems>
 
       <electrical>
-        <path>Aircraft/Generic/generic-electrical.xml</path>
+        <path></path> <!-- disable -->
       </electrical>
-
+	  
       <autopilot>
         <path>Aircraft/737-800/Systems/737-afds.xml</path>
       </autopilot>
@@ -175,6 +175,13 @@
                 tiller.open();
               </script>
             </binding>
+          </item>
+		  <item>
+              <label>Toggle External Power</label>
+              <binding>
+                  <command>property-toggle</command>
+                  <property>services/ext-pwr/enable</property>
+              </binding>
           </item>
         </menu>
       </default>
@@ -670,7 +677,6 @@
         <pump-right type="bool">0</pump-right>
       </tank>
     </fuel>
-
   </controls>
 
 
@@ -778,6 +784,8 @@
       <file>Aircraft/737-800/Nasal/air-ground.nas</file>
       <file>Aircraft/737-800/Nasal/controls.nas</file>
       <file>Aircraft/737-800/Nasal/warnings.nas</file>
+      <file>Aircraft/737-800/Nasal/electrical.nas</file>
+	  <file>Aircraft/737-800/Nasal/apu.nas</file>
       <file>Aircraft/737-800/Nasal/friction.nas</file>
       <file>Aircraft/737-800/Nasal/liveries.nas</file>
       <file>Aircraft/737-800/Nasal/systems.nas</file>

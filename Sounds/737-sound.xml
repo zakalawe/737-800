@@ -166,11 +166,19 @@
    <mode>in-transit</mode>
    <path>Aircraft/737-800/Sounds/flaps.wav</path>
    <property>/surface-positions/flap-pos-norm</property>
+   <condition>
+	<not>
+		<equals>
+			<property>sim/current-view/view-number</property>
+			<value>0</value>
+		</equals>
+	</not>
+   </condition>
    <volume>
     <property>sim/current-view/z-offset-m</property>
     <offset>1</offset>
     <factor>0.4</factor>
-    <min>-1</min>
+    <min>0.0</min>
     <max>0.6</max>
    </volume>
   </flap>

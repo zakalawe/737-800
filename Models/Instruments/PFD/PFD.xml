@@ -1,6 +1,21 @@
 <PropertyList>
 
  <path>EFIS.ac</path>
+ 
+ 	<!-- Power on/off -->
+	<animation>
+		<name>Power on/off</name>
+		<type>select</type>
+		<object-name>Off</object-name>
+		<condition>
+			<not>
+				<equals>
+					<property>/systems/electrical/dc-stby-avail</property>
+					<value>1</value>
+				</equals>
+			</not>
+		</condition>
+	</animation>
 
 <animation>
 	<type>pick</type>
