@@ -123,7 +123,10 @@ var dc_electricSources = [
 	# the below are not really sources, but you could call them sources which source power from another part of the electrical system
 	electricSource.new("TR1", "/systems/electrical/tr1-avail", 1, 0, "DC"),
 	electricSource.new("TR2", "/systems/electrical/tr2-avail", 1, 0, "DC"),
-	electricSource.new("TR3", "/systems/electrical/tr3-avail", 1, 0, "DC")
+	electricSource.new("TR3", "/systems/electrical/tr3-avail", 1, 0, "DC"),
+	
+	# ISFD dedicated source
+	electricSource.new("ISFD", "/systems/electrical/ISFD-avail", 1, 0, "DC")
 ];
 
 var ac_electricBuses = [
@@ -719,6 +722,14 @@ var master_elec_loop = func {
 		setprop("/systems/electrical/dc-hot-bat-sw-avail", 0);
 	}
 	
+	# ISFD Battery
+	
+	if (getprop("/controls/electrical/battery-switch") == 1) { # ISFD is powered by its own source (capacity 150 min) whenever the battery switch is on
+		setprop("/systems/electrical/ISFD-avail", 1);
+	} else {
+		setprop("/systems/electrical/ISFD-avail", 0);
+	}
+	
 	######################
 	# STBY System        #
 	######################
@@ -741,6 +752,7 @@ var master_elec_loop = func {
 	######################
 	
 	warningLoop();
+	
 	setprop("/instrumentation/attitude-indicator/spin", 1);
 }
 
@@ -856,6 +868,23 @@ var warningLoop = func {
 		setprop("/systems/weu/elec-failed", 0);
 	}
 }
+
+######################
+# Displays           #
+######################
+
+var displays = ["CAPTL", "CAPTR", "UPPR", "LOWR", "FOL", "FOR", "ISFD"];
+
+var createDisplayListener = func(display,source) {
+	setlistener(source, func  {
+		if (getprop(source) == 1) {
+			setprop("/systems/electrical/displays/display-"~display~"-powered", 1);
+		} else {
+			setprop("/systems/electrical/displays/display-"~display~"-powered", 0);
+		}
+	}, 0, 0);
+}
+
 ######################
 # Init				 #
 ######################
@@ -883,6 +912,7 @@ var elec_init = func {
 	setprop("/systems/electrical/dc-bat-avail", 0);
 	setprop("/systems/electrical/dc-hot-bat-avail", 0);
 	setprop("/systems/electrical/dc-hot-bat-sw-avail", 0);
+	setprop("/systems/electrical/ISFD-avail", 0);
 	setprop("/controls/electrical/battery-switch", 0);
 	setprop("/controls/electrical/battery-switch-cvr", 1);
 	setprop("/systems/electrical/battery-avail", 1);
@@ -923,7 +953,21 @@ var elec_init = func {
 		setprop("/systems/electrical/warning-lights/"~lightName, 0);
 	}
 	
+	foreach(var displayName; displays) {
+		setprop("/systems/electrical/displays/display-"~displayName~"-powered", 0);
+	}
+	
+	createDisplayListener("CAPTL", "/systems/electrical/dc-stby-avail");
+	createDisplayListener("CAPTR", "/systems/electrical/dc-stby-avail");
+	createDisplayListener("UPPR", "/systems/electrical/dc-stby-avail");
+	createDisplayListener("LOWR", "/systems/electrical/dc2-avail");
+	createDisplayListener("FOL", "/systems/electrical/dc2-avail");
+	createDisplayListener("FOR", "/systems/electrical/dc2-avail");
+	createDisplayListener("ISFD", "/systems/electrical/ISFD-avail");
+
 	elec_timer.start();
+	
+	print("Electrical system loaded!");
 }
 
 ###################
