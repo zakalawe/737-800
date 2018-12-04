@@ -753,12 +753,6 @@ var master_elec_loop = func {
 	
 	warningLoop();
 	
-	######################
-	# Displays           #
-	######################
-	
-	displayLoop();
-	
 	setprop("/instrumentation/attitude-indicator/spin", 1);
 }
 
@@ -881,32 +875,14 @@ var warningLoop = func {
 
 var displays = ["CAPTL", "CAPTR", "UPPR", "LOWR", "FOL", "FOR", "ISFD"];
 
-var displayLoop = func {
-	if (getprop("/systems/electrical/dc-stby-avail") == 1) {
-		setprop("/systems/electrical/displays/display-CAPTL-powered", 1);
-		setprop("/systems/electrical/displays/display-CAPTR-powered", 1);
-		setprop("/systems/electrical/displays/display-UPPR-powered",  1);
-	} else {
-		setprop("/systems/electrical/displays/display-CAPTL-powered", 0);
-		setprop("/systems/electrical/displays/display-CAPTR-powered", 0);
-		setprop("/systems/electrical/displays/display-UPPR-powered",  0);
-	}
-	
-	if (getprop("/systems/electrical/dc2-avail") == 1) {
-		setprop("/systems/electrical/displays/display-FOL-powered",  1);
-		setprop("/systems/electrical/displays/display-FOR-powered",  1);
-		setprop("/systems/electrical/displays/display-LOWR-powered", 1);
-	} else {
-		setprop("/systems/electrical/displays/display-FOL-powered",  0);
-		setprop("/systems/electrical/displays/display-FOR-powered",  0);
-		setprop("/systems/electrical/displays/display-LOWR-powered", 0);
-	}
-	
-	if (getprop("/systems/electrical/ISFD-avail") == 1) {
-		setprop("/systems/electrical/displays/display-ISFD-powered", 1);
-	} else {
-		setprop("/systems/electrical/displays/display-ISFD-powered", 0);
-	}
+var createDisplayListener = func(display,source) {
+	setlistener(source, func  {
+		if (getprop(source) == 1) {
+			setprop("/systems/electrical/displays/display-"~display~"-powered", 1);
+		} else {
+			setprop("/systems/electrical/displays/display-"~display~"-powered", 0);
+		}
+	}, 0, 0);
 }
 
 ######################
@@ -981,7 +957,17 @@ var elec_init = func {
 		setprop("/systems/electrical/displays/display-"~displayName~"-powered", 0);
 	}
 	
+	createDisplayListener("CAPTL", "/systems/electrical/dc-stby-avail");
+	createDisplayListener("CAPTR", "/systems/electrical/dc-stby-avail");
+	createDisplayListener("UPPR", "/systems/electrical/dc-stby-avail");
+	createDisplayListener("LOWR", "/systems/electrical/dc2-avail");
+	createDisplayListener("FOL", "/systems/electrical/dc2-avail");
+	createDisplayListener("FOR", "/systems/electrical/dc2-avail");
+	createDisplayListener("ISFD", "/systems/electrical/ISFD-avail");
+
 	elec_timer.start();
+	
+	print("Electrical system loaded!");
 }
 
 ###################
