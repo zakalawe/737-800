@@ -117,7 +117,7 @@
         </offsets>
     </model>
 
-    <model>
+    <!--<model>
         <name>STANDBY-AH</name>
         <path>Models/Instruments/STANDBY/att-ball.xml</path>
         <offsets>
@@ -148,7 +148,7 @@
             <z-m>-0.035</z-m>
             <pitch-deg>0</pitch-deg>
         </offsets>
-    </model>
+    </model>-->
 
     <animation>
         <type>rotate</type>
@@ -282,5 +282,4 @@
             </binding>
         </hovered>
     </animation>
-
 </PropertyList>
