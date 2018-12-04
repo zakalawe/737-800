@@ -741,6 +741,13 @@ var master_elec_loop = func {
 	######################
 	
 	warningLoop();
+	
+	######################
+	# Displays           #
+	######################
+	
+	displayLoop();
+	
 	setprop("/instrumentation/attitude-indicator/spin", 1);
 }
 
@@ -856,6 +863,35 @@ var warningLoop = func {
 		setprop("/systems/weu/elec-failed", 0);
 	}
 }
+
+######################
+# Displays           #
+######################
+
+var displays = ["CAPTL", "CAPTR", "UPPR", "LOWR", "FOL", "FOR"];
+
+var displayLoop = func {
+	if (getprop("/systems/electrical/dc-stby-avail") == 1) {
+		setprop("/systems/electrical/displays/display-CAPTL-powered", 1);
+		setprop("/systems/electrical/displays/display-CAPTR-powered", 1);
+		setprop("/systems/electrical/displays/display-UPPR-powered",  1);
+	} else {
+		setprop("/systems/electrical/displays/display-CAPTL-powered", 0);
+		setprop("/systems/electrical/displays/display-CAPTR-powered", 0);
+		setprop("/systems/electrical/displays/display-UPPR-powered",  0);
+	}
+	
+	if (getprop("/systems/electrical/dc2-avail") == 1) {
+		setprop("/systems/electrical/displays/display-FOL-powered",  1);
+		setprop("/systems/electrical/displays/display-FOR-powered",  1);
+		setprop("/systems/electrical/displays/display-LOWR-powered", 1);
+	} else {
+		setprop("/systems/electrical/displays/display-FOL-powered",  0);
+		setprop("/systems/electrical/displays/display-FOR-powered",  0);
+		setprop("/systems/electrical/displays/display-LOWR-powered", 0);
+	}
+}
+
 ######################
 # Init				 #
 ######################
@@ -921,6 +957,10 @@ var elec_init = func {
 	
 	foreach(var lightName; warnlights) {
 		setprop("/systems/electrical/warning-lights/"~lightName, 0);
+	}
+	
+	foreach(var displayName; displays) {
+		setprop("/systems/electrical/displays/display-"~displayName~"-powered", 0);
 	}
 	
 	elec_timer.start();
