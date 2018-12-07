@@ -22723,7 +22723,7 @@ refs 4
 12 0.391403 0.190533
 kids 0
 OBJECT poly
-name "ISFD.001"
+name "ISFD-baro-mode"
 data 8
 Cube.007
 crease 40.0
