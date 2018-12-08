@@ -322,7 +322,7 @@
 		<type>gain</type>
 		<gain>1.0</gain>
 		<input>
-			<property>/instrumentation/nav[1]/heading-deg</property>
+			<property>/instrumentation/nav[0]/heading-deg</property>
 			<offset>
 				<property>/orientation/heading-deg</property>
 				<scale>-1.0</scale>
