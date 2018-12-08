@@ -493,4 +493,159 @@
             <z>0.0</z>
         </axis>
 	</animation>
+	
+	<animation>
+		<name>Heading rotate</name>
+		<type>rotate</type>
+		<object-name>ddrmi_hdg</object-name>
+		<property>instrumentation/rmi/heading</property>
+		<center>
+			<x-m>-0.016854</x-m>
+			<y-m>-0.157336</y-m>
+			<z-m>-0.110979</z-m>
+		</center>
+		<axis>
+            <x>1.0</x>
+            <y>0.0</y>
+            <z>0.0</z>
+        </axis>
+	</animation>
+	
+	<animation>
+		<name>VOR1 rotate</name>
+		<object-name>ddrmi_pointer_1</object-name>
+		<type>rotate</type>
+		<property>instrumentation/rmi/needle-1</property>
+		<center>
+			<x-m>-0.016854</x-m>
+			<y-m>-0.157336</y-m>
+			<z-m>-0.110979</z-m>
+		</center>
+		<axis>
+            <x>1.0</x>
+            <y>0.0</y>
+            <z>0.0</z>
+        </axis>
+	</animation>
+	
+	<animation>
+		<name>VOR2 rotate</name>
+		<object-name>ddrmi_pointer_2</object-name>
+		<type>rotate</type>
+		<property>instrumentation/rmi/needle-2</property>
+		<center>
+			<x-m>-0.016854</x-m>
+			<y-m>-0.157336</y-m>
+			<z-m>-0.110979</z-m>
+		</center>
+		<axis>
+            <x>1.0</x>
+            <y>0.0</y>
+            <z>0.0</z>
+        </axis>
+	</animation>
+	
+	<animation>
+		<type>pick</type>
+		<object-name>ddrmi_vor_adf_select_1</object-name>
+		<action>
+			<button>0</button>
+			<button>3</button>
+			<repeatable type="bool">false</repeatable>
+			<binding>
+				<command>property-adjust</command>
+				<property>instrumentation/rmi/vor-adf-1</property>
+				<min>-1</min>
+				<max>1</max>
+				<step>1</step>
+				<wrap>0</wrap>
+			</binding>
+		</action>
+		<action>
+			<button>1</button>
+			<button>4</button>
+			<repeatable type="bool">false</repeatable>
+			<binding>
+				<command>property-adjust</command>
+				<property>instrumentation/rmi/vor-adf-1</property>
+				<min>-1</min>
+				<max>1</max>
+				<step>-1</step>
+				<wrap>0</wrap>
+			</binding>
+		</action>
+	</animation>
+	<animation>
+		<name>Knob 1 rotate</name>
+		<object-name>ddrmi_vor_adf_select_1</object-name>
+		<type>rotate</type>
+		<property>instrumentation/rmi/vor-adf-1</property>
+		<interpolation>
+			<entry><ind>-1</ind><dep>90</dep></entry>
+			<entry><ind> 0</ind><dep>45</dep></entry>
+			<entry><ind> 1</ind><dep> 0</dep></entry>
+		</interpolation>
+		<center>
+			<x-m>-0.008057</x-m>
+			<y-m>-0.187377</y-m>
+			<z-m>-0.13950</z-m>
+		</center>
+		<axis>
+            <x>-1.0</x>
+            <y>0.0</y>
+            <z>0.0</z>
+        </axis>
+	</animation>
+	
+	<animation>
+		<type>pick</type>
+		<object-name>ddrmi_vor_adf_select_2</object-name>
+		<action>
+			<button>0</button>
+			<button>3</button>
+			<repeatable type="bool">false</repeatable>
+			<binding>
+				<command>property-adjust</command>
+				<property>instrumentation/rmi/vor-adf-2</property>
+				<min>-1</min>
+				<max>1</max>
+				<step>1</step>
+				<wrap>0</wrap>
+			</binding>
+		</action>
+		<action>
+			<button>1</button>
+			<button>4</button>
+			<repeatable type="bool">false</repeatable>
+			<binding>
+				<command>property-adjust</command>
+				<property>instrumentation/rmi/vor-adf-2</property>
+				<min>-1</min>
+				<max>1</max>
+				<step>-1</step>
+				<wrap>0</wrap>
+			</binding>
+		</action>
+	</animation>
+	<animation>
+		<name>Knob 2 rotate</name>
+		<object-name>ddrmi_vor_adf_select_2</object-name>
+		<type>rotate</type>
+		<property>instrumentation/rmi/vor-adf-2</property>
+		<interpolation>
+			<entry><ind>-1</ind><dep>-90</dep></entry>
+			<entry><ind> 0</ind><dep>-45</dep></entry>
+			<entry><ind> 1</ind><dep>  0</dep></entry>
+		</interpolation>
+		<center>
+			<x-m>-0.008312</x-m>
+			<y-m>-0.127109</y-m>
+			<z-m>-0.139495</z-m>
+		</center>
+		<axis>
+            <x>-1.0</x>
+            <y>0.0</y>
+            <z>0.0</z>
+        </axis>
+	</animation>
 </PropertyList>
