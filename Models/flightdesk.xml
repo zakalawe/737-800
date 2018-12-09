@@ -117,7 +117,7 @@
         </offsets>
     </model>
 
-    <model>
+    <!--<model>
         <name>STANDBY-AH</name>
         <path>Models/Instruments/STANDBY/att-ball.xml</path>
         <offsets>
@@ -148,7 +148,7 @@
             <z-m>-0.035</z-m>
             <pitch-deg>0</pitch-deg>
         </offsets>
-    </model>
+    </model>-->
 
     <animation>
         <type>rotate</type>
@@ -262,7 +262,8 @@
             <x>-1.0</x>
             <y>0.0</y>
             <z>0.0</z>
-        </axis><property>/controls/fmc/v-speed-bug</property>
+        </axis>
+		<property>/controls/fmc/v-speed-bug</property>
         <factor>4.32</factor>
         <action>
             <binding>
@@ -282,5 +283,369 @@
             </binding>
         </hovered>
     </animation>
-
+	
+	<!-- ISFD -->
+	
+	<animation>
+		<type>knob</type>
+        <object-name>ISFD-baro</object-name>
+        <center>
+            <x-m>-0.001359</x-m>
+            <y-m>-0.128542</y-m>
+            <z-m>-0.049572</z-m>
+        </center>
+        <axis>
+            <x>-1.0</x>
+            <y>0.0</y>
+            <z>0.0</z>
+        </axis>
+		<property>/controls/ISFD/animation-3D/btn-baro-knob</property>
+        <factor>5</factor>
+        <action>
+            <binding>
+                <command>property-adjust</command>
+                <property>/controls/ISFD/animation-3D/btn-baro-knob</property>
+                <offset>1</offset>
+                <min>0</min>
+                <max>500</max>                
+                <wrap>0</wrap>
+            </binding>
+        </action>
+	</animation>
+	
+	<animation>
+		<type>pick</type>
+		<object-name>ISFD-rst</object-name>
+		<action>
+			<button>0</button>
+			<binding>
+				<command>property-assign</command>
+				<property>controls/ISFD/animation-3D/btn-rst</property>
+				<value>1</value>
+			</binding>
+			<mod-up>
+				<binding>
+					<command>property-assign</command>
+					<property>controls/ISFD/animation-3D/btn-rst</property>
+					<value>0</value>
+				</binding>
+				<binding>
+					<command>nasal</command>
+					<script>isfd.rstBtn();</script>
+				</binding>
+			</mod-up>
+		</action>
+	</animation>
+	
+	<animation>
+		<type>translate</type>
+		<object-name>ISFD-rst</object-name>
+		<property>controls/ISFD/animation-3D/btn-rst</property>
+		<factor>0.001</factor>
+		<axis>
+            <x>-1.0</x>
+            <y>0.0</y>
+            <z>0.0</z>
+        </axis>
+	</animation>
+	
+	<animation>
+		<type>pick</type>
+		<object-name>ISFD-minus</object-name>
+		<action>
+			<button>0</button>
+			<binding>
+				<command>property-assign</command>
+				<property>controls/ISFD/animation-3D/btn-minus</property>
+				<value>1</value>
+			</binding>
+			<mod-up>
+				<binding>
+					<command>property-assign</command>
+					<property>controls/ISFD/animation-3D/btn-minus</property>
+					<value>0</value>
+				</binding>
+				<binding>
+					<command>nasal</command>
+					<script>isfd.minusBtn();</script>
+				</binding>
+			</mod-up>
+		</action>
+	</animation>
+	
+	<animation>
+		<type>translate</type>
+		<object-name>ISFD-minus</object-name>
+		<property>controls/ISFD/animation-3D/btn-minus</property>
+		<factor>0.001</factor>
+		<axis>
+            <x>-1.0</x>
+            <y>0.0</y>
+            <z>0.0</z>
+        </axis>
+	</animation>
+	
+	
+	<animation>
+		<type>pick</type>
+		<object-name>ISFD-plus</object-name>
+		<action>
+			<button>0</button>
+			<binding>
+				<command>property-assign</command>
+				<property>controls/ISFD/animation-3D/btn-plus</property>
+				<value>1</value>
+			</binding>
+			<mod-up>
+				<binding>
+					<command>property-assign</command>
+					<property>controls/ISFD/animation-3D/btn-plus</property>
+					<value>0</value>
+				</binding>
+				<binding>
+					<command>nasal</command>
+					<script>isfd.plusBtn();</script>
+				</binding>
+			</mod-up>
+		</action>
+	</animation>
+	
+	<animation>
+		<type>translate</type>
+		<object-name>ISFD-plus</object-name>
+		<property>controls/ISFD/animation-3D/btn-plus</property>
+		<factor>0.001</factor>
+		<axis>
+            <x>-1.0</x>
+            <y>0.0</y>
+            <z>0.0</z>
+        </axis>
+	</animation>
+	
+	<animation>
+		<type>pick</type>
+		<object-name>ISFD-app</object-name>
+		<action>
+			<button>0</button>
+			<binding>
+				<command>property-assign</command>
+				<property>controls/ISFD/animation-3D/btn-app</property>
+				<value>1</value>
+			</binding>
+			<mod-up>
+				<binding>
+					<command>property-assign</command>
+					<property>controls/ISFD/animation-3D/btn-app</property>
+					<value>0</value>
+				</binding>
+				<binding>
+					<command>nasal</command>
+					<script>isfd.appBtn();</script>
+				</binding>
+			</mod-up>
+		</action>
+	</animation>
+	
+	<animation>
+		<type>translate</type>
+		<object-name>ISFD-app</object-name>
+		<property>controls/ISFD/animation-3D/btn-app</property>
+		<factor>0.001</factor>
+		<axis>
+            <x>-1.0</x>
+            <y>0.0</y>
+            <z>0.0</z>
+        </axis>
+	</animation>
+	
+	<animation>
+		<type>pick</type>
+		<object-name>ISFD-baro-mode</object-name>
+		<action>
+			<button>0</button>
+			<binding>
+				<command>property-assign</command>
+				<property>controls/ISFD/animation-3D/btn-baro-mode</property>
+				<value>1</value>
+			</binding>
+			<mod-up>
+				<binding>
+					<command>property-assign</command>
+					<property>controls/ISFD/animation-3D/btn-baro-mode</property>
+					<value>0</value>
+				</binding>
+				<binding>
+					<command>nasal</command>
+					<script>isfd.baroModeBtn();</script>
+				</binding>
+			</mod-up>
+		</action>
+	</animation>
+	
+	<animation>
+		<type>translate</type>
+		<object-name>ISFD-baro-mode</object-name>
+		<property>controls/ISFD/animation-3D/btn-baro-mode</property>
+		<factor>0.001</factor>
+		<axis>
+            <x>-1.0</x>
+            <y>0.0</y>
+            <z>0.0</z>
+        </axis>
+	</animation>
+	
+	<animation>
+		<name>Heading rotate</name>
+		<type>rotate</type>
+		<object-name>ddrmi_hdg</object-name>
+		<property>instrumentation/rmi/heading</property>
+		<center>
+			<x-m>-0.016854</x-m>
+			<y-m>-0.157336</y-m>
+			<z-m>-0.110979</z-m>
+		</center>
+		<axis>
+            <x>1.0</x>
+            <y>0.0</y>
+            <z>0.0</z>
+        </axis>
+	</animation>
+	
+	<animation>
+		<name>VOR1 rotate</name>
+		<object-name>ddrmi_pointer_1</object-name>
+		<type>rotate</type>
+		<property>instrumentation/rmi/needle-1</property>
+		<center>
+			<x-m>-0.016854</x-m>
+			<y-m>-0.157336</y-m>
+			<z-m>-0.110979</z-m>
+		</center>
+		<axis>
+            <x>1.0</x>
+            <y>0.0</y>
+            <z>0.0</z>
+        </axis>
+	</animation>
+	
+	<animation>
+		<name>VOR2 rotate</name>
+		<object-name>ddrmi_pointer_2</object-name>
+		<type>rotate</type>
+		<property>instrumentation/rmi/needle-2</property>
+		<center>
+			<x-m>-0.016854</x-m>
+			<y-m>-0.157336</y-m>
+			<z-m>-0.110979</z-m>
+		</center>
+		<axis>
+            <x>1.0</x>
+            <y>0.0</y>
+            <z>0.0</z>
+        </axis>
+	</animation>
+	
+	<animation>
+		<type>pick</type>
+		<object-name>ddrmi_vor_adf_select_1</object-name>
+		<action>
+			<button>0</button>
+			<button>3</button>
+			<repeatable type="bool">false</repeatable>
+			<binding>
+				<command>property-adjust</command>
+				<property>instrumentation/rmi/vor-adf-1</property>
+				<min>-1</min>
+				<max>1</max>
+				<step>1</step>
+				<wrap>0</wrap>
+			</binding>
+		</action>
+		<action>
+			<button>1</button>
+			<button>4</button>
+			<repeatable type="bool">false</repeatable>
+			<binding>
+				<command>property-adjust</command>
+				<property>instrumentation/rmi/vor-adf-1</property>
+				<min>-1</min>
+				<max>1</max>
+				<step>-1</step>
+				<wrap>0</wrap>
+			</binding>
+		</action>
+	</animation>
+	<animation>
+		<name>Knob 1 rotate</name>
+		<object-name>ddrmi_vor_adf_select_1</object-name>
+		<type>rotate</type>
+		<property>instrumentation/rmi/vor-adf-1</property>
+		<interpolation>
+			<entry><ind>-1</ind><dep>90</dep></entry>
+			<entry><ind> 0</ind><dep>45</dep></entry>
+			<entry><ind> 1</ind><dep> 0</dep></entry>
+		</interpolation>
+		<center>
+			<x-m>-0.008057</x-m>
+			<y-m>-0.187377</y-m>
+			<z-m>-0.13950</z-m>
+		</center>
+		<axis>
+            <x>-1.0</x>
+            <y>0.0</y>
+            <z>0.0</z>
+        </axis>
+	</animation>
+	
+	<animation>
+		<type>pick</type>
+		<object-name>ddrmi_vor_adf_select_2</object-name>
+		<action>
+			<button>0</button>
+			<button>3</button>
+			<repeatable type="bool">false</repeatable>
+			<binding>
+				<command>property-adjust</command>
+				<property>instrumentation/rmi/vor-adf-2</property>
+				<min>-1</min>
+				<max>1</max>
+				<step>1</step>
+				<wrap>0</wrap>
+			</binding>
+		</action>
+		<action>
+			<button>1</button>
+			<button>4</button>
+			<repeatable type="bool">false</repeatable>
+			<binding>
+				<command>property-adjust</command>
+				<property>instrumentation/rmi/vor-adf-2</property>
+				<min>-1</min>
+				<max>1</max>
+				<step>-1</step>
+				<wrap>0</wrap>
+			</binding>
+		</action>
+	</animation>
+	<animation>
+		<name>Knob 2 rotate</name>
+		<object-name>ddrmi_vor_adf_select_2</object-name>
+		<type>rotate</type>
+		<property>instrumentation/rmi/vor-adf-2</property>
+		<interpolation>
+			<entry><ind>-1</ind><dep>-90</dep></entry>
+			<entry><ind> 0</ind><dep>-45</dep></entry>
+			<entry><ind> 1</ind><dep>  0</dep></entry>
+		</interpolation>
+		<center>
+			<x-m>-0.008312</x-m>
+			<y-m>-0.127109</y-m>
+			<z-m>-0.139495</z-m>
+		</center>
+		<axis>
+            <x>-1.0</x>
+            <y>0.0</y>
+            <z>0.0</z>
+        </axis>
+	</animation>
 </PropertyList>

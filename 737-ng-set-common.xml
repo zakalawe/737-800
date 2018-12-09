@@ -1024,6 +1024,12 @@
     <slip-skid-ball>
       <side-accel-filtered-norm type="double">0</side-accel-filtered-norm>
     </slip-skid-ball>
+	
+	
+	<ddrmi n="0">
+		<vor-adf-1 type="int">1</vor-adf-1>
+		<vor-adf-2 type="int">1</vor-adf-2>
+	</ddrmi>
 
   </instrumentation>
 

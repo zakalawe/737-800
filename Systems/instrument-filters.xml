@@ -301,4 +301,154 @@
   <output>gear/gear[0]/steering-multiplay</output>
 </filter>
 
+<filter>
+	<name>DDRMI: Heading</name>
+	<type>gain</type>
+	<gain>1.0</gain>
+	<enable>
+		<condition>
+			<equals>
+				<property>/systems/electrical/ac-stby-avail</property>
+				<value>1</value>
+			</equals>
+		</condition>
+	</enable>
+	<input>/orientation/heading-magnetic-deg</input>
+	<output>/instrumentation/rmi/heading</output>
+</filter>
+
+<filter>
+	<name>DDRMI: VOR 1 Error</name>
+	<type>gain</type>
+	<gain>1.0</gain>
+	<input>
+		<property>/instrumentation/nav[0]/heading-deg</property>
+		<offset>
+			<property>/orientation/heading-deg</property>
+			<scale>-1.0</scale>
+		</offset>
+	</input>
+	<output>/instrumentation/rmi/vor-1-error</output>
+	<period>
+		<min>-180</min>
+		<max>180</max>
+	</period>
+</filter>
+
+<filter>
+	<name>DDRMI: Needle 1</name>
+	<debug>false</debug>
+	<type>gain</type>
+	<gain>1.0</gain>
+	<input>
+		<condition>
+			<and>
+				<equals>
+					<property>/systems/electrical/ac-stby-avail</property>
+					<value>1</value>
+				</equals>
+				<equals>
+					<property>/instrumentation/rmi/vor-adf-2</property>
+					<value>1</value>
+				</equals>
+				<equals>
+					<property>/instrumentation/nav[0]/in-range</property>
+					<value>1</value>
+				</equals>
+			</and>
+		</condition>
+		<property>/instrumentation/rmi/vor-1-error</property>
+		<scale>-1.0</scale>
+	</input>
+	<input>
+		<condition>
+			<and>
+				<equals>
+					<property>/systems/electrical/ac-stby-avail</property>
+					<value>1</value>
+				</equals>
+				<equals>
+					<property>/instrumentation/rmi/vor-adf-2</property> <!-- not a bug -->
+					<value>-1</value>
+				</equals>
+				<equals>
+					<property>/instrumentation/adf[0]/in-range</property>
+					<value>1</value>
+				</equals>
+			</and>
+		</condition>
+		<property>/instrumentation/adf[0]/indicated-bearing-deg</property>
+		<scale>-1.0</scale>
+	</input>
+	<input>-90</input>
+	<output>/instrumentation/rmi/needle-1</output>
+</filter>
+
+<filter>
+	<name>DDRMI: VOR 2 Error</name>
+	<type>gain</type>
+	<gain>1.0</gain>
+	<input>
+		<property>/instrumentation/nav[1]/heading-deg</property>
+		<offset>
+			<property>/orientation/heading-deg</property>
+			<scale>-1.0</scale>
+		</offset>
+	</input>
+	<output>/instrumentation/rmi/vor-2-error</output>
+	<period>
+		<min>-180</min>
+		<max>180</max>
+	</period>
+</filter>
+
+<filter>
+	<name>DDRMI: Needle 2</name>
+	<debug>false</debug>
+	<type>gain</type>
+	<gain>1.0</gain>
+	<input>
+		<condition>
+			<and>
+				<equals>
+					<property>/systems/electrical/ac-stby-avail</property>
+					<value>1</value>
+				</equals>
+				<equals>
+					<property>/instrumentation/rmi/vor-adf-1</property> <!-- not a bug -->
+					<value>1</value>
+				</equals>
+				<equals>
+					<property>/instrumentation/nav[1]/in-range</property>
+					<value>1</value>
+				</equals>
+			</and>
+		</condition>
+		<property>/instrumentation/rmi/vor-2-error</property>
+		<scale>-1.0</scale>
+	</input>
+	<input>
+		<condition>
+			<and>
+				<equals>
+					<property>/systems/electrical/ac-stby-avail</property>
+					<value>1</value>
+				</equals>
+				<equals>
+					<property>/instrumentation/rmi/vor-adf-1</property>
+					<value>-1</value>
+				</equals>
+				<equals>
+					<property>/instrumentation/adf[1]/in-range</property>
+					<value>1</value>
+				</equals>
+			</and>
+		</condition>
+		<property>/instrumentation/adf[1]/indicated-bearing-deg</property>
+		<scale>-1.0</scale>
+	</input>
+	<input>-90</input>
+	<output>/instrumentation/rmi/needle-2</output>
+</filter>
+
 </PropertyList>
