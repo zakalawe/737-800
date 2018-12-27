@@ -104,7 +104,7 @@ var PerformanceModel =
 	
     dataForSelectedTemperature: func {
 		if (!getprop('gear/gear/wow')) return 0;
-        var temp = getprop('instrumentation/fmc/inputs/assumed-temp-deg-c');
+        var temp = getprop('instrumentation/fmc/inputs/assumed-temp-deg-c') or 9999;
         if (temp < 0 or temp > 99) return sprintf('--        %2dgC', getprop('environment/temperature-degc'));
         return sprintf('%2dgC      %2dgC', temp, getprop('environment/temperature-degc'));
     },
@@ -115,17 +115,13 @@ var PerformanceModel =
             var n = CDU.parseTemperatureAsCelsius(scratch);
             if ((n < 0) or (n > 99)) return 0;
             setprop('instrumentation/fmc/inputs/assumed-temp-deg-c', n);
-			if (getprop("instrumentation/fmc/speeds/v1-kt") != 0) {
-				setprop("instrumentation/fmc/speeds/v1-kt",0);
-				setprop("instrumentation/fmc/speeds/v2-kt",0);
-				setprop("instrumentation/fmc/speeds/vr-kt",0);
-			}
+			boeing737.vspeed.clearFMCSpeeds();
 			return 1;
         }
     },
     
     titleForTakeoffThrustLimit: func {
-		var sel = getprop('instrumentation/fmc/inputs/takeoff-derate-index');
+		var sel = getprop('instrumentation/fmc/takeoff/derate-index');
         return (sel == 0) ? '~TO N1' : sprintf('~TO %d N1',sel);
     },
     
@@ -142,7 +138,7 @@ var PerformanceModel =
 		if (getprop('gear/gear/wow')) {
 			var derate = (index == 1) ? '5% ' : '15%';
 			var s = (index == 0) ? '<TO  ' : '<-'~derate;
-			var sel = getprop('instrumentation/fmc/inputs/takeoff-derate-index');
+			var sel = getprop('instrumentation/fmc/takeoff/derate-index');
 			return (sel == index) ? s ~ ' <SEL>' : s;
 		} else {
 			if (index == 0) return '<GA';
@@ -153,7 +149,7 @@ var PerformanceModel =
     
     selectTakeoffThrust: func(index) {
         if (getprop('gear/gear/wow')) {
-			setprop('instrumentation/fmc/inputs/takeoff-derate-index', index);
+			setprop('instrumentation/fmc/takeoff/derate-index', index);
 			if (index != 0) me.selectClimbThrust(index);
 		} else setprop('instrumentation/fmc/inputs/in-flight-thrust-mode-index', index);
         return 1;
@@ -162,18 +158,18 @@ var PerformanceModel =
     titleForClimbThrust: func '',
     dataForClimbThrust: func(index) {
         var s = (index == 0) ? '  CLB>' : sprintf('CLB %d>', index);
-        var sel = getprop('instrumentation/fmc/inputs/climb-derate-index');
+        var sel = getprop('instrumentation/fmc/climb/derate-index');
         return (sel == index) ? '<ARM> ' ~ s : s;
     },
     
     selectClimbThrust: func(index) {
-        setprop('instrumentation/fmc/inputs/climb-derate-index', index);
+        setprop('instrumentation/fmc/climb/derate-index', index);
         return 1;
     },
     
     dataForThrustSelection: func(index) {
         var labels = ['<AUTO', '<GA  ', '<CON ', '<CLB ', '<CRZ '];
-        var sel = getprop('instrumentation/fmc/inputs/thrust-limit-index');
+        var sel = getprop('instrumentation/fmc/inputs/thrust-limit-index') or 0;
         return labels[index] ~ ((sel == index) ? ' <ACT>' : '');
     },
     
@@ -189,28 +185,28 @@ var PerformanceModel =
     },
     
     dataForClimb1Select: func {
-        var sel = getprop('instrumentation/fmc/inputs/climb-derate-index');
+        var sel = getprop('instrumentation/fmc/climb/derate-index');
         return '<CLB-1' ~ ((sel == 1) ? ' <ACT>' : '');
     },
     
     dataForClimb2Select: func {
-        var sel = getprop('instrumentation/fmc/inputs/climb-derate-index');
+        var sel = getprop('instrumentation/fmc/climb/derate-index');
         return ((sel == 2) ? ' <ACT>' : '') ~ 'CLB-2>';
     },
     
     selectClimb1Select: func {
         if (cdu.getScratchpad() == 'DELETE')
-            setprop('instrumentation/fmc/inputs/climb-derate-index', 0);
+            setprop('instrumentation/fmc/climb/derate-index', 0);
         else
-            setprop('instrumentation/fmc/inputs/climb-derate-index', 1);
+            setprop('instrumentation/fmc/climb/derate-index', 1);
         return 1;
     },
     
     selectClimb2Select: func {
         if (cdu.getScratchpad() == 'DELETE')
-            setprop('instrumentation/fmc/inputs/climb-derate-index', 0);
+            setprop('instrumentation/fmc/climb/derate-index', 0);
         else
-            setprop('instrumentation/fmc/inputs/climb-derate-index', 2);
+            setprop('instrumentation/fmc/climb/derate-index', 2);
         return 1;
     },  
 };

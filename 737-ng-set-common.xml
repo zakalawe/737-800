@@ -974,8 +974,17 @@
         <runway-elevation-ft type="double">0</runway-elevation-ft>
       </derated-to>
       <takeoff>
+        <takeoff-thrust-n1>101</takeoff-thrust-n1>
         <thr-red-alt-ft type="int">800</thr-red-alt-ft>
+        <thr-red-flaps type="int">5</thr-red-flaps>
+        <derate-index type="int">0</derate-index>
+        <derate-rating index="0">22000</derate-rating>
+        <derate-rating index="0">20000</derate-rating>
+        <derate-rating index="0">18000</derate-rating>
       </takeoff>
+      <climb>
+        <derate-index type="int">0</derate-index>
+      </climb>
     </fmc>
 
     <pfd>

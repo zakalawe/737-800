@@ -2,7 +2,9 @@
 
 var LegsModel = 
 {
-    _wpIndexFromModel: func(index) { index + flightplan().current; },
+    _wpIndexFromModel: func(index) { 
+        return index + flightplan().current; 
+    },
     
     _wpFromModel: func(index) { flightplan().getWP(me._wpIndexFromModel(index)); },
     
@@ -11,22 +13,17 @@ var LegsModel =
     new: func()
     {
       m = {parents: [LegsModel, CDU.AbstractModel.new()]};
-      
-      
-        
       return m;
     },
     
     firstLineForLegs: func 0,
     countForLegs: func { 
         var fp = flightplan();
-        return fp.getPlanSize() - fp.current;
+        var count = fp.getPlanSize() - fp.current;
+        return count;
     },
     firstLineForSpeedAlt: func 0,
-    countForSpeedAlt: func { 
-        var fp = flightplan();
-        return fp.getPlanSize() - fp.current;
-    },
+    countForSpeedAlt: func { return me.countForLegs(); },
     
     titleForLegs: func(index)
     {
@@ -86,7 +83,7 @@ legsPage.addAction(CDU.Action.new('RTE DATA', 'R6',
 legsPage.addAction(CDU.Action.new('    STEP', 'R6', func {
     var cur = getprop('instrumentation/efis/inputs/plan-wpt-index');
     if ((cur += 1) >= flightplan().getPlanSize()) 
-        cur = flightplan.current;
+        cur = flightplan().current;
     
     setprop('instrumentation/efis/inputs/plan-wpt-index', cur);
 }, 

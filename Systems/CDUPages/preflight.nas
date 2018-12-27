@@ -99,38 +99,44 @@ var TakeoffModel =
     },
     
     dataForFlaps: func { 
-        var f = getprop('instrumentation/fmc/inputs/takeoff-flaps');
+        var f = getprop('instrumentation/fmc/inputs/takeoff-flaps') or 0;
 		var h = getprop('instrumentation/fmc/inputs/acceleration-height-ft') or '~1500';
-        if (f != 10 and f != 20) return CDU.BOX2~'/'~h~'FT';
+        if (f == 0) return CDU.BOX2~'/'~h~'FT';
         return sprintf('%2d', f)~'/'~h;
     },
     
+    permittedTakeoffFlaps: [2, 5, 10, 15, 25],
+
     editFlaps: func(scratch) {
-        var fields = CDU.parseDualFieldInput(scratch);
-        debug.dump('fields:', scratch, fields);
-        
+        var fields = CDU.parseDualFieldInput(scratch);        
         if (fields[0] != nil) {
             var f = num(fields[0]);
-			if ((f != 10) and (f != 20)) return 0;
+
+            var ok = 0;
+            foreach (var fl; me.permittedTakeoffFlaps) {
+                if (fl == f) ok = 1;
+            }
+
+			if (!ok) return 0;
 			setprop('instrumentation/fmc/inputs/takeoff-flaps', f);
-			Boeing747.vspeeds();
+			boeing737.vspeed.updateFromFMC();
         }
         
         if (fields[1] != nil) {
             var n = fields[1];
             if ((n < 400) or (n > 9999)) return 0;
             setprop('instrumentation/fmc/inputs/acceleration-height-ft', n);
-			Boeing747.vspeeds();
+			boeing737.vspeed.updateFromFMC();
         }
 		
         return 1;
     },
 	
 	dataForThrReduction: func {
-		var clbModeId = getprop('instrumentation/fmc/inputs/climb-derate-index');
+		var clbModeId = getprop('instrumentation/fmc/climb/derate-index') or 0;
         var clbMode = (clbModeId == 0) ? 'CLB' : sprintf('CLB %d', clbModeId);
-		var redAlt = getprop('instrumentation/fmc/settings/thrust-reduction-alt-ft');
-		var redFlap = getprop('instrumentation/fmc/settings/thrust-reduction-flaps');
+		var redAlt = getprop('instrumentation/fmc/takeoff/thr-red-alt-ft') or 0;
+		var redFlap = getprop('instrumentation/fmc/takeoff/thr-red-flap') or 5;
 		return ((redAlt == 0) ? 'FLAPS 5' : sprintf('%4d~FT',redAlt))~' !'~clbMode;
 	},
 	
@@ -139,11 +145,11 @@ var TakeoffModel =
         if (n != 5 and ((n < 400) or (n > 9999))) return 0;
         
         if (n == 5) {
-			setprop('instrumentation/fmc/settings/thrust-reduction-flaps',5);
-			setprop('instrumentation/fmc/settings/thrust-reduction-alt-ft',0);
+			setprop('instrumentation/fmc/takeoff/thr-red-flaps',5);
+			setprop('instrumentation/fmc/takeoff/thr-red-alt-ft',0);
         } else {
-			setprop('instrumentation/fmc/settings/thrust-reduction-flaps',0);
-			setprop('instrumentation/fmc/settings/thrust-reduction-alt-ft',n);
+			setprop('instrumentation/fmc/takeoff/thr-red-flaps',0);
+			setprop('instrumentation/fmc/takeoff/thr-red-alt-ft',n);
 		}
 		
         return 1;
@@ -168,16 +174,16 @@ var TakeoffModel =
     },
 
     dataForTakeoffCG: func {
-        sprintf('~%4.01f%%', getprop('/instrumentation/fmc/cg'));
+        sprintf('~%4.01f%%', getprop('/instrumentation/fmc/cg') or 0);
     },
     
     dataForTakeoffTrim: func {
-        sprintf('~%4.01f ', getprop('/instrumentation/fmc/stab-trim-units'));
+        sprintf('~%4.01f ', getprop('/instrumentation/fmc/stab-trim-units') or 0);
     },
     
     titleForTakeoffThrust: func {
-        var n = getprop('instrumentation/fmc/inputs/takeoff-derate-index');
-        var rating = getprop('instrumentation/fmc/settings/takeoff-derate-rating[' ~ n ~']');
+        var n = getprop('instrumentation/fmc/takeoff/derate-index');
+        var rating = getprop('instrumentation/fmc/takeoff/derate-rating[' ~ n ~']');
         sprintf('%dK', rating);
     },
     
@@ -228,49 +234,164 @@ var RouteModel =
     {
       m = {parents: [RouteModel, CDU.AbstractModel.new()]};
       m._fileSelector = nil;
+      m.resetInsert();
       return m;
     },
 	
-	_wpIndexFromModel: func(index) { index + flightplan().current; },
+	_wpIndexFromModel: func(index) { 
+        if (index == me._insertIndex)
+            return index + 1;
+
+        var r = index + 1;
+        r -= (index > me._insertIndex); # make space for the insert row
+        return r;
+    },
     
-    _wpFromModel: func(index) { flightplan().getWP(me._wpIndexFromModel(index)); },
+    _wpFromModel: func(index) { 
+        if (index == me._insertIndex)
+            return nil;
+
+        flightplan().getWP(me._wpIndexFromModel(index)); 
+    },
     
     firstLineForTo: func 0,
-    countForTo: func flightplan().getPlanSize()-1,
+    countForTo: func {
+        # ommit first and last points
+        var sz = flightplan().getPlanSize()-2; 
+        sz += 1; # insert marker (at end by default)
+        return sz;
+    },
+
     firstLineForVia: func 0,
-    countForVia: func flightplan().getPlanSize()-1,
+    countForVia: func { me.countForTo(); },
   
     titleForTo: func(index) { (index == 0) ? '~TO' : ''; },
     titleForVia: func(index) { (index == 0) ? '~VIA' : ''; },
     
     dataForTo: func(index) {
-		if (index == (flightplan().getPlanSize()-2)) return CDU.EMPTY_FIELD4;
-		var wp = me._wpFromModel(index+1);
+		var wp = me._wpFromModel(index);
+        if (wp == nil)
+            return CDU.EMPTY_FIELD4;
+        
+        if ((wp.wp_type == 'via') or (wp.wp_parent != nil)) {
+            debug.dump("WP navaid:", wp.navaid());
+            return wp.navaid().id;
+        }
+
         return wp.wp_name;
 	},
+
     dataForVia: func(index) {
-		if (index == (flightplan().getPlanSize()-2)) return CDU.EMPTY_FIELD4;
-		return 'DIRECT';
+        var wp = me._wpFromModel(index);
+        if (wp == nil) {
+            if (me._airway != '')
+                return me._airway;
+            return CDU.EMPTY_FIELD4;
+        }
+
+        var nm = wp.wp_parent_name;
+        if (nm != nil)
+    		return nm; # covers procedures and expanded VIAs
+
+        # un-expanded VIAs
+        if (wp.airway != nil)
+            return wp.airway.id;
+
+        return 'DIRECT';
 	},
 	
     selectTo: func(index) {
 		var scratch = cdu.getScratchpad();
 		if (size(scratch) == 0) return 0;
 		
+        var fpIndex = me._wpIndexFromModel(index);
 		if (scratch == 'DELETE'){
-			setprop("/autopilot/route-manager/input","@DELETE"~(index+1));
-			return 1;
+            if (index != me._insertIndex) {
+			    setprop("/autopilot/route-manager/input","@DELETE"~fpIndex);
+            }			
+            me.resetInsert();
+            return 1;
 		}
-		var data = navinfo(scratch);
-		if (size(data) > 0) {
-			flightplan().insertWP(createWPFrom(data[0]),index+1);
-			cdu.clearScratchpad();
-			return 1;
-		} else {
-			cdu.message('NOT IN DATA BASE');
-		}
+
+        var data = navinfo(scratch);
+        if (size(data) == 0) {
+            cdu.message('NOT IN DATA BASE');
+		    return 0;
+        }
+
+        var to = data[0];
+        cdu.clearScratchpad();
+
+        # if we have an airway, check the waypoint is on it
+        if (me._airway != '') {
+            # insert a via
+            print('trying to VIA:' ~ to.id);
+            var via = nil;
+            if (fpIndex > 0) {
+                print('Have previous');
+                var prev = flightplan().getWP(fpIndex-1);
+                via = createViaFromTo(prev, me._airway, to);
+            } else {
+                via = createViaFromTo(me._airway, to);
+            }
+
+            if (via == nil) {
+                print('Failed to VIA');
+                me.resetInsert();
+                cdu.message('NO AIRWAY TRANS');
+                return 1;
+            }
+
+            flightplan().insertWP(via, fpIndex);
+        } else {
+		    flightplan().insertWP(createWPFrom(to), fpIndex);
+        }
+
+        me.resetInsert();
+        return 1;
 	},
-    selectVia: func(index) { },
+
+    resetInsert: func { 
+        me._airway = '';
+        if (flightplan() != nil) 
+            me._insertIndex = flightplan().getPlanSize() - 2; 
+        else
+            me._insertIndex = 0;
+        print('resetInsert: insert index is now:' ~ me._insertIndex);
+    },
+
+    selectVia: func(index) { 
+        var scratch = cdu.getScratchpad();
+		if (size(scratch) == 0) return 0;
+        cdu.clearScratchpad();
+
+        var fpIndex = me._wpIndexFromModel(index);
+        if (scratch == 'DELETE'){
+            if (index == me._insertIndex) {
+			    setprop("/autopilot/route-manager/input","@DELETE"~fpIndex);
+            }
+            me.resetInsert();
+			return 1;
+		}
+
+        var previous = nil;
+        if (fpIndex > 0) {
+            previous = flightplan().getWP(fpIndex - 1);
+            print('previous wp:' ~ previous.wp_name);
+        }
+        var awy = airway(scratch, previous);
+        if (awy == nil) {
+            print("couldn't find airway:" ~ scratch);
+            cdu.message('NO AIRWAY');
+            me.resetInsert();
+            return 1;
+        }
+
+        print('Pending insert:' ~ scratch);
+        me._airway = scratch;
+        me._insertIndex = index;
+        return 1;
+    },
 	
     dataForCompanyRoute: func { CDU.EMPTY_FIELD10; },
     

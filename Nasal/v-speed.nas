@@ -13,6 +13,8 @@ var vSpeedSelectorPFDText = props.globals.initNode("/controls/fmc/v-speed-pfd-te
 
 var v1Speed = props.globals.initNode("/instrumentation/fmc/speeds/v1-kt", 0, "DOUBLE");
 var vrSpeed = props.globals.initNode("/instrumentation/fmc/speeds/vr-kt", 0, "DOUBLE");
+var v2Speed = props.globals.initNode("/instrumentation/fmc/speeds/v2-kt", 0, "DOUBLE");
+
 var vrefSpeed = props.globals.initNode("/instrumentation/fmc/speeds/vref-kt", 0, "DOUBLE");
 var whiteBugSpeed = props.globals.initNode("/instrumentation/fmc/speeds/white-bug-kt", 0, "DOUBLE");
 var gWeight = props.globals.initNode("/instrumentation/fmc/weights/gw", 0, "DOUBLE");
@@ -39,12 +41,8 @@ var vspeed = {
 		
 		if (mode == 0) {
 			setFlag.setBoolValue(0);
-			vSpeedSelectorModeText.setValue("AUTO"); # when setting in cdu is simulated, remove the below setValue()s
-			v1Speed.setValue(0);
-			vrSpeed.setValue(0);
-			vrefSpeed.setValue(0);
-			gWeight.setValue(0);
-			whiteBugSpeed.setValue(0);
+			vSpeedSelectorModeText.setValue("AUTO"); #
+			me.updateFromFMC();
 			return;
 		} 
 		
@@ -115,7 +113,24 @@ var vspeed = {
 		} elsif (mode == 4 and airgnd == 0) {
 			me.vref = bug;
 			vSpeedSelectorPFDText.setValue(me.vref);
-		}
+		}s
+	},
+
+	clearFMCSpeeds : func()
+	{
+			v1Speed.setValue(0);
+			vrSpeed.setValue(0);
+			v2Speed.setValue(0);
+			vrefSpeed.setValue(0);
+	},
+
+	updateFromFMC : func() {
+		print('Compute V speeds');
+			v1Speed.setValue(0);
+			vrSpeed.setValue(0);
+			vrefSpeed.setValue(0);
+			gWeight.setValue(0);
+			whiteBugSpeed.setValue(0);
 	},
 };
 
