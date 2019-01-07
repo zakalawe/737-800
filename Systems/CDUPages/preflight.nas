@@ -56,9 +56,10 @@ var PosInitModel =
     },
     
     editRefAirport: func(scratch) {
-		if (scratch == 'DELETE')
+		if (scratch == 'DELETE') {
 			apt = nil;
-		else {
+            setprop(FMC ~ 'settings/ref-airport', nil);
+		} else {
 			var apt = airportinfo(scratch);
 			if (apt == nil) {
 				cdu.message('NOT IN DATA BASE');
@@ -67,6 +68,7 @@ var PosInitModel =
 		}
         
         me._refAirport = apt;
+        setprop(FMC ~ 'settings/ref-airport', apt.id);
         return 1;
     },
     
@@ -89,6 +91,45 @@ var PosInitModel =
     #titleForGate: func {  (me._refAirport == nil) ? nil : 'GATE'; }
 };
 
+###########
+    var posInit1 = CDU.Page.new(cdu, "      POS INIT");
+    var positionModel = PosInitModel.new();
+    
+    posInit1.setModel(positionModel);
+    posInit1.addAction(CDU.Action.new('INDEX', 'L6', func {cdu.displayPageByTag("index");} ));
+    posInit1.addAction(CDU.Action.new('ROUTE', 'R6', func {
+        cdu.displayPageByTag("route");
+    } ));
+  
+    posInit1.addField(CDU.Field.createWithLSKAndTag('R1', '~LAST POS', 'LastPos'));
+    posInit1.addField(CDU.Field.createWithLSKAndTag('L2', '~REF AIRPORT', 'RefAirport'));
+    posInit1.addField(CDU.Field.createWithLSKAndTag('R2', '', 'RefAirportPos'));
+    posInit1.addField(CDU.Field.new(pos:'L3', title:'~GATE', tag:'Gate'));
+    posInit1.addField(CDU.Field.createWithLSKAndTag('R3', '', 'GatePos'));
+    posInit1.addField(CDU.Field.new(pos:'L5', title:'~UTC(GPS)', tag:'GMTDate', dynamic:1));
+    posInit1.addField(CDU.Field.createWithLSKAndTag('R4', '~GPS POS', 'GPSPos'));
+    posInit1.addField(CDU.Field.createWithLSKAndTag('R5', '~SET IRS POS', 'IRSPosInit'));
+  
+    var posInit2 = CDU.Page.new(cdu, "      POS REF");
+    posInit2.setModel(positionModel);
+    
+    posInit2.addField(CDU.Field.createWithLSKAndTag('L1', '~FMC POS', 'FMCPos'));
+    posInit2.addField(CDU.Field.createWithLSKAndTag('L2', '~IRS L', 'IRSPos'));
+    posInit2.addField(CDU.Field.createWithLSKAndTag('L3', '~IRS R', 'IRSPos'));
+    posInit2.addField(CDU.Field.createWithLSKAndTag('L4', '~GPS L', 'GPSPos'));
+    posInit2.addField(CDU.Field.createWithLSKAndTag('L5', '~GPS R', 'GPSPos'));
+    posInit2.addField(CDU.Field.createWithLSKAndTag('L6', '~RADIO', 'RadioPos'));
+    posInit2.addField(CDU.Field.createWithLSKAndTag('R1', '~GS', 'FMCG'));
+  
+    var posInit3 = CDU.Page.new(cdu, "POS SHIFT");
+  
+  
+    CDU.linkPages([posInit1, posInit2, posInit3]);
+    cdu.addPage(posInit1, "pos-init");
+    cdu.addPage(posInit2, "pos-init-2");
+    cdu.addPage(posInit3, "pos-init-3");
+  
+##########  
 
 var TakeoffModel = 
 {
@@ -100,66 +141,36 @@ var TakeoffModel =
     
     dataForFlaps: func { 
         var f = getprop('instrumentation/fmc/inputs/takeoff-flaps') or 0;
-		var h = getprop('instrumentation/fmc/inputs/acceleration-height-ft') or '~1500';
-        if (f == 0) return CDU.BOX2~'/'~h~'FT';
-        return sprintf('%2d', f)~'/'~h;
+        if (f == 0) return CDU.BOX2 ~ 'g';
+        return sprintf('%2d', f)~'g';
     },
     
     permittedTakeoffFlaps: [2, 5, 10, 15, 25],
 
     editFlaps: func(scratch) {
-        var fields = CDU.parseDualFieldInput(scratch);        
-        if (fields[0] != nil) {
-            var f = num(fields[0]);
+        var f = num(scratch);
 
-            var ok = 0;
-            foreach (var fl; me.permittedTakeoffFlaps) {
-                if (fl == f) ok = 1;
-            }
+        var ok = 0;
+        foreach (var fl; me.permittedTakeoffFlaps) {
+            if (fl == f) ok = 1;
+        }
 
-			if (!ok) return 0;
-			setprop('instrumentation/fmc/inputs/takeoff-flaps', f);
-			boeing737.vspeed.updateFromFMC();
-        }
-        
-        if (fields[1] != nil) {
-            var n = fields[1];
-            if ((n < 400) or (n > 9999)) return 0;
-            setprop('instrumentation/fmc/inputs/acceleration-height-ft', n);
-			boeing737.vspeed.updateFromFMC();
-        }
-		
+        if (!ok) return 0;
+        setprop('instrumentation/fmc/inputs/takeoff-flaps', f);
+        boeing737.vspeed.updateFromFMC();
+        boeing737.fmc.updateTakeoffTrim();
         return 1;
     },
 	
-	dataForThrReduction: func {
-		var clbModeId = getprop('instrumentation/fmc/climb/derate-index') or 0;
-        var clbMode = (clbModeId == 0) ? 'CLB' : sprintf('CLB %d', clbModeId);
-		var redAlt = getprop('instrumentation/fmc/takeoff/thr-red-alt-ft') or 0;
-		var redFlap = getprop('instrumentation/fmc/takeoff/thr-red-flap') or 5;
-		return ((redAlt == 0) ? 'FLAPS 5' : sprintf('%4d~FT',redAlt))~' !'~clbMode;
-	},
-	
-	editThrReduction: func(scratch) {
-        var n = num(scratch);
-        if (n != 5 and ((n < 400) or (n > 9999))) return 0;
-        
-        if (n == 5) {
-			setprop('instrumentation/fmc/takeoff/thr-red-flaps',5);
-			setprop('instrumentation/fmc/takeoff/thr-red-alt-ft',0);
-        } else {
-			setprop('instrumentation/fmc/takeoff/thr-red-flaps',0);
-			setprop('instrumentation/fmc/takeoff/thr-red-alt-ft',n);
-		}
-		
-        return 1;
-    },
-    
     dataForV1: func { 
         var v1 = getprop('instrumentation/fmc/speeds/v1-kt');
 		if (v1 == 0) return '---';
         return sprintf('%3d', v1)~'~KT';
     },
+
+    selectV1: func { boeing737.vspeed.setSpeed(0, boeing737.vspeed.computeSpeed(0)); },
+    selectVr: func { boeing737.vspeed.setSpeed(1, boeing737.vspeed.computeSpeed(1)); },
+    selectV2: func { boeing737.vspeed.setSpeed(2, boeing737.vspeed.computeSpeed(2)); },
 	
     dataForV2: func { 
         var v2 = getprop('instrumentation/fmc/speeds/v2-kt');
@@ -173,24 +184,38 @@ var TakeoffModel =
         return sprintf('%3d', vr)~'~KT';
     },
 
+    dataForQRHVSpeed: func(index) {
+        return boeing737.vspeed.computeSpeed(index) ~ '>';
+    },
+
+    titleForTakeoffCG: func {
+        if (getprop('/instrumentation/fmc/stab-trim-units'))
+            return '~CG   TRIM';
+        return '~CG';
+    },
+
     dataForTakeoffCG: func {
-        sprintf('~%4.01f%%', getprop('/instrumentation/fmc/cg') or 0);
+        var cg = getprop(FMC ~ 'cg') or 0;
+        var trim = getprop(FMC ~ 'stab-trim-units');
+        if (trim) {
+            return sprintf('~%4.01f%% %4.2f', cg, trim);
+        }
+        sprintf('%4.01f%%', cg);
+    },
+
+    editTakeoffCG: func {
+        var cg = num(scratch);
+        if (!cg) return 0; 
+        if ((cg < -5) or (cg > 40))
+            return 0;
+
+        setprop(FMC ~ 'cg', cg);
+        boeing737.fmc.updateTakeoffTrim();
+        return 1;
     },
     
-    dataForTakeoffTrim: func {
-        sprintf('~%4.01f ', getprop('/instrumentation/fmc/stab-trim-units') or 0);
-    },
-    
-    titleForTakeoffThrust: func {
-        var n = getprop('instrumentation/fmc/takeoff/derate-index');
-        var rating = getprop('instrumentation/fmc/takeoff/derate-rating[' ~ n ~']');
-        sprintf('%dK', rating);
-    },
-    
-    dataForTakeoffThrust: func {
-        var n = getprop('instrumentation/fmc/takeoff/takeoff-thrust-n1');
-        sprintf('%5.1f/%5.1f', n * 100, n * 100);
-    },
+    titleForTakeoffThrust: func { boeing737.fmc.takeoffThrustTitle(); },
+    dataForTakeoffThrust: func { boeing737.fmc.takeoffThrustN1(); },
     
     titleForPreflight: func(index) {
         if (index != 0) return '';
@@ -208,7 +233,7 @@ var TakeoffModel =
 		else if (flightplan().departure_runway == nil)
 			return 'DEPARTURE>';
 		else
-			return 'THRUST LIM>';
+			return 'N1 LIMIT>';
     },
     
     selectPreflight: func(index) {
@@ -224,7 +249,74 @@ var TakeoffModel =
             cdu.displayPageByTag('n1-limit');
         return 1;
     },
+
+    dataForIntersection: func {
+        var rwy = flightplan().departure_runway;
+        if (rwy == nil) return '---/-----';
+        return '---/RW' ~ rwy.id;
+    },
+
+    dataForShift: func {
+        var rwy = flightplan().departure_runway;
+        if (rwy == nil) return '';
+
+        var shift = getprop(FMC ~ 'takeoff/shift-ft');
+        if (!shift) {
+            return 'RW' ~ rwy.id ~ '  --00FT>' ;
+        }
+
+        return sprintf('RW%s  %d00FT', rwy.id, shiftFt / 100); 
+    },
+
+    editShift: func(sp) {
+        var ft = num(sp);
+        if (!ft) return 0;
+        setprop(FMC ~ 'takeoff/shift-ft', ft);
+    },
+
+    dataForGrossWeightTOW: func {
+        var gw = boeing737.fmc.grossWeightLbs();
+        var tow = gw;
+        return sprintf('%5.1f/~%5.1f', gw, tow);
+    },
+    
+    toggleVSpeeds: func {
+        print('Toggle VSPeeds');
+    }
 };
+
+
+      
+###############
+  var takeoff = CDU.Page.new(cdu, '       TAKEOFF REF');
+  var tmodel = TakeoffModel.new();
+  takeoff.setModel(tmodel);
+  cdu.addPage(takeoff, "takeoff");
+    
+  takeoff.addField(CDU.Field.new(pos:'L1', title:'~FLAPS', tag:'Flaps'));
+  takeoff.addField(CDU.Field.new(pos:'L2', tag:'TakeoffThrust'));
+  #takeoff.addField(CDU.StaticField.new('L4', '~WIND/SLOPE', '~H00/U0.0'));
+  #takeoff.addField(CDU.Field.new(pos:'L2', tag:'TakeoffThrust'));
+  takeoff.addField(CDU.Field.new(pos:'L3', tag:'TakeoffCG'));
+
+  # needs to be hidden if loading takeoff data
+  # we don't have intersection data so not making this selectable
+  takeoff.addField(CDU.Field.new(pos:'L5', title:'~INTERSECT', tag:'Intersection'));
+  takeoff.addField(CDU.Field.new(pos:'R5', title:'~TO SHIFT', tag:'Shift', selectable:1));
+
+  takeoff.addField(CDU.Field.new(pos:'R1', title:'~V1', tag:'V1', selectable:1));
+  takeoff.addField(CDU.Field.new(pos:'R2', title:'~VR', tag:'Vr', selectable:1));
+  takeoff.addField(CDU.Field.new(pos:'R3', title:'~V2', tag:'V2', selectable:1));
+  takeoff.addField(CDU.Field.new(pos:'R1+6', title:'~QRH', rows:3, tag:'QRHVSpeed'));
+  takeoff.addField(CDU.Field.new(pos:'R4', title:'~GW  /  TOW', tag:'GrossWeightTOW'));
+  takeoff.addField(CDU.Field.new(tag:'Preflight', pos:'R6', rows:1, selectable:1));
+         
+  takeoff.fixedSeparator = [5, 5];
+  takeoff.addAction(CDU.Action.new('INDEX', 'L6', func {cdu.displayPageByTag("index");}));
+  takeoff.addAction(CDU.Action.new('VSPDS OFF', 'R6', func { tmodel.toggleVSpeeds(); }));
+
+ ###############
+ 
 var fp=flightplan();
 var segment = airwaysRoute(navinfo('COL')[0],navinfo('PAM')[0]);
 
@@ -268,14 +360,23 @@ var RouteModel =
     titleForTo: func(index) { (index == 0) ? '~TO' : ''; },
     titleForVia: func(index) { (index == 0) ? '~VIA' : ''; },
     
+    willDisplay: func(page) {
+        print('will display:' ~ page);
+        if (page == 'route1') {
+            if (flightplan().departure == nil) {
+                cdu.setScratchpad(positionModel.dataForRefAirport());
+            }
+        }
+    },
+
     dataForTo: func(index) {
 		var wp = me._wpFromModel(index);
         if (wp == nil)
             return CDU.EMPTY_FIELD4;
         
         if ((wp.wp_type == 'via') or (wp.wp_parent != nil)) {
-            debug.dump("WP navaid:", wp.navaid());
-            return wp.navaid().id;
+            debug.dump("WP navaid:", wp.wp_type, wp.navaid());
+            return wp.wp_name;
         }
 
         return wp.wp_name;
@@ -304,9 +405,9 @@ var RouteModel =
 		var scratch = cdu.getScratchpad();
 		if (size(scratch) == 0) return 0;
 		
-        var fpIndex = me._wpIndexFromModel(index);
 		if (scratch == 'DELETE'){
             if (index != me._insertIndex) {
+                var fpIndex = me._wpIndexFromModel(index);
 			    setprop("/autopilot/route-manager/input","@DELETE"~fpIndex);
             }			
             me.resetInsert();
@@ -319,37 +420,51 @@ var RouteModel =
 		    return 0;
         }
 
-        var to = data[0];
         cdu.clearScratchpad();
+        
+        if (size(data) > 1) {
+            # need to disambiguate
+            var self = me;
+            makeWaypointSelect(cdu, scratch, func (nav) { 
+                self.enterToNavaid(nav, index); 
+            });
+        } else {
+            me.enterToNavaid(data[0], index);
+        }
 
+        return 1;
+	},
+
+    enterToNavaid: func(navaid, index)
+    {
+        var fpIndex = me._wpIndexFromModel(index);
         # if we have an airway, check the waypoint is on it
         if (me._airway != '') {
             # insert a via
-            print('trying to VIA:' ~ to.id);
+            print('trying to VIA:' ~ navaid.id);
             var via = nil;
             if (fpIndex > 0) {
                 print('Have previous');
                 var prev = flightplan().getWP(fpIndex-1);
-                via = createViaFromTo(prev, me._airway, to);
+                via = createViaFromTo(prev, me._airway, navaid);
             } else {
-                via = createViaFromTo(me._airway, to);
+                via = createViaFromTo(me._airway, navaid);
             }
 
             if (via == nil) {
                 print('Failed to VIA');
                 me.resetInsert();
                 cdu.message('NO AIRWAY TRANS');
-                return 1;
+                return;
             }
 
             flightplan().insertWP(via, fpIndex);
         } else {
-		    flightplan().insertWP(createWPFrom(to), fpIndex);
+		    flightplan().insertWP(createWPFrom(navaid), fpIndex);
         }
 
         me.resetInsert();
-        return 1;
-	},
+    },
 
     resetInsert: func { 
         me._airway = '';
@@ -421,51 +536,9 @@ var RouteModel =
     }
     
 };
-
-###########
-    var posInit1 = CDU.Page.new(cdu, "      POS INIT");
-    var positionModel = PosInitModel.new();
-    
-    posInit1.setModel(positionModel);
-    posInit1.addAction(CDU.Action.new('INDEX', 'L6', func {cdu.displayPageByTag("index");} ));
-    posInit1.addAction(CDU.Action.new('ROUTE', 'R6', func {
-        cdu.displayPageByTag("route");
-        # preload scratch with ref airport if set
-		if (positionModel.dataForRefAirport() != CDU.EMPTY_FIELD4)
-			cdu.setScratchpad(positionModel.dataForRefAirport());
-    } ));
-  
-    posInit1.addField(CDU.Field.createWithLSKAndTag('R1', '~LAST POS', 'LastPos'));
-    posInit1.addField(CDU.Field.createWithLSKAndTag('L2', '~REF AIRPORT', 'RefAirport'));
-    posInit1.addField(CDU.Field.createWithLSKAndTag('R2', '', 'RefAirportPos'));
-    posInit1.addField(CDU.Field.new(pos:'L3', title:'~GATE', tag:'Gate'));
-    posInit1.addField(CDU.Field.createWithLSKAndTag('R3', '', 'GatePos'));
-    posInit1.addField(CDU.Field.new(pos:'L4', title:'~UTC(GPS)', tag:'GMTDate', dynamic:1));
-    posInit1.addField(CDU.Field.createWithLSKAndTag('R4', '~GPS POS', 'GPSPos'));
-    posInit1.addField(CDU.Field.createWithLSKAndTag('R5', '~SET IRS POS', 'IRSPosInit'));
-    posInit1.addField(CDU.StaticField.new('L5', '~SET HDG', '---g'));
-  
-    var posInit2 = CDU.Page.new(cdu, "      POS REF");
-    posInit2.setModel(positionModel);
-    
-    posInit2.addField(CDU.Field.createWithLSKAndTag('L1', '~FMC POS', 'FMCPos'));
-    posInit2.addField(CDU.Field.createWithLSKAndTag('L2', '~IRS L', 'IRSPos'));
-    posInit2.addField(CDU.Field.createWithLSKAndTag('L3', '~IRS R', 'IRSPos'));
-    posInit2.addField(CDU.Field.createWithLSKAndTag('L4', '~GPS L', 'GPSPos'));
-    posInit2.addField(CDU.Field.createWithLSKAndTag('L5', '~GPS R', 'GPSPos'));
-    posInit2.addField(CDU.Field.createWithLSKAndTag('L6', '~RADIO', 'RadioPos'));
-    posInit2.addField(CDU.Field.createWithLSKAndTag('R1', '~GS', 'FMCG'));
-  
-    var posInit3 = CDU.Page.new(cdu, "POS SHIFT");
-  
-  
-    CDU.linkPages([posInit1, posInit2, posInit3]);
-    cdu.addPage(posInit1, "pos-init");
-    cdu.addPage(posInit2, "pos-init-2");
-    cdu.addPage(posInit3, "pos-init-3");
   
 ##########  
-	var route1 = CDU.Page.new(cdu, "         RTE 1");
+	var route1 = CDU.Page.new(owner:cdu, title:"         RTE 1", tag:'route1');
     var routeModel = RouteModel.new();
     
     route1.setModel(routeModel);
@@ -488,7 +561,7 @@ var RouteModel =
             return 1; 
         }));
     
-    route1.addField(CDU.NasalField.new('L2', '~RUNWAY', 
+    route1.addField(CDU.NasalField.new('L3', '~RUNWAY', 
         func { return (flightplan().departure_runway == nil) ? CDU.EMPTY_FIELD5 : flightplan().departure_runway.id; },
         func(data) {
             var apt = flightplan().departure;
@@ -526,8 +599,15 @@ var RouteModel =
       route1.addField(CDU.EditablePropField.new('R2', 'instrumentation/fmc/inputs/flight-number', '~FLT NO.'));
       route1.fixedSeparator = [3, 3];
 	  
-      route1.addField(CDU.Field.new(pos:'R3', title:'~CO ROUTE', tag:'CompanyRoute', selectable:1));
+      route1.addField(CDU.Field.new(pos:'L2', title:'~CO ROUTE', tag:'CompanyRoute', selectable:1));
     
+    route1.addField(CDU.NasalField.new('R3', '~FLT PLAN', 
+        func { return "REQUEST>"},
+        func(data) {
+			print('Request flight plan');
+            return 1; 
+        }));
+
       route1.addAction(CDU.Action.new('ACTIVATE', 'R6', 
           func {
               cdu.setExecCallback(activateRoute);
@@ -561,39 +641,33 @@ var RouteModel =
                   (getprop('instrumentation/fmc/phase-index') >= 2);
           }
       ));
+
+        route1.addAction(CDU.Action.new('SAVE', 'L5', 
+          func { print('Save route'); }
+      ));
+
+      route1.addAction(CDU.Action.new('REVERSE', 'R5', 
+          func {
+              print('Reverse route');
+          },
+          func {
+              return (getprop('autopilot/route-manager/active') == 0);
+          }));
+        
     
       #var route2 = CDU.Page.new(cdu, "      RTE 1");
      # route2.setModel(routeModel);
-	 var route12 = CDU.MultiPage.new(cdu:cdu, title:"         RTE 1", model:RouteModel.new(), dynamicActions:1);
+	 var route2 = CDU.MultiPage.new(cdu:cdu, title:"         RTE 1", 
+        model:RouteModel.new(), 
+        dynamicActions:1,
+        basePageIndex: 1);
     # actions are shared from route1 page
      # foreach(var act; route1.getActions()) route2.addAction(act);
       
-      route12.addField(CDU.ScrolledField.new(tag:'Via', selectable:1));
-      route12.addField(CDU.ScrolledField.new(tag:'To', selectable:1, alignRight:1));
+      route2.addField(CDU.ScrolledField.new(tag:'Via', selectable:1));
+      route2.addField(CDU.ScrolledField.new(tag:'To', selectable:1, alignRight:1));
       
-      CDU.linkPages([route1, route12]);
+      CDU.linkPages([route1, route2]);
       cdu.addPage(route1, "route");
-      cdu.addPage(route12, "route-1-2");
+      cdu.addPage(route2, "route-2");
       
-      
-###############
-  var takeoff = CDU.Page.new(cdu, '       TAKEOFF REF');
-  takeoff.setModel(TakeoffModel.new());
-  cdu.addPage(takeoff, "takeoff");
-    
-  takeoff.addField(CDU.Field.new(pos:'L1', title:'~FLAP/ACCEL HT', tag:'Flaps'));
-  takeoff.addField(CDU.StaticField.new('L2', '~E/O ACCEL HT', '~1000FT'));
-  takeoff.addField(CDU.Field.new(pos:'L3', title:'~THR REDUCTION', tag:'ThrReduction'));
-  #takeoff.addField(CDU.StaticField.new('L4', '~WIND/SLOPE', '~H00/U0.0'));
-  #takeoff.addField(CDU.Field.new(pos:'L2', tag:'TakeoffThrust'));
-  takeoff.addField(CDU.Field.new(pos:'R4', title:'~CG', tag:'TakeoffCG'));
-  takeoff.addField(CDU.Field.new(tag:'TakeoffTrim', title:'~TRIM', pos:'R4+5'));
-    
-  takeoff.addField(CDU.Field.new(pos:'R1', title:'~REF V1', tag:'V1'));
-  takeoff.addField(CDU.Field.new(pos:'R2', title:'~REF VR', tag:'Vr'));
-  takeoff.addField(CDU.Field.new(pos:'R3', title:'~REF V2', tag:'V2'));
-    
-  takeoff.addField(CDU.Field.new(tag:'Preflight', pos:'R6', rows:1, selectable:1));
-         
-  takeoff.fixedSeparator = [5, 5];
-  takeoff.addAction(CDU.Action.new('INDEX', 'L6', func {cdu.displayPageByTag("index");}));

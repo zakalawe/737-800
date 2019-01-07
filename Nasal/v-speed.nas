@@ -30,6 +30,7 @@ var vspeed = {
     init: func() {
 		me.v1 = 0;
 		me.vr = 0;
+		me.v2 = 0;
 		me.wt = 0;
 		me.vref = 0;
     },
@@ -132,6 +133,30 @@ var vspeed = {
 			gWeight.setValue(0);
 			whiteBugSpeed.setValue(0);
 	},
+
+	computeSpeed: func(index) {
+		print('FIXME - compute real speeds');
+		if (index == 0) {
+			return 130;
+		} elsif (index == 1) {
+			return 135;
+		} elsif (index == 2) {
+			return 140;
+		}
+	},
+
+	setSpeed: func(index, speed) {
+		if (index == 0) {
+			me.v1 = speed;
+			v1Speed.setIntValue(speed);
+		} elsif (index == 1) {
+			me.vr = speed;
+			vrSpeed.setIntValue(speed);
+		} elsif (index == 2) {
+			me.v2 = speed;
+			v2Speed.setIntValue(speed);
+		}
+	}
 };
 
 ###############################################################################

@@ -1,195 +1,108 @@
-var DeparturesModel = 
+
+#####################
+
+var WaypointSelectModel =
 {
-    new: func(apt)
+    new: func(ident, cb)
     {
-      m = {parents: [DeparturesModel, CDU.AbstractModel.new()]};
-      m._airport = apt;
-      
-      var fp = flightplan();
-      m._runways = keys(apt.runways);
-      m._selectedRunway = (fp.departure_runway != nil) ? fp.departure_runway.id : nil;
-      m._sids = (m._selectedRunway != nil) ? apt.sids(m._selectedRunway) : apt.sids();
-      m._selectedSID = (fp.sid != nil) ? fp.sid.id : nil;
-      
-      return m;
+        m = {parents: [WaypointSelectModel, CDU.AbstractModel.new()],
+           _ident: ident,
+           _navaids: navinfo('any', ident),
+           _callback: cb
+        };
+
+        m._removeDuplicateNavaids();
+
+        return m;
     },
+
+    # CDU logic looks for a method with this name to support dynamic titles
+    pageTitle: func { 'SELECTED DESIRED ' ~ me._ident; },
+
+    firstLineForWaypoint: func 0,
+    countForWaypoint: func size(me._navaids),
     
-    firstLineForSIDs: func 0,
-    countForSIDs: func { 
-		var count = size(me._sids);
-		if (count == 0) return 1;
-		return count;
-	},
-    firstLineForRunways: func 0,
-    countForRunways: func size(me._runways),
-    firstLineForTransitions: func { me.countForSIDs(); },
-    countForTransitions: func 1,
-    
-    titleForSIDs: func(index) { (index == 0) ? '~SIDS' : ''; },
-    titleForRunways: func(index) { (index == 0) ? '~RUNWAYS' : ''; },
-    titleForTransitions: func(index) { (index == 0) ? '~TRANS' : ''; },
-    
-    dataForSIDs: func(index) {
-		if (size(me._sids) == 0) return 'NONE';
-        var s = me._sids[index];
-        if (s == me._selectedSID) return s ~ '<SEL>';
-        return s;
+    titleForWaypoint: func(index) {
+        '~' ~ me._stringForType(me._navaids[index]) ~ ' ' ~ me._navaids[index].name;
     },
-    
-    selectSIDs: func(index) {
-        me._selectedSID = me._sids[index];
-        flightplan().sid = me._airport.getSid(me._selectedSID);
+
+    dataForWaypoint: func(index) {
+        var nav = me._navaids[index];
+        var prefix = '';
+        if ((nav.type == "VOR") or (nav.type == "ILS") or (nav.type == "DME")) {
+            prefix = sprintf('%6.2f ', nav.frequency / 100.0);
+        }
+        
+        return prefix ~ CDU.formatLatLonString(nav);
+    },
+
+    selectWaypoint: func(index) {
+        cdu.popTemporaryPage();
+        me._callback(me._navaids[index]);
         return 1;
     },
-    
-    dataForRunways: func(index) {
-        var rwy = me._runways[index];
-        if (rwy== me._selectedRunway) return '<SEL>' ~ rwy;
-        return rwy;
+
+    # right and left LSKs do the same thing
+    firstLineForWaypointR: func 0,
+    dataForWaypointR: func nil,
+    countForWaypointR: func me.countForWaypoint(),
+    selectWaypointR: func(index) { me.selectWaypoint(index) },
+
+    _typeRemap: {
+        dme: 'DME',
+        fix: 'WPT'
     },
-    
-    selectRunways: func(index) {
-        me._selectedRunway = me._runways[index];
-        flightplan().departure_runway = me._airport.runway(me._selectedRunway);
-        return 1;
+
+    _stringForType: func(nav) {
+        if (contains(me._typeRemap, nav.type))
+            return me._typeRemap[nav.type];
+        return nav.type;
     },
-    
-    dataForTransitions: func(index) {
-        return 'TRANS';
+
+    # remove DMEs paired to VORs, ILSs
+    _removeDuplicateNavaids: func {
+        var allNavs = me._navaids;
+        foreach (var n; allNavs) {
+            var colo = (n.type == 'fix') ? nil : n.colocated_dme;
+            if (colo != nil) {
+                me._removeNavaid(colo.guid);
+            }
+        }
+    },
+
+    _removeNavaid: func(guid) {
+        var sz = size(me._navaids);
+        for (var i=0; i < sz; i +=1) {
+            var nav = me._navaids[i];
+            if (nav.guid == guid) {
+                if (i == 0) {
+                    me._navaids = me._navaids[1:];
+                } elsif (i == (sz - 1)) {
+                    me._navaids = me._navaids[:-2]
+                } else {
+                    # middle of the array
+                    me._navaids = me._navaids[:i-1] ~ me._navaids[i+1:];
+                }
+                
+                return 1;
+            }
+        }
+
+        return 0;
     }
 };
 
-var makeDeparturesPage = func(apt)
+var makeWaypointSelect = func(cdu, ident, cb)
 {
-    if (apt == nil) return nil;
-    
-    var mdl = DeparturesModel.new(apt);
-    var pg = CDU.MultiPage.new(cdu:cdu, title:"   " ~ (apt.id or "    ") ~ " DEPARTURES", model:mdl);
-    
-    pg.addAction(CDU.Action.new('INDEX', 'L6', func {cdu.displayPageByTag("departure-arrival");} ));
-    pg.addAction(CDU.Action.new('ROUTE', 'R6', func {cdu.displayPageByTag("route");} ));
-    
-    pg.addField(CDU.ScrolledField.new(tag:'SIDs', selectable:1));
-    pg.addField(CDU.ScrolledField.new(tag:'Runways', selectable:1, alignRight:1));
-    pg.addField(CDU.ScrolledField.new(tag:'Transitions', selectable:1));
-    
-    return pg;
-}
-
-var ArrivalsModel = 
-{
-    new: func(apt)
-    {
-      m = {parents: [ArrivalsModel, CDU.AbstractModel.new()]};
-      m._airport = apt;
-      
-      var fp = flightplan();
-      m._runways = keys(apt.runways);
-      m._selectedRunway = (fp.destination_runway != nil) ? fp.destination_runway.id : nil;
-      m._stars = (m._selectedRunway != nil) ? apt.stars(m._selectedRunway) : apt.stars();
-      m._selectedSTAR = (fp.star != nil) ? fp.star.id : nil;
-      return m;
-    },
-    
-    firstLineForSTARs: func 0,
-    countForSTARs: func {
-		if (me._selectedSTAR != '' and me._selectedSTAR != nil) return 1;
-		return size(me._stars) or 1;
-	},
-    firstLineForRunways: func 0,
-    countForRunways: func {
-		if (me._selectedRunway != '' and me._selectedRunway != nil) return 1;
-		return size(me._runways) or 1;
-	},
-    firstLineForTransitions: func { me.countForSTARs(); },
-    countForTransitions: func 6,
-    
-    titleForSTARs: func(index) { (index == 0) ? '~STARS' : ''; },
-    titleForRunways: func(index) { (index == 0) ? '~RUNWAYS' : ''; },
-    titleForTransitions: func(index) { (index == 0) ? '~TRANS' : ''; },
-    
-    dataForSTARs: func(index) {
-		if (size(me._stars) == 0) return 'NONE';
-		if (me._selectedSTAR != '' and me._selectedSTAR != nil) return me._selectedSTAR~ '<SEL>';
-        var s = me._stars[index];
-        return s;
-    },
-    
-    selectSTARs: func(index) {
-        me._selectedSTAR = me._stars[index];
-        flightplan().star = me._airport.getStar(me._selectedSTAR);
-        return 1;
-    },
-    
-    dataForRunways: func(index) {
-		if (me._selectedRunway != '' and me._selectedRunway != nil) return me._selectedRunway~ '<SEL>';
-        var rwy = me._runways[index];
-        return rwy;
-    },
-    
-    selectRunways: func(index) {
-        me._selectedRunway = me._runways[index];
-        flightplan().destination_runway = me._airport.runway(me._selectedRunway);
-        return 1;
-    },
-    
-    dataForTransitions: func(index) {
-        return 'TRANS' ~ index;
-    }
+    var wptSelectPage = CDU.MultiPage.new(cdu:cdu, title:'SELECTED DESIRED', 
+        model:WaypointSelectModel.new(ident, cb),
+        linesPerPage: 6);
+    wptSelectPage.addField(CDU.Field.new(pos:'L1', tag:'Waypoint', selectable: 1));
+    wptSelectPage.addField(CDU.Field.new(pos:'R1', tag:'WaypointR', selectable: 1));
+    cdu.pushTemporaryPage(wptSelectPage);
+    return wptSelectPage;
 };
 
-var makeArrivalsPage = func(apt)
-{
-    var mdl = ArrivalsModel.new(apt);
-    var pg = CDU.MultiPage.new(cdu:cdu, title:"   " ~ (apt.id or "    ") ~ " ARRIVALS", model:mdl);
-    
-    pg.addAction(CDU.Action.new('INDEX', 'L6', func {cdu.displayPageByTag("departure-arrival");}, func { 
-		return ((flightplan().star == '' or flightplan().star == nil) and (flightplan().destination_runway == '' or flightplan().destination_runway == nil)); 
-	} ));
-	pg.addAction(CDU.Action.new('ERASE', 'L6', func {
-		flightplan().star = '';
-		flightplan().destination_runway= '';
-	}, func { return (flightplan().star != '' and flightplan().star != nil and flightplan().destination_runway != '' or flightplan().destination_runway != nil); } ));
-    pg.addAction(CDU.Action.new('ROUTE', 'R6', func {cdu.displayPageByTag("route");} ));
-    
-    pg.addField(CDU.ScrolledField.new(tag:'STARs', selectable:1));
-    pg.addField(CDU.ScrolledField.new(tag:'Runways', selectable:1, alignRight:1));
-    pg.addField(CDU.ScrolledField.new(tag:'Transitions', selectable:1));
-    
-    return pg;
-}
-
-#############
-
-    var depArrIndex = CDU.Page.new(cdu, "DEP/ARR INDEX");
-    
-    depArrIndex.addField(CDU.PropField.new(pos:'L1+9', prop:'autopilot/route-manager/departure/airport'));
-    depArrIndex.addField(CDU.PropField.new(pos:'L2+9', prop:'autopilot/route-manager/destination/airport'));
-    depArrIndex.addField(CDU.StaticField.new(pos:'L6+9', data:'OTHER'));
-    
-    depArrIndex.addAction(CDU.Action.new('DEP', 'L1', func {
-            var apt = flightplan().departure;
-            if (apt == nil) return;
-            cdu.displayPage(makeDeparturesPage(apt));
-        } 
-    ));
-    
-    depArrIndex.addAction(CDU.Action.new('ARR', 'R1', func {
-            var apt = flightplan().departure;
-            if (apt == nil) return;
-            cdu.displayPage(makeArrivalsPage(apt));
-        } 
-    ));
-    
-    depArrIndex.addAction(CDU.Action.new('ARR', 'R2', func {
-            var apt = flightplan().destination;
-            if (apt == nil) return;
-            cdu.displayPage(makeArrivalsPage(apt));
-        } 
-    ));
-    
-    cdu.addPage(depArrIndex, "departure-arrival");
-    
 #####################
 
 var NavdataModel = 

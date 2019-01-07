@@ -183,6 +183,13 @@
                   <property>services/ext-pwr/enable</property>
               </binding>
           </item>
+
+          <item>
+              <label>Reload CDU</label>
+              <binding>
+                  <command>cdu-reload</command>
+              </binding>
+          </item>
         </menu>
       </default>
     </menubar>
@@ -793,6 +800,7 @@
       <file>Aircraft/737-800/Nasal/tire-smoke.nas</file>
       <file>Aircraft/737-800/Nasal/v-speed.nas</file>
       <file>Aircraft/737-800/Nasal/engine-fire.nas</file> 
+      	<file>Aircraft/737-800/Nasal/fmc.nas</file>
     </boeing737>
 
     <autopilot737>
@@ -957,34 +965,70 @@
           <page type="string" n="1">Systems/CDUPages/navdata.nas</page>
           <page type="string" n="2">Systems/CDUPages/preflight.nas</page>
           <page type="string" n="3">Systems/CDUPages/flight.nas</page>
-          <page type="string" n="4">Systems/CDUPages/progress.nas</page>
-          <page type="string" n="5">Systems/CDUPages/performance.nas</page>
-          <page type="string" n="6">Systems/CDUPages/maintenance.nas</page>
+          <page type="string" n="4">Systems/CDUPages/legs.nas</page>
+          <page type="string" n="5">Systems/CDUPages/progress.nas</page>
+          <page type="string" n="6">Systems/CDUPages/performance.nas</page>
+          <page type="string" n="7">Systems/CDUPages/maintenance.nas</page>
+          <page type="string" n="8">Systems/CDUPages/departure-arrival.nas</page>
           <boot-page type="string">ident</boot-page>
       </settings>
     </cdu>
 
     <fmc>
+      <settings>
+        <aircraft-model>737-800</aircraft-model>
+        <engine-rating>24K</engine-rating>
+        <nav-data-version>FGINTDB</nav-data-version>
+        <!-- -->
+        <nav-data-validity>JAN01DEC31/06</nav-data-validity>
+      </settings>
       <to-flap type="double">5</to-flap>
-      <derated-to>
-        <zone type="int">1</zone>
-        <assumed-temp-degc type="double">15</assumed-temp-degc>
-        <method-assumed type="bool">0</method-assumed>
-        <method-derate-20k type="bool">0</method-derate-20k>
-        <runway-elevation-ft type="double">0</runway-elevation-ft>
+
+      <!-- baseline takeoff data -->
+      <derated-to n="0">
+          <title>24K</title>
+          <prompt>TO</prompt>
+          <n1-percent>98.5</n1-percent>
+          <climb-thrust-index>0</climb-thrust-index>
+          <short-title>24K N1</short-title> <!-- title for thrust limit / takeoff ref -->
       </derated-to>
+
+      <derated-to n="1">
+          <title>22K DERATE</title>
+          <prompt>TO-1</prompt>
+          <n1-percent>95.5</n1-percent>
+          <climb-thrust-index>1</climb-thrust-index>
+          <short-title>22K N1</short-title> <!-- title for thrust limit / takeoff ref -->
+      </derated-to>
+
+      <derated-to n="2">
+          <title>20K DERATE</title>
+          <prompt>TO-2</prompt>
+          <n1-percent>92.5</n1-percent>
+          <climb-thrust-index>2</climb-thrust-index>
+          <short-title>20K N1</short-title> <!-- title for thrust limit / takeoff ref -->
+      </derated-to>
+
+      <derated-to n="3">
+          <title>24K BUMP</title>
+          <prompt>TO-B</prompt>
+          <n1-percent>101.0</n1-percent>
+          <climb-thrust-index>0</climb-thrust-index>
+          <short-title>24K BUMP N1</short-title> <!-- title for thrust limit / takeoff ref -->
+      </derated-to>
+
       <takeoff>
-        <takeoff-thrust-n1>101</takeoff-thrust-n1>
         <thr-red-alt-ft type="int">800</thr-red-alt-ft>
         <thr-red-flaps type="int">5</thr-red-flaps>
         <derate-index type="int">0</derate-index>
-        <derate-rating index="0">22000</derate-rating>
-        <derate-rating index="0">20000</derate-rating>
-        <derate-rating index="0">18000</derate-rating>
       </takeoff>
+
       <climb>
         <derate-index type="int">0</derate-index>
       </climb>
+      <cruise>
+        <default-cg-percent type="double">26.2</default-cg-percent>
+      </cruise>
     </fmc>
 
     <pfd>

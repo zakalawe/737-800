@@ -5,18 +5,55 @@ var PerformanceModel =
       m = {parents: [PerformanceModel, CDU.AbstractModel.new()]};
       return m;
     },
+
+    dataForGrossWeightCruiseCG: func {
+        return me.dataForGrossWeight() ~ '/' ~ me.dataForCruiseCG();
+    },
     
     dataForGrossWeight: func { 
-		var gw = getprop('/fdm/jsbsim/inertia/weight-kg')/1000;
-        #var gw = getprop('instrumentation/fmc/gross-weight-lbs') / 1000;
+        var entered = getprop('instrumentation/fmc/gross-weight-lbs');
+        if (entered) {
+            return sprintf('%5.1f', gw / 1000); #entered value
+        }
+		var gw = (getprop('/fdm/jsbsim/inertia/weight-kg') or 0) / 1000;
         if (gw < 1.0) return CDU.BOX3_1;
         return sprintf('~%5.1f', gw);
     },
+
+    editGrossWeightCruiseCG: func(scratch) {
+        var fields = CDU.parseDualFieldInput(scratch);
+         if (fields[0] != nil) {
+            var f = num(fields[0]) * 1000;
+            me.enterGrossWeight(f);
+        }
+        
+        if (fields[1] != nil) {
+            var cg = num(fields[1]);
+            me.editCruiseCG(cg);
+        }
+	
+        return 1;
+    },
+
+    enterGrossWeight: func(gw)
+    {
+        setprop('instrumentation/fmc/gross-weight-lbs', gw * 1000);
+    },
     
     dataForCruiseCG: func { 
-        var ccg = getprop('instrumentation/fmc/cruise/cg-percent') ;
-        if (ccg < -900) return '--.-%';
+        var ccg = getprop('instrumentation/fmc/cruise/cg-percent');
+        if (ccg) {
+            return sprintf('%5.1f%%', ccg);
+        }
+
+        ccg = getprop(FMC ~ 'cruise/default-cg-percent');
         return sprintf('~%5.1f%%', ccg);
+    },
+
+    editCruiseCG: func(cg)
+    {
+        if ((cg < 5) or (cg > 40)) return;
+        setprop('instrumentation/fmc/cruise/cg-percent', cg);
     },
     
     dataForCruiseAltitude: func { 
@@ -38,26 +75,36 @@ var PerformanceModel =
     },
     
     dataForZeroFuelWeight: func { 
-		var zfw = getprop('/fdm/jsbsim/inertia/zero-fuel-weight-kg') / 1000;
-        # var zfw = getprop('instrumentation/fmc/inputs/zero-fuel-weight-lbs') / 1000;
+        var entered = getprop('instrumentation/fmc/inputs/zero-fuel-weight-lbs');
+        if (entered)
+            return sprintf('%5.1f', entered); #big text
+
+		var zfw = (getprop('/fdm/jsbsim/inertia/zero-fuel-weight-kg') or 0) / 1000;
         if (zfw < 1.0) return CDU.BOX3_1;
-        return sprintf('~%5.1f', zfw);
+        return sprintf('~%5.1f', zfw); # small text
     },
     
     editZeroFuelWeight: func(scratch) {
-        var zfw = num(scratch) * 1000;
+        var zfw = (num(scratch) or 0) * 1000;
         if ((zfw < 10000) or (zfw > 100000)) return 0;
         setprop('instrumentation/fmc/inputs/zero-fuel-weight-lbs', zfw);
         return 1;
     },
-    
+
+    enterGrossWeight: func(gw) {
+        var zfw = gw - getprop('consumables/fuel/total-fuel-lbs');
+        setprop('instrumentation/fmc/inputs/zero-fuel-weight-lbs', zfw);
+        # should cause update of ZFW
+        return 1;
+    },
+
     dataForFuelOnBoard: func {
         var total = getprop('consumables/fuel/total-fuel-lbs');
-        return sprintf('~%5.1f', total / 1000)~' ~SENSED';
+        return sprintf('~%5.1f', total / 1000);
     },
     
     dataForFuelReserves: func {
-        var rf = getprop('instrumentation/fmc/inputs/reserve-fuel-lbs') / 1000;
+        var rf = (getprop('instrumentation/fmc/settings/reserve-fuel-lbs') or 0) / 1000;
         if (rf < 1.0) return CDU.BOX3_1;
         return sprintf('%5.1f', rf);
     },
@@ -65,14 +112,14 @@ var PerformanceModel =
     editFuelReserves: func(scratch) {
         var rf = num(scratch) * 1000;
         if ((rf < 900) or (rf > 50000)) return 0;
-        setprop('instrumentation/fmc/inputs/reserve-fuel-lbs', rf);
+        setprop('instrumentation/fmc/settings/reserve-fuel-lbs', rf);
         return 1;
     },
     
     dataForCostIndex: func {
-        var cost = getprop('instrumentation/fmc/inputs/cost-index');
-        if (cost < 0) return CDU.BOX4;
-        return sprintf('%4d', cost);
+        var cost = getprop('instrumentation/fmc/inputs/cost-index') or -1;
+        if (cost < 0) return CDU.BOX3;
+        return sprintf('%3d', cost);
     },
     
     editCostIndex: func (scratch) {
@@ -83,17 +130,34 @@ var PerformanceModel =
     },
     
     dataForCruiseWind: func {
-        var windHdg = getprop('instrumentation/fmc/inputs/cruise-wind-bearing-deg');
-        var windSpeed = getprop('instrumentation/fmc/inputs/cruise-wind-knots');
+        var windHdg = getprop('instrumentation/fmc/cruise/wind-bearing-deg') or -1;
+        var windSpeed = getprop('instrumentation/fmc/cruise/wind-knots') or -1;
         return CDU.formatBearingSpeed(windHdg, windSpeed);
     },
     
+    editCruiseWind: func(sp) {
+        var hdgSpd = CDU.parseBearingSpeed(sp);
+        if (hdgSpd == nil) return 0;
+
+        setprop('instrumentation/fmc/cruise/wind-bearing-deg', hdgSpd.bearing);
+        setprop('instrumentation/fmc/cruise/wind-knots', hdgSpd.speed);
+        return 1;
+    },
+
     dataForToCOAT: func {
         return '---gF ---gC';
     },
     
-    dataForTransitionAltitude: func { getprop('instrumentation/fmc/inputs/transition-altitude-ft'); },
+    dataForTransitionAltitude: func { 
+        getprop('instrumentation/fmc/inputs/transition-altitude-ft') or 18000; 
+    },
     
+    editTransitionAltitude: func(sp) {
+        var ft = CDU.parseAltitude(sp);
+        setprop('instrumentation/fmc/inputs/transition-altitude-ft', ft);
+        return 1;
+    },
+
     dataForTimeErrorTolerance: func { getprop('instrumentation/fmc/setting/rta-tolerance-sec'); },
     dataForMinSpeed: func { return '100/.400'; },
     dataForMaxSpeed: func { return '340/.820'; },
@@ -112,46 +176,40 @@ var PerformanceModel =
     editSelectedTemperature: func (scratch)
     {
         if (scratch != nil) {
-            var n = CDU.parseTemperatureAsCelsius(scratch);
+            var n = CDU.parseTemperatureAsCelsius(scratch) or -99;
             if ((n < 0) or (n > 99)) return 0;
             setprop('instrumentation/fmc/inputs/assumed-temp-deg-c', n);
+            boeing737.fmc.updateTakeoffThrust();
 			boeing737.vspeed.clearFMCSpeeds();
 			return 1;
         }
     },
     
     titleForTakeoffThrustLimit: func {
-		var sel = getprop('instrumentation/fmc/takeoff/derate-index');
-        return (sel == 0) ? '~TO N1' : sprintf('~TO %d N1',sel);
+        return boeing737.fmc.takeoffThrustTitle();
     },
     
     dataForTakeoffThrustLimit: func {
-        var lim = getprop('fdm/jsbsim/eec/reference-thrust/to-n1');
-        return sprintf('%5.01f', lim)~'%';
+        return boeing737.fmc.takeoffThrustN1();
     },
     
     titleForTakeoffThrust: func(index) {
-        if (getprop('gear/gear/wow')) sprintf((index == 0) ? '' : '~TO %d', index);
+        return '~' ~ getprop(FMC ~ 'derated-to[' ~ index ~ ']/title');
     },
     
     dataForTakeoffThrust: func(index) {
-		if (getprop('gear/gear/wow')) {
-			var derate = (index == 1) ? '5% ' : '15%';
-			var s = (index == 0) ? '<TO  ' : '<-'~derate;
-			var sel = getprop('instrumentation/fmc/takeoff/derate-index');
-			return (sel == index) ? s ~ ' <SEL>' : s;
-		} else {
-			if (index == 0) return '<GA';
-			elsif (index == 1) return '<CON';
-			else return '<CRZ';
-		}
+		var s = '<' ~ getprop(FMC ~ 'derated-to[' ~ index ~ ']/prompt');
+        if (getprop(FMC ~ 'takeoff/derate-index') == index) {
+            s ~= '<ACT>';
+        }
+        return s;
     },
     
     selectTakeoffThrust: func(index) {
-        if (getprop('gear/gear/wow')) {
-			setprop('instrumentation/fmc/takeoff/derate-index', index);
-			if (index != 0) me.selectClimbThrust(index);
-		} else setprop('instrumentation/fmc/inputs/in-flight-thrust-mode-index', index);
+		setprop(FMC ~ 'takeoff/derate-index', index);
+        var climbIndex = getprop(FMC ~ 'derated-to[' ~ index ~ ']/climb-thrust-index');
+        boeing737.fmc.updateTakeoffThrust();
+        me.selectClimbThrust(climbIndex);
         return 1;
     },
     
@@ -180,7 +238,7 @@ var PerformanceModel =
             'max-continuous-thrust-n1', 'climb/climb-thrust-n1',
             'cruise/cruise-thrust-n1'];
         
-        var n1 = getprop('instrumentation/fmc/' ~ limitProps[index]);
+        var n1 = getprop(FMC ~ limitProps[index]);
         return sprintf('%5.1f/ %5.1f', n1 * 100, n1 * 100);
     },
     
@@ -209,6 +267,12 @@ var PerformanceModel =
             setprop('instrumentation/fmc/climb/derate-index', 2);
         return 1;
     },  
+
+    dataForPerfInitRequest: func { "REQUEST>" },
+    selectPerfInitRequest: func {
+        print('Request pefect init');
+        return 1;
+    }
 };
 
 #############
@@ -217,14 +281,19 @@ var PerformanceModel =
     
   perfInit.setModel(perfModel);
   perfInit.addAction(CDU.Action.new('INDEX', 'L6', func {cdu.displayPageByTag("index");} ));
-  perfInit.addAction(CDU.Action.new('THRUST LIM', 'R6', func {cdu.displayPageByTag("thrust-lim");} ));
-  
-  perfInit.addField(CDU.Field.new(pos:'L1', title:'~GR WT', tag:'GrossWeight', dynamic:1));
+  perfInit.addAction(CDU.Action.new('N1 LIMIT', 'R6', func {cdu.displayPageByTag("thrust-lim");} ));
+  perfInit.addField(CDU.Field.new(pos: 'R5', title: '~PERF INIT', selectable: 1, tag:'PerfInitRequest'));
+
+  perfInit.addField(CDU.Field.new(pos:'L1', title:'~GW/CRZ CG', tag:'GrossWeightCruiseCG', dynamic:1));
   perfInit.addField(CDU.Field.new(pos:'R1', title:'~CRZ ALT', tag:'CruiseAltitude'));
+  perfInit.addField(CDU.Field.new(pos:'R2', title:'~CRZ WIND', tag:'CruiseWind'));
+
+  # not supporting the PLANed fuel option here yet
+  # (allows entering fuel for predictions before loaded)
   perfInit.addField(CDU.Field.new(pos:'L2', title:'~FUEL', tag:'FuelOnBoard', dynamic:1)); 
   perfInit.addField(CDU.Field.new(pos:'L3', title:'~ZFW', tag:'ZeroFuelWeight')); 
   perfInit.addField(CDU.Field.new(pos:'L4', title:'~RESERVES', tag:'FuelReserves'));
-  perfInit.addField(CDU.Field.new(pos:'R4', title:'~CRZ CG', tag:'CruiseCG'));
+  perfInit.addField(CDU.Field.new(pos:'R4', title:'~TRANS ALT', tag:'TransitionAltitude'));
   perfInit.addField(CDU.Field.new(pos:'L5', title:'~COST INDEX', tag:'CostIndex')); 
     
   var perfLimits = CDU.Page.new(cdu, "PERF LIMITS");
@@ -243,24 +312,24 @@ var PerformanceModel =
   CDU.linkPages([perfInit, perfLimits]);
   cdu.addPage(perfInit, "performance");
     
-  var n1Limit = CDU.Page.new(cdu, '       THRUST LIM');
+  var n1Limit = CDU.Page.new(cdu, '     N1 LIMIT');
   n1Limit.setModel(perfModel);
     
   n1Limit.addField(CDU.Field.new(pos:'L1', tag:'SelectedTemperature'));
   n1Limit.addField(CDU.Field.new(pos:'R1', tag:'TakeoffThrustLimit'));
-  n1Limit.addField(CDU.Field.new(pos:'L2', tag:'TakeoffThrust', rows:3, selectable:1));
+  n1Limit.addField(CDU.Field.new(pos:'L2', tag:'TakeoffThrust', rows:4, selectable:1));
   n1Limit.addField(CDU.Field.new(pos:'R2', tag:'ClimbThrust', rows:3, selectable:1));
     
   n1Limit.addAction(CDU.Action.new('PERF INIT', 'L6', func {cdu.displayPageByTag("performance");} ));
   n1Limit.addAction(CDU.Action.new('TAKEOFF', 'R6', func {cdu.displayPageByTag("takeoff");} ));
     
-  var n1Flight = CDU.Page.new(cdu, 'THRUST LIM');
+  var n1Flight = CDU.Page.new(cdu, '    N1 LIMIT');
   n1Flight.setModel(perfModel);
     
   cdu.addPageWithFlightVariant("thrust-lim", n1Limit, n1Flight);
   
   n1Flight.addField(CDU.Field.new(pos:'L1', tag:'ThrustSelection', rows:5, selectable:1));
-  n1Flight.addField(CDU.Field.new(pos:'R2', tag:'ThrustN1', rows:5));
+  n1Flight.addField(CDU.Field.new(pos:'R1', tag:'ThrustN1', rows:5));
      
   n1Flight.addField(CDU.Field.new(pos:'L6', tag:'Climb1Select', title:'------reduced clb-------', selectable:1));
   n1Flight.addField(CDU.Field.new(pos:'R6', tag:'Climb2Select', selectable:1));
