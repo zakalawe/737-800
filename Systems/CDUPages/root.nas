@@ -1,3 +1,5 @@
+var FMC = 'instrumentation/fmc/';
+
  var initRef = CDU.Page.new(cdu);
  initRef.baseTitle = "    INIT/REF INDEX";
  initRef.addAction(CDU.Action.new('IDENT', 'L1', func {cdu.displayPageByTag("ident");} ));
@@ -16,8 +18,11 @@
  ident1.addAction(CDU.Action.new('POS INIT', 'R6', func {cdu.displayPageByTag("pos-init");} ));
   
  ident1.addField(CDU.StaticField.new('L1', '~MODEL', getprop('instrumentation/fmc/settings/aircraft-model')));
- ident1.addField(CDU.StaticField.new('R1', '~ENGINES', getprop('instrumentation/fmc/settings/engine-model')));
-  
+ ident1.addField(CDU.StaticField.new('R1', '~ENG RATING', getprop('instrumentation/fmc/settings/engine-rating')));
+ ident1.addField(CDU.StaticField.new('L2', '~NAV DATA', getprop('instrumentation/fmc/settings/nav-data-version')));
+ ident1.addField(CDU.StaticField.new('R2', '~ACTIVE', getprop('instrumentation/fmc/settings/nav-data-validity')));
+ ident1.addField(CDU.StaticField.new('R3', '', getprop('instrumentation/fmc/settings/alternate-nav-data-validity')));
+
  cdu.addPage(ident1, "ident");
   
  var menuPage = CDU.Page.new(cdu, '          MENU');

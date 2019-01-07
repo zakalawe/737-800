@@ -30,6 +30,7 @@ var vspeed = {
     init: func() {
 		me.v1 = 0;
 		me.vr = 0;
+		me.v2 = 0;
 		me.wt = 0;
 		me.vref = 0;
     },
@@ -126,12 +127,43 @@ var vspeed = {
 
 	updateFromFMC : func() {
 		print('Compute V speeds');
-			v1Speed.setValue(0);
-			vrSpeed.setValue(0);
-			vrefSpeed.setValue(0);
-			gWeight.setValue(0);
-			whiteBugSpeed.setValue(0);
+		v1Speed.setValue(0);
+		vrSpeed.setValue(0);
+		vrefSpeed.setValue(0);
+		gWeight.setValue(0);
+		whiteBugSpeed.setValue(0);
 	},
+
+	computeSpeed: func(index) {
+		print('FIXME - compute real speeds');
+		if (index == 0) {
+			return 130;
+		} elsif (index == 1) {
+			return 135;
+		} elsif (index == 2) {
+			return 140;
+		}
+	},
+
+	setSpeed: func(index, speed) {
+		if (index == 0) {
+			me.v1 = speed;
+			v1Speed.setIntValue(speed);
+		} elsif (index == 1) {
+			me.vr = speed;
+			vrSpeed.setIntValue(speed);
+		} elsif (index == 2) {
+			me.v2 = speed;
+			v2Speed.setIntValue(speed);
+		}
+	},
+
+	getSpeed: func(index) {
+		if (index == 0) return me.v1;
+		elsif (index == 1) return me.vr;
+		elsif (index == 2)  return me.v2;
+		return nil;
+	}
 };
 
 ###############################################################################

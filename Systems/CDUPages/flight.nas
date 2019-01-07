@@ -1,170 +1,5 @@
 
 
-var LegsModel = 
-{
-    _wpIndexFromModel: func(index) { 
-        return index + flightplan().current; 
-    },
-    
-    _wpFromModel: func(index) { flightplan().getWP(me._wpIndexFromModel(index)); },
-    
-    _ndPlanModeActive: func { getprop('instrumentation/efis/mfd/mode-num') == 3; },
-    
-    new: func()
-    {
-      m = {parents: [LegsModel, CDU.AbstractModel.new()]};
-      return m;
-    },
-    
-    firstLineForLegs: func 0,
-    countForLegs: func { 
-        var fp = flightplan();
-        var count = fp.getPlanSize() - fp.current;
-        return count;
-    },
-    firstLineForSpeedAlt: func 0,
-    countForSpeedAlt: func { return me.countForLegs(); },
-    
-    titleForLegs: func(index)
-    {
-        var wp = me._wpFromModel(index);
-        if (wp==nil) return nil;
-        
-        if (wp.leg_distance < 10)
-            return sprintf('~%3dg     %3dNM', wp.leg_bearing, wp.leg_distance);
-        sprintf('~%3dg    %4dNM', wp.leg_bearing, int(wp.leg_distance));
-    },
-        
-    dataForLegs: func(index)
-    {
-        var wp = me._wpFromModel(index);
-        if (me._ndPlanModeActive() and (index == getprop('instrumentation/efis/inputs/plan-wpt-index'))) {
-            return wp.wp_name ~ '   <CTR>';
-        }
-        
-        return wp.wp_name;
-    },
-    
-    dataForSpeedAlt: func(index)
-    {
-        var wp = me._wpFromModel(index);
-        return CDU.formatWayptSpeedAltitude(wp);
-    },
-    
-    selectLegs: func(index) 
-    {   
-        return 1;
-    },
-    
-};
-
-var legsPage = CDU.MultiPage.new(cdu:cdu, title:"      RTE 1 LEGS", model:LegsModel.new(), dynamicActions:1);
-
-legsPage.addAction(CDU.Action.new('ACTIVATE', 'R6', 
-	func {
-		cdu.setExecCallback(activateRoute);
-	},
-	func {
-		var inactive = (getprop('autopilot/route-manager/active') == 0);
-		var fp = flightplan();
-		return inactive and (fp.departure != nil) and (fp.destination != nil);
-	}
-));
-		  
-legsPage.addAction(CDU.Action.new('RTE DATA', 'R6', 
-    func { cdu.displayPageByTag("route-data"); }, 
-    func { 
-		var act = (getprop('autopilot/route-manager/active') != 0);
-		return act and (getprop('instrumentation/efis/mfd/mode-num') != 3);
-	}
-));
-
-# note spaces in title to ensure we over-write 'RTE DATA' when updating
-legsPage.addAction(CDU.Action.new('    STEP', 'R6', func {
-    var cur = getprop('instrumentation/efis/inputs/plan-wpt-index');
-    if ((cur += 1) >= flightplan().getPlanSize()) 
-        cur = flightplan().current;
-    
-    setprop('instrumentation/efis/inputs/plan-wpt-index', cur);
-}, 
-func {
-    getprop('instrumentation/efis/mfd/mode-num') == 3;
-}
-));
-    
-legsPage.addField(CDU.ScrolledField.new(tag:'Legs', selectable:1));
-legsPage.addField(CDU.ScrolledField.new(tag:'SpeedAlt', alignRight:1));
-
-cdu.addPage(legsPage, "legs");
-
-#############
-
-var RteDataModel = 
-{
-    _wpIndexFromModel: func(index) { index + flightplan().current; },
-    
-    _wpFromModel: func(index) { flightplan().getWP(me._wpIndexFromModel(index)); },
-    
-    _ndPlanModeActive: func { getprop('instrumentation/efis/mfd/mode-num') == 3; },
-    
-    new: func()
-    {
-      m = {parents: [RteDataModel, CDU.AbstractModel.new()]};
-      
-      return m;
-    },
-    
-    firstLineForRteData: func 0,
-    countForRteData: func { 
-        var fp = flightplan();
-        return return fp.getPlanSize() - fp.current;
-    },
-    
-    titleForRteData: func(index)
-    {
-		
-    },
-        
-    dataForRteData: func(index)
-    {
-        var wp = me._wpFromModel(index);
-		if (index < 2) {
-			var eta = getprop("autopilot/route-manager/wp["~index~"]/eta-seconds") or -1;
-			if (eta > 0) {
-				eta = getprop("/sim/time/utc/day-seconds") + eta;
-				var h = math.floor(eta/3600);
-				eta=eta-3600*h;
-				var m = math.floor(eta/60);
-				if (h>24) h=h-24;
-				return sprintf("~%02d%02dZ",h,m)~'! '~wp.wp_name;
-			}
-		}
-        return '      '~wp.wp_name;
-    },
-    
-    dataForSpeedAlt: func(index)
-    {
-        var wp = me._wpFromModel(index);
-        return CDU.formatWayptSpeedAltitude(wp);
-    },
-    
-    selectRteData: func(index) 
-    {   
-        return 1;
-    },
-    
-};
-
-var rteDataPage = CDU.MultiPage.new(cdu:cdu, title:"      RTE 1 DATA", model:RteDataModel.new(), dynamicActions:1);
-
-rteDataPage.addAction(CDU.Action.new('LEGS', 'R6', 
-    func { cdu.displayPageByTag("legs"); }
-));
-
-rteDataPage.addField(CDU.ScrolledField.new(tag:'RteData', selectable:1, dynamic:1));
-rteDataPage.addField(CDU.Field.new(pos:'L1', title:'~ ETA    WPT   FUEL  WIND', tag:''));
-
-cdu.addPage(rteDataPage, "route-data");
 
 #############
 
@@ -226,7 +61,7 @@ var ClimbModel =
     },
     
     dataForSpeedRestriction: func {
-        var restrictedSpeed = getprop('/instrumentation/fmc/active-speed-restrict-kt');
+        var restrictedSpeed = getprop('/instrumentation/fmc/active-speed-restrict-kt') or 0;
         if (restrictedSpeed < 0) return nil; # no restriction
         
         return sprintf('%3d/%s', restrictedSpeed, getprop('instrumentation/fmc/speed-restrict-reason'));
@@ -249,8 +84,8 @@ var ClimbModel =
     },
     
     dataForNextRestrictionError: func {
-        var wp = me._nextAltRestrictionWP();
-        if (wp == nil) return nil;
+        #var wp = me._nextAltRestrictionWP();
+        #if (wp == nil) return nil;
         return '150lo'; # TODO
     },
 };
@@ -317,7 +152,7 @@ var CruiseModel =
     },
     
     dataForStep: func() {
-        var alt = getprop('instrumentation/fmc/cruise/step-altitude-ft');
+        var alt = getprop('instrumentation/fmc/cruise/step-altitude-ft') or 0;
         if (alt < 1) return CDU.EMPTY_FIELD5;
         CDU.formatAltitude(alt);
     },
