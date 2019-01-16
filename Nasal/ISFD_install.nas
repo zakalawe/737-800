@@ -12,10 +12,7 @@ var ISFD_createProperties = func() {
 var _list = setlistener("sim/signals/fdm-initialized", func() {
     var ourISFD = isfd.ISFD.new();
     ISFD_createProperties();
-    
-    print('Created ISFD instance');
-    # ourISFD.display(ISFDScreen); add to object - not working?
-
+    ourISFD.display("ISFDScreen");
     removelistener(_list); # run ONCE
 });
 
