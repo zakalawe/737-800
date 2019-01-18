@@ -8,69 +8,84 @@ var ProgressModel =
       return m;
     },
     
-    titleForFrom: func { '~LAST   ALT   ATA   FUEL' },
+    titleForFrom: func { '~FROM   ALT   ATA   FUEL' },
     dataForFrom: func { getprop('instrumentation/fmc/from-wpt/ident'); },
     
     dataForFromR: func
     {
         var fromTime = getprop('instrumentation/fmc/from-wpt/time-gmt');
         if (fromTime == nil) return nil;
-        
         var fromAlt = getprop('instrumentation/fmc/from-wpt/altitude-ft');
-        var fromFuel = getprop('instrumentation/fmc/from-wpt/total-fuel-lbs');
+        var fromFuel = getprop('instrumentation/fmc/from-wpt/total-fuel-kg');
         sprintf('%s %sz %5.1f', CDU.formatAltitude(fromAlt), fromTime, fromFuel);
     },
     
-    titleForNext: func { '~TO      DTG  ETA' },
-    dataForNext: func(index)
-    {
+    titleForNext: func(index) { 
         var fp = flightplan();
-        var wp = nil;
-        if (index < 2) {
-            wp = fp.getWP(fp.current + index);
-            if (wp == nil) return nil;
-            return wp.wp_name;
+        var wp = fp.getWP(fp.current + index);
+        if (wp == nil) return nil;
+        if (index == 0) {
+            sprintf(' ~%3d*HDG   DTG   ETA    FUEL', wp.leg_bearing);
         } else {
-            return fp.destination;
-        }    
+            sprintf(' ~%3d*', wp.leg_bearing);
+        }
+    },
+
+    dataForNext: func(index) {
+        var fp = flightplan();
+        var wp = fp.getWP(fp.current + index);
+        if (wp == nil) return nil;
+        return wp.wp_name;  
     },
     
     dataForNextR: func(index)
     {
         var fp = flightplan();
-        if (fp.currentWP() == nil) return nil;
-        
+        var wp = fp.getWP(fp.current + index);
+        if (wp == nil) return nil;
+
         var eta = 0;
         var fuel = 0;
         
         var distance = fp.currentWP().courseAndDistanceFrom(geo.aircraft_position())[1];
-        if (index < 2) {
-            wp = fp.getWP(fp.current + index);
-            if (wp == nil) return nil;
-            if (index == 1) distance += wp.leg_distance;
-        } else {
-            wp = fp.getWP(fp.getPlanSize() - 1);
-            distance += wp.distance_along_route - fp.currentWP().distance_along_route;
+        if (index == 1) {
+            distance += wp.leg_distance;
         }
-        
-        sprintf('%4d %4d~Z!  %4.1f', distance, eta, fuel);
+
+        var forecast = boeing737.fmc.forecastForWP(wp.index);
+
+        sprintf('%4d %2d%2d~Z!  %4.1f', distance, 
+            forecast.eta_hour, forecast.eta_min, forecast.fuel);
     },
 	
-    titleForDest: func { '~DEST' },
     dataForDest: func()
+    {
+        flightplan().destination.id;
+    },
+    
+    dataForDestR: func()
     {
 		var fp = flightplan();
 		var distance = getprop('autopilot/route-manager/distance-remaining-nm');
-        sprintf('%s    %4d', fp.destination.id, distance);
+        var forecast = boeing737.fmc.forecastForWP(fp.getPlanSize() - 1);
+        sprintf('%4d %2d%2d~Z!  %4.1f', distance, 
+            forecast.eta_hour, forecast.eta_min, forecast.fuel);
     },
-    
+
     dataForFuel: func { 
-        var total = getprop('consumables/fuel/total-fuel-lbs');
+        var total = getprop('consumables/fuel/total-fuel-kg');
         return sprintf('%5.1f', total / 1000);
     },
     
-    dataForNextAltitudeChangePoint: {
-    
+    titleForNextAltitudeChangePoint: func {
+        # if phase of flight = CLB, return 'TO T/C'
+        # if step is active in CRZ, return 'TO STEP POINT'
+        # if CRZ is active, return 'TO T/D'
+        # if DES is active, return 'TO E/D'
+    },
+
+    dataForNextAltitudeChangePoint: func {
+        return '0000Z/  123NM'
     },
     
     dataForWind: func {
@@ -136,6 +151,7 @@ progress1.addField(CDU.Field.new(pos:'R1', tag:'FromR', dynamic: 1));
 progress1.addField(CDU.Field.new(pos:'L2', rows: 2, tag:'Next', dynamic:1));
 progress1.addField(CDU.Field.new(pos:'R2', rows: 2, tag:'NextR', dynamic:1));
 progress1.addField(CDU.Field.new(pos:'L4', tag:'Dest', dynamic:1));
+progress1.addField(CDU.Field.new(pos:'E4', tag:'DestR', dynamic:1));
 
 progress1.addField(CDU.Field.new(pos:'L5', tag:'NextAltitudeChangePoint', dynamic: 1));
 progress1.addField(CDU.Field.new(pos:'R6', tag:'WindKt', dynamic:1));

@@ -76,12 +76,12 @@ var LegsModel =
     dataForSpeedAlt: func(index)
     {
         var wp = me._wpFromModel(index);
-        if (wp.alt_cstr_type == nil and wp.speed_cstr_type == nil) {
-            var f = boeing737.fmc.forecastForWP(me._wpIndexFromModel(index));
-            return '~' ~ CDU.formatWayptSpeedAltitude(f);
-        }
-
-        return CDU.formatWayptSpeedAltitude(wp);
+        var f = nil;
+        if (wp.alt_cstr_type == nil or wp.speed_cstr_type == nil) {
+            f = boeing737.fmc.forecastForWP(me._wpIndexFromModel(index));
+        } 
+        
+        return CDU.formatWayptSpeedAltitudeWithForecast(wp, f);
     },
     
     editActiveLeg: func(sp) {

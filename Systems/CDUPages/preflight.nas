@@ -301,7 +301,7 @@ var TakeoffModel =
     },
 
     dataForGrossWeightTOW: func {
-        var gw = boeing737.fmc.grossWeightLbs();
+        var gw = boeing737.fmc.grossWeightKg();
         var tow = gw;
         return sprintf('%5.1f/~%5.1f', gw, tow);
     },

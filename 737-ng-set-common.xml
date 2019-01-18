@@ -514,6 +514,11 @@
   </input>
 
 <autopilot>
+    <!-- disable the built-in FMC delegate, we supply our own in fmc.nas -->
+    <route-manager>
+      <disable-fms type="bool">true</disable-fms>
+    </route-manager>
+
     <settings>
       <vertical-speed-knob type="int">0</vertical-speed-knob>
       <target-altitude-mcp-ft type="double">3000</target-altitude-mcp-ft>
@@ -1024,10 +1029,16 @@
       </takeoff>
 
       <climb>
+        <!-- 
+        <target-speed-kt type="int">280</target-speed-kt>
+        <target-speed-mach>0.78</target-speed-mach> -->
+
         <derate-index type="int">0</derate-index>
       </climb>
+
       <cruise>
         <default-cg-percent type="double">26.2</default-cg-percent>
+        <margin-to-buffet-g type="double">1.25</margin-to-buffet-g>
       </cruise>
     </fmc>
 

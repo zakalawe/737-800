@@ -11,7 +11,7 @@ var PerformanceModel =
     },
     
     dataForGrossWeight: func { 
-        var entered = getprop('instrumentation/fmc/gross-weight-lbs');
+        var entered = getprop('instrumentation/fmc/gross-weight-kg');
         if (entered) {
             return sprintf('%5.1f', gw / 1000); #entered value
         }
@@ -72,6 +72,7 @@ var PerformanceModel =
         me.setModifiedData('CruiseAltitude', CDU.formatAltitude(alt));
         cdu.setupExec( func { 
             setprop('autopilot/route-manager/cruise/altitude-ft', alt);
+            flightplan().cruiseAltitudeFt = alt;
             boeing737.fmc.updatePerformance();
         }, nil, boeing737.fmc.isPerformanceActive());
 
@@ -85,7 +86,7 @@ var PerformanceModel =
     },
     
     dataForZeroFuelWeight: func { 
-        var entered = getprop('instrumentation/fmc/inputs/zero-fuel-weight-lbs');
+        var entered = getprop('instrumentation/fmc/inputs/zero-fuel-weight-kg');
         if (entered)
             return sprintf('%5.1f', entered / 1000); #big text
 
@@ -99,7 +100,7 @@ var PerformanceModel =
         if (cdu.getScratchpad() != '') return -1;
 
         # Simulator convenience: if selected the empty ZFW, place the computed value into the sp
-        var zfw = getprop('/fdm/jsbsim/inertia/weight-kg') - getprop('consumables/fuel/total-fuel-lbs');
+        var zfw = getprop('/fdm/jsbsim/inertia/weight-kg') - getprop('consumables/fuel/total-fuel-kg');
         cdu.setScratchpad(sprintf("%.1f", zfw / 1000.0));
         return 1;
     },
@@ -110,24 +111,24 @@ var PerformanceModel =
         debug.dump(scratch, num(scratch));
 
         if ((zfw < 10000) or (zfw > 100000)) return 0;
-        setprop('instrumentation/fmc/inputs/zero-fuel-weight-lbs', zfw);
+        setprop('instrumentation/fmc/inputs/zero-fuel-weight-kg', zfw);
         return 1;
     },
 
     enterGrossWeight: func(gw) {
-        var zfw = gw - getprop('consumables/fuel/total-fuel-lbs');
-        setprop('instrumentation/fmc/inputs/zero-fuel-weight-lbs', zfw);
+        var zfw = gw - getprop('consumables/fuel/total-fuel-kg');
+        setprop('instrumentation/fmc/inputs/zero-fuel-weight-kg', zfw);
         # should cause update of ZFW
         return 1;
     },
 
     dataForFuelOnBoard: func {
-        var total = getprop('consumables/fuel/total-fuel-lbs');
+        var total = getprop('consumables/fuel/total-fuel-kg');
         return sprintf('~%5.1f', total / 1000);
     },
     
     dataForFuelReserves: func {
-        var rf = (getprop('instrumentation/fmc/settings/reserve-fuel-lbs') or 0) / 1000;
+        var rf = (getprop('instrumentation/fmc/settings/reserve-fuel-kk') or 0) / 1000;
         if (rf < 1.0) return CDU.BOX3_1;
         return sprintf('%5.1f', rf);
     },
@@ -135,7 +136,7 @@ var PerformanceModel =
     editFuelReserves: func(scratch) {
         var rf = num(scratch) * 1000;
         if ((rf < 900) or (rf > 50000)) return 0;
-        setprop('instrumentation/fmc/settings/reserve-fuel-lbs', rf);
+        setprop('instrumentation/fmc/settings/reserve-fuel-kg', rf);
         boeing737.fmc.updatePerformance();
         return 1;
     },

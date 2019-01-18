@@ -29,3 +29,5 @@ var FMC = 'instrumentation/fmc/';
  menuPage.addAction(CDU.Action.new('FMC', 'L1', func {cdu.displayPageByTag("index");} ));
  menuPage.addAction(CDU.Action.new('CMC', 'L6', func {cdu.displayPageByTag("cmc-menu");} ));
  cdu.addPage(menuPage, "menu");
+
+ boeing737.fmc.addRefreshCallback( func { cdu.requestRefresh(); } );
