@@ -78,82 +78,50 @@ setlistener( "/autopilot/internal/CMDB", stop_stab_move, 0, 0);
 ############################################
 var update_timer_spoilers = maketimer(1, func spoilers_control() );
 
-var spoilers_control = func {
-  var lever_pos = num( getprop("b737/controls/flight/spoilers-lever-pos") );
+var speedbrake_pos_table = [0.0, 0.0, 0.1625, 0.325, 0.4875, 0.65, 1.0 ];
+
+var spoilers_control = func 
+{
+  	var lever_pos = num( getprop("b737/controls/flight/spoilers-lever-pos") );
+    setprop( "/controls/flight/speedbrake", speedbrake_pos_table[lever_pos] );
+	setprop( "/controls/flight/autospeedbrake", (lever_pos == 1) );
+   
+	if (lever_pos < 4) {
+		setprop( "/controls/flight/spoilers", 0);
+	    update_timer_spoilers.stop();
+	} else {
+		var wow_right = getprop("/gear/gear[2]/wow");
+		setprop( "/controls/flight/spoilers", (wow_right == 1));
+
+		# update periodically to check for WoW changing and hence causing
+		# spoiler deployment
+		var height = getprop("/position/altitude-agl-ft");
+		var time = height / 70;
+		if (time < 0.2 or time > 600) time = 0.2;
+		update_timer_spoilers.restart(time);
+	}
 
   if (lever_pos == 0) {
-    setprop( "/controls/flight/speedbrake", 0.00 );
-    setprop( "/controls/flight/spoilers", 0 );
-	setprop( "/controls/flight/autospeedbrake", 0 );
     if (getprop("/sim/messages/copilot") == "Spoilers DOWN!") { } else {
     if (getprop("sim/co-pilot")) setprop ("/sim/messages/copilot", "Spoilers DOWN!");}
     setprop("b737/sound/spoiler-auto", 0);
-    update_timer_spoilers.stop();
   }
   if (lever_pos == 1) {
-    setprop( "/controls/flight/speedbrake", 0.00 );
-    setprop( "/controls/flight/spoilers", 0 );
-	setprop( "/controls/flight/autospeedbrake", 1 );
     if (getprop("/sim/messages/copilot") == "Spoilers ARMED!") { } else {
     if (getprop("sim/co-pilot")) setprop ("/sim/messages/copilot", "Spoilers ARMED!");}
-    update_timer_spoilers.stop();
-    }
-   if (lever_pos == 2) {
-   	setprop( "/controls/flight/speedbrake", 0.1625 );
-     update_timer_spoilers.stop();
-  }
-
-  if (lever_pos == 3) {
-    setprop( "/controls/flight/speedbrake", 0.325 );
-    setprop( "/controls/flight/spoilers", 0 );
-    update_timer_spoilers.stop();
-  }
-  if (lever_pos == 4) {
-    setprop( "/controls/flight/speedbrake", 0.4875 );
-
-    var wow_right = getprop("/gear/gear[2]/wow");
-    if (wow_right) setprop( "/controls/flight/spoilers", 1 );
-    if (!wow_right) setprop( "/controls/flight/spoilers", 0 );
-
-    var height = getprop("/position/altitude-agl-ft");
-    var time = height / 70;
-    if (time < 0.2 or time > 600) time = 0.2;
-    update_timer_spoilers.restart(time);
-  }
+  } 
   if (lever_pos == 5) {
-    setprop( "/controls/flight/speedbrake", 0.65 );
-
-    var wow_right = getprop("/gear/gear[2]/wow");
-    if (wow_right) setprop( "/controls/flight/spoilers", 1 );
-    if (!wow_right) setprop( "/controls/flight/spoilers", 0 );
-
     if (getprop("/sim/messages/copilot") == "Spoilers at FLIGHT DETENT!") { } else {
     if (getprop("sim/co-pilot")) setprop ("/sim/messages/copilot", "Spoilers at FLIGHT DETENT!");}
-
-    var height = getprop("/position/altitude-agl-ft");
-    var time = height / 70;
-    if (time < 0.2 or time > 600) time = 0.2;
-    update_timer_spoilers.restart(time);
   }
   if (lever_pos == 6) {
-    setprop( "/controls/flight/speedbrake", 1.00 );
-
-    var wow_right = getprop("/gear/gear[2]/wow");
-    if (wow_right) setprop( "/controls/flight/spoilers", 1 );
-    if (!wow_right) setprop( "/controls/flight/spoilers", 0 );
-
     if (getprop("/sim/messages/copilot") == "Spoilers UP!") { } else {
     if (getprop("sim/co-pilot")) setprop ("/sim/messages/copilot", "Spoilers UP!");}
-
-    var height = getprop("/position/altitude-agl-ft");
-    var time = height / 70;
-    if (time < 0.2 or time > 600) time = 0.2;
-   update_timer_spoilers.restart(time);
   }
-}
-
+};
 
 setlistener( "/b737/controls/flight/spoilers-lever-pos", spoilers_control, 0, 0 );
+
 var update_timer_landing_check = maketimer(1, func landing_check() );
  update_timer_landing_check.start();
  var dearm_autothrust = maketimer(2, func {setprop("/autopilot/internal/SPD", 0);});
