@@ -7,9 +7,9 @@
 		<type>knob</type>
         <object-name>ISFD-baro</object-name>
         <center>
-            <x-m>-0.001359</x-m>
-            <y-m>-0.128542</y-m>
-            <z-m>-0.049572</z-m>
+            <x-m>0.011315</x-m>
+            <y-m>0.025963</y-m>
+            <z-m>-0.025992</z-m>
         </center>
         <axis>
             <x>-1.0</x>
