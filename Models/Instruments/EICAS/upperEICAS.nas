@@ -30,7 +30,7 @@ var canvas_upperEICAS = {
 		var svg_keys = ["engine0N1","engine0N1Decimal","engine1N1","engine1N1Decimal",
 		"engine0rev","engine1rev",
 		"EGT_0","EGT_1","needleEGT_0","needleEGT_1","ff_0","ff_1",
-		"needleN1_0","needleN1_1","tat",
+		"needleN1_0","needleN1_1","tat","engLimit","assumeTemp",
 		"tank1Thousand","tank1Decimal","tank2Thousand","tank2Decimal","tankCtrThousand","tankCtrDecimal",
 		"tank1Line","tank2Line","tankCtrLine"];
 		foreach(var key; svg_keys) {
@@ -58,7 +58,8 @@ var canvas_upperEICAS = {
 		var tank1 = roundToNearest(getprop("/consumables/fuel/tank[0]/level-kg"), 20);
 		var tank2 = roundToNearest(getprop("/consumables/fuel/tank[1]/level-kg"), 20);
 		var tankCtr = roundToNearest(getprop("/consumables/fuel/tank[2]/level-kg"), 20);
-
+        var assumedTemp = getprop('instrumentation/fmc/inputs/assumed-temp-deg-c') or 9999;
+		
 		var n1_0_int = int(n1_0);
 		var n1_0_dec = int(10*math.mod(n1_0,1));
 		var n1_1_int = int(n1_1);
@@ -83,7 +84,13 @@ var canvas_upperEICAS = {
 		me["ff_1"].setText(sprintf("%01.2f",fuel_flow_1));
 
 		me["tat"].setText(sprintf("%+2.0f", tat));
-
+		if (assumedTemp != 9999) {
+			me["assumeTemp"].show();
+			me["assumeTemp"].setText(sprintf("%2.0f", assumedTemp));
+		} else {
+			me["assumeTemp"].hide();
+		}
+			
 		if (tank1 < 1000 ) {
 			me["tank1Thousand"].hide();
 			me["tank1Decimal"].setText(sprintf("%3.0f",math.mod(tank1,1000)));
