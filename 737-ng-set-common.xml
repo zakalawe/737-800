@@ -783,10 +783,6 @@
 
   <nasal>
 
-    <Boeing>
-      <file>Aircraft/Instruments-3d/cdu2/boeing.nas</file>
-    </Boeing>
-
     <boeing737>
       <file>Aircraft/Generic/limits.nas</file>
       <file>Aircraft/737-800/Models/Instruments/PFD/PFD.nas</file>
@@ -821,6 +817,11 @@
       <file>Aircraft/Instruments-3d/ISFD/ISFD.nas</file>
       <file>Aircraft/737-800/Nasal/ISFD_install.nas</file>
     </isfd>
+
+  <!-- ensure we load the CDU later than the core scripts above -->
+    <Boeing>
+      <file>Aircraft/Instruments-3d/cdu2/boeing.nas</file>
+    </Boeing>
 
   </nasal>
 
