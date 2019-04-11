@@ -22,7 +22,7 @@
           </or>
         </and>
       </condition>
-    </enable>	
+    </enable>
     <input>
       <prop>/orientation/roll-rate-degps</prop>
     </input>
@@ -92,7 +92,7 @@
       <condition>
         <property>/autopilot/internal/PITCH-ACTIVE</property>
       </condition>
-    </enable>	
+    </enable>
     <input>
       <prop>/orientation/pitch-deg</prop>
     </input>
@@ -203,7 +203,7 @@
           <property>/autopilot/internal/PITCH-ACTIVE</property>
         </and>
       </condition>
-    </enable> 
+    </enable>
     <input>
       <prop>/autopilot/settings/target-accel-pitch</prop>
       <scale>1</scale>
@@ -419,7 +419,7 @@
           <property>/autopilot/internal/SPD-SPEED</property>
         </and>
       </condition>
-    </enable>	
+    </enable>
     <input>
       <prop>/instrumentation/airspeed-indicator/indicated-speed-kt</prop>
     </input>
@@ -451,7 +451,7 @@
           <property>/autopilot/internal/SPD-N1</property>
         </and>
       </condition>
-    </enable>	
+    </enable>
     <input>
       <property>/autopilot/settings/max-n1</property>
     </input>
@@ -469,7 +469,7 @@
           <property>/autopilot/internal/THROTTLE-ACTIVE</property>
         </and>
       </condition>
-    </enable>	
+    </enable>
     <input> <!-- N1 range from 19.76 to 104 -->
       <expression>
         <sum>
@@ -487,7 +487,7 @@
   </filter>
 
   <filter>
-    <name>SERVO-DRIVER:autothrottle</name>	
+    <name>SERVO-DRIVER:autothrottle</name>
     <type>noise-spike</type>
     <max-rate-of-change>
       <condition>
@@ -533,7 +533,7 @@
 <!-- JMT simpit mode: duplicate autothrotle SERVO-DRIVER for right throttle -->
 
   <filter>
-    <name>SERVO-DRIVER:autothrottle-right</name>	
+    <name>SERVO-DRIVER:autothrottle-right</name>
     <type>noise-spike</type>
     <max-rate-of-change>
       <condition>
@@ -584,7 +584,7 @@
       <condition>
         <property>/autopilot/internal/SPD-MACH</property>
       </condition>
-    </enable>	
+    </enable>
     <input>
       <expression>
         <div>
@@ -1083,7 +1083,7 @@
       <condition>
         <property>/autopilot/internal/GA</property>
       </condition>
-    </enable>	
+    </enable>
     <input>
       <property>/instrumentation/fmc/va-addition</property>
       <offset>
@@ -1153,6 +1153,7 @@
     <transition>
       <source>OFF</source>
       <target>ARM</target>
+      <name>AT armed</name>
       <condition>
         <property>/autopilot/internal/SPD</property>
       </condition>
@@ -1168,6 +1169,7 @@
       <source>GA</source>
       <source>regain arm</source>
       <target>regain off</target>
+      <name>AT disarming once regained control position</name>
       <condition>
         <not><property>/autopilot/internal/SPD</property></not>
       </condition>
@@ -1176,6 +1178,7 @@
     <transition>
       <source>regain off</source>
       <target>OFF</target>
+      <name>AT disarmed</name>
       <condition>
         <less-than>
           <property>/autopilot/at/thr-diff</property>
@@ -1187,6 +1190,7 @@
     <transition>
       <source>ARM</source>
       <target>MCP SPD</target>
+      <name>MCP SPD pressed</name>
       <condition>
         <property>/autopilot/buttons/speed</property>
       </condition>
@@ -1200,6 +1204,7 @@
     <transition>
       <source>MCP SPD</source>
       <target>regain arm</target>
+      <name>MCP SPD deselected</name>
       <condition>
         <property>/autopilot/buttons/speed</property>
       </condition>
@@ -1215,7 +1220,7 @@
 <!-- ROLL CHANNEL -->
 
   <state-machine>
-    
+
     <branch>/autopilot/fcc-a-roll-servo</branch>
     <state>
       <name>OFF</name>
@@ -1233,6 +1238,7 @@
     <transition>
       <source>OFF</source>
       <target>CMD</target>
+      <name>AP CMD selected</name>
       <condition>
         <property>/autopilot/buttons/cmda</property>
       </condition>

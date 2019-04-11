@@ -29,6 +29,7 @@
             <source>Preflight</source>
             <target>Takeoff</target>
             <exclude-target type="bool">true</exclude-target>
+            <name>FMC phase TOGA selected</name>
             <condition>
                 <property>/autopilot/internal/TOGA</property>
             </condition>
@@ -37,6 +38,7 @@
             <source>Takeoff</source>
             <target>Climb</target>
             <exclude-target type="bool">true</exclude-target>
+            <name>FMC phase: transitioning to Climb</name>
             <condition>
                 <greater-than>
                     <property>/instrumentation/radar-altimeter[0]/radar-altitude-ft</property>
