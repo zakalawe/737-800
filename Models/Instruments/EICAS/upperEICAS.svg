@@ -1057,6 +1057,15 @@
          x="533.67175"
          y="71.95652"
          style="font-size:37.78290939px;line-height:1.25;font-family:sans-serif">REV</tspan></text>
+
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#00ff00;fill-opacity:1;stroke:none"
+       x="383.91187"
+       y="30.010153"
+       id="assumeTemp"
+       inkscape:label="#text1129">42C</text>
+
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#00ff00;fill-opacity:1;stroke:none"
@@ -1069,21 +1078,6 @@
          x="239.28571"
          y="34"
          style="-inkscape-font-specification:Monospace;font-family:Monospace;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal">CON</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#00ff00;fill-opacity:1;stroke:none"
-       x="383.91187"
-       y="30.010153"
-       id="assumeTemp"
-       inkscape:label="#text1129"><tspan
-         sodipodi:role="line"
-         id="tspan1127"
-         x="383.91187"
-         y="30.010153"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:34.66666794px;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans'"><tspan
-   style="font-size:26.66666794px"
-   id="tspan1133">+</tspan><tspan
-   style="font-size:32px"
-   id="tspan1135">42</tspan>C</tspan></text>
+
   </g>
 </svg>

@@ -35,6 +35,9 @@ var canvas_upperEICAS = {
 		"tank1Line","tank2Line","tankCtrLine"];
 		foreach(var key; svg_keys) {
 			m[key] = upperEICAS.getElementById(key);
+			if (m[key] == nil) {
+				printlog("warn", "SVG element not found:" ~ key);
+			}
 		}
 		m.timers = [];
 
