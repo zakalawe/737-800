@@ -10,7 +10,7 @@
       <electrical>
         <path></path> <!-- disable -->
       </electrical>
-	  
+
       <autopilot>
         <path>Aircraft/737-800/Systems/737-afds.xml</path>
       </autopilot>
@@ -22,19 +22,19 @@
       <autopilot>
         <path>Aircraft/737-800/Systems/737-fcc-b.xml</path>
       </autopilot>
-	  
+
 	  <autopilot>
 		<path>Aircraft/737-800/Systems/hydraulics.xml</path>
 	  </autopilot>
-	  
+
 	  <autopilot>
 		<path>Aircraft/737-800/Systems/autospeedbrake.xml</path>
       </autopilot>
-	  
+
 	  <autopilot>
 		<path>Aircraft/737-800/Systems/fadec.xml</path>
       </autopilot>
-	  
+
       <autopilot>
         <path>Aircraft/737-800/Systems/737_pfd.xml</path>
       </autopilot>
@@ -46,7 +46,7 @@
       <autopilot>
         <path>Aircraft/737-800/Systems/aircraft-systems-logic.xml</path>
       </autopilot>
-      
+
       <path>Aircraft/737-800/Systems/systems.xml</path>
 
       <property-rule n="101">
@@ -148,7 +148,7 @@
                         mal.open();
                </script>
               </binding>
-          </item> 
+          </item>
           <item>
               <label>Failures</label>
               <binding>
@@ -158,7 +158,7 @@
                         fail.open();
                </script>
               </binding>
-          </item> 
+          </item>
           <item>
               <label>Show/Hide Yokes</label>
               <binding>
@@ -282,7 +282,7 @@
           <script>autopilot737.toga_button();</script>
         </binding>
       </key>
-      
+
       <key n="71">
         <name>G</name>
         <desc>Gear Down Custom Binding</desc>
@@ -292,7 +292,7 @@
             <value>0</value>
         </binding>
       </key>
-            
+
       <key n="103">
         <name>g</name>
         <desc>Gear Up Custom Binding</desc>
@@ -326,7 +326,7 @@
           <max type="double">6</max>
         </binding>
       </key>
-	  
+
 	  <key n="2">
 			<name>Ctrl-b</name>
 			<desc>Cycle speedbrake setting</desc>
@@ -641,7 +641,7 @@
 
   </autopilot>
 
-  
+
 
   <controls>
 
@@ -649,7 +649,7 @@
       <autobrakes type="int">0</autobrakes>
       <!-- 0=off, 1=1, 2=2, 3=3, 4=MAX, -1=RTO -->
     </gear>
-	
+
 	<flight n="0">
 		<aileron-sum>0</aileron-sum>
 		<elevator-sum>0</elevator-sum>
@@ -800,7 +800,7 @@
 	  <file>Aircraft/737-800/Nasal/hydraulics.nas</file>
       <file>Aircraft/737-800/Nasal/tire-smoke.nas</file>
       <file>Aircraft/737-800/Nasal/v-speed.nas</file>
-      <file>Aircraft/737-800/Nasal/engine-fire.nas</file> 
+      <file>Aircraft/737-800/Nasal/engine-fire.nas</file>
       	<file>Aircraft/737-800/Nasal/fmc.nas</file>
     </boeing737>
 
@@ -912,15 +912,15 @@
       <serviceable>true</serviceable>     <!-- EGPWS_ENABLE -->
       <configuration-module>
         <category-1>  255 </category-1>
-        <category-3>   2 </category-3>  <!-- POSITION_INPUT_SELECT -->      
-        <category-4>  13 </category-4>  <!-- ALTITUDE_CALLOUTS -->      
-        <category-5>   0 </category-5>  <!-- AUDIO_MENU_SELECT -->      
-        <category-6>   1 </category-6>  <!-- TERRAIN_DISPLAY_SELECT -->     
-        <category-7> 124 </category-7>  <!-- OPTIONS_SELECT_GROUP_1 -->     
+        <category-3>   2 </category-3>  <!-- POSITION_INPUT_SELECT -->
+        <category-4>  13 </category-4>  <!-- ALTITUDE_CALLOUTS -->
+        <category-5>   0 </category-5>  <!-- AUDIO_MENU_SELECT -->
+        <category-6>   1 </category-6>  <!-- TERRAIN_DISPLAY_SELECT -->
+        <category-7> 124 </category-7>  <!-- OPTIONS_SELECT_GROUP_1 -->
         <category-8>   4 </category-8>  <!-- RADIO_ALTITUDE_INPUT_SELECT-->
-        <category-9>   3 </category-9>  <!-- NAVIGATION_INPUT_SELECT -->        
-        <category-10>  6 </category-10> <!-- ATTITUDE_INPUT_SELECT -->      
-        <category-13>  7 </category-13> <!-- INPUT_OUTPUT_DISCRETE_TYPE_SELECT -->      
+        <category-9>   3 </category-9>  <!-- NAVIGATION_INPUT_SELECT -->
+        <category-10>  6 </category-10> <!-- ATTITUDE_INPUT_SELECT -->
+        <category-13>  7 </category-13> <!-- INPUT_OUTPUT_DISCRETE_TYPE_SELECT -->
         <category-14>  0 </category-14> <!-- AUDIO_OUTPUT_LEVEL -->
       </configuration-module>
       <inputs>                            <!-- Module I/O -->
@@ -928,10 +928,10 @@
           <decision-height-ncd> true </decision-height-ncd>
           <decision-height> 200 </decision-height>
         </arinc429>
-        <rs-232>        
-          <present-status>      
-            <landing-flaps type="double">0.5</landing-flaps>        
-          </present-status>     
+        <rs-232>
+          <present-status>
+            <landing-flaps type="double">0.5</landing-flaps>
+          </present-status>
         </rs-232>
       </inputs>
       <speaker>                           <!-- Speaker Configuration -->
@@ -1030,7 +1030,7 @@
       </takeoff>
 
       <climb>
-        <!-- 
+        <!--
         <target-speed-kt type="int">280</target-speed-kt>
         <target-speed-mach>0.78</target-speed-mach> -->
 
@@ -1089,8 +1089,8 @@
     <slip-skid-ball>
       <side-accel-filtered-norm type="double">0</side-accel-filtered-norm>
     </slip-skid-ball>
-	
-	
+
+
 	<ddrmi n="0">
 		<vor-adf-1 type="int">1</vor-adf-1>
 		<vor-adf-2 type="int">1</vor-adf-2>
