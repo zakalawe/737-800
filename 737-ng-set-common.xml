@@ -923,6 +923,12 @@
         <category-13>  7 </category-13> <!-- INPUT_OUTPUT_DISCRETE_TYPE_SELECT -->
         <category-14>  0 </category-14> <!-- AUDIO_OUTPUT_LEVEL -->
       </configuration-module>
+      <input-feeders>
+        <discretes>
+          <!-- disable the built-in input feeder -->
+          <landing-flaps type="bool">false</landing-flaps>
+        </discretes>
+      </input-feeders>
       <inputs>                            <!-- Module I/O -->
         <arinc429>
           <decision-height-ncd> true </decision-height-ncd>
