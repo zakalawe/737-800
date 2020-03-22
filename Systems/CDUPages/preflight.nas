@@ -402,7 +402,6 @@ var RouteModel =
             return CDU.EMPTY_FIELD4;
         
         if ((wp.wp_type == 'via') or (wp.wp_parent != nil)) {
-            debug.dump("WP navaid:", wp.wp_type, wp.navaid());
             return wp.wp_name;
         }
 
@@ -599,7 +598,13 @@ var RouteR6Action =
             displayRouteDepartures();
 
         elsif (!flightplan().active) {
-            cdu.setupExec( func { flightplan().activate(); }, nil, 0);
+            cdu.setupExec( func { 
+                # activate via the route-manager, since otherwise some
+                # pieces get confused. This will call flightplan.activate
+                # and hence end up in our FMCDelegate, for anything we
+                # need to do there.
+                fgcommand("activate-flightplan", props.Node.new({"activate": 1}));
+            }, nil, 0);
         } elsif (!getprop('instrumentation/fmc/pos-init-complete'))
             cdu.displayPageByTag('pos-init');
         else if (!getprop('instrumentation/fmc/perf-complete'))

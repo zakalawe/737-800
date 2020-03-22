@@ -16,8 +16,12 @@ var FMC = {
     MODE_LRC : 2,
     MODE_CLB_MAX_ANGLE : 3,
     MODE_CLB_MAX_RATE : 4,
-    MODE_DES_PATH : 5,
-    MODE_RTA : 6,
+    
+    MODE_DES_ECON_PATH : 5,
+    MODE_DES_SPEED_PATH : 6,
+    MODE_DES_SPEED : 7,
+
+    MODE_RTA : 8,
 
     new: func {
         m = { 
@@ -44,6 +48,31 @@ var FMC = {
 
         m._cruiseMode = m._root.getNode('cruise/mode', 1);
         m._cruiseMode.setIntValue(FMC.MODE_ECON);
+
+    # descent properties
+        m._descentMode = m._root.getNode('descent/mode', 1);
+        # default DES mode is ECON-PATH if available
+        m._descentMode.setIntValue(FMC.MODE_DES_ECON_PATH);
+
+        m._descentEndAltitude = m._root.getNode('descent/end-altitude-ft', 1);
+
+        m._descentTargetSpeedKnots = m._root.getNode('descent/target-speed-kts', 1);
+        m._descentTargetSpeedMach = m._root.getNode('descent/target-speed-mach', 1);
+
+        m._descentRestrictionWaypt = m._root.getNode('descent/restriction-waypt', 1);
+        m._descentRestrictionSpeed = m._root.getNode('descent/restriction-speed-kts', 1);
+        m._descentRestrictionAltitude = m._root.getNode('descent/restriction-altitude-ft', 1);
+        # boolean flag to mark when the user enters a restriction manually,
+        # as opposed to being computed
+        m._descentRestrictionFromUser = m._root.getNode('descent/restriction-user', 1);
+
+        m._descentHaveFlightPath = m._root.getNode('descent/flight-path-active', 1);
+        m._descentHaveFlightPath.setBoolValue(0);
+
+        m._descentVerticalDeviation = m._root.getNode('descent/vertical-deviation-ft', 1);
+        m._descentFPA = m._root.getNode('descent/flight-path-angle-deg', 1);
+        m._descentVS = m._root.getNode('descent/vertical-speed-fpm', 1);
+
 
         # squat switch
         m._airGround = props.globals.getNode("/b737/sensors/air-ground", 1);
@@ -149,7 +178,7 @@ var FMC = {
             
         } elsif (phase == FMC.PHASE_TAKEOFF) {
            if (me._airGround.getValue() == 0) {
-                print('FMC detected liftoff');
+                print('FMC detected liftoff, switching to CLIMB');
                 me._advanceToPhase(FMC.PHASE_CLIMB);
             }
         } elsif (phase == FMC.PHASE_CLIMB) {
@@ -162,6 +191,7 @@ var FMC = {
         } elsif (phase == FMC.PHASE_CRUISE) {
             # if distance to ToD is < 0.1 name
             # me.doDescentNow();
+
         }
 
     },
@@ -175,6 +205,10 @@ var FMC = {
 
         print('FMC descent now');
         me._advanceToPhase(FMC.PHASE_DESCENT);
+    },
+
+    activeDescentMode: func {
+        return me._descentMode;
     },
 
     _advanceToPhase: func(p) {
@@ -253,6 +287,24 @@ var FMC = {
         return nil;
     },
 
+    # find the first descent WP (starting from the current one)
+    # with an altitude resriction. 
+    # return nil if no such restriction exists
+    _nextDescentRestictionWP : func 
+    {
+        var fp = flightplan();
+        var sz = fp.getPlanSize();
+        var index = fp.currentWP().index;
+
+        for (; index < sz; index +=1 ) {
+            var wp = fp.getWP(index);
+            if ((wp.speed_cstr_type != nil) or (wp.alt_cstr_type != nil)) {
+                return wp;
+            }
+        }
+        return nil;
+    },
+
     doAltitudeIntervention: func {
         # delete active altitude restriction
         var wp = me.activeAltitudeRestrictionWP();
@@ -283,6 +335,13 @@ var FMC = {
     {
        
         # compute step point and savings for changed altitude
+
+
+    # update TO T/D time / distance
+        # compute along path distance to ToD point
+        # use me._descentTopGeod
+        setprop(FMC.rootPath ~ 'descent/to-top-distance-nm', 0.74);
+        setprop(FMC.rootPath ~ 'descent/to-top-time-sec', 0.74);
     },
 
     # given twp structs with {speed:nnn, altitude:mmmmmm}, select
@@ -388,9 +447,143 @@ var FMC = {
     isAboveCrossover: func(knots, mach)
     {
         # FIXME find actual crossover for the mach value
-        var crossOverAlt = 30000;
+        var crossOverAlt = 26000;
         return (me._indicatedAlt.getValue() >= crossOverAlt);
     },
+
+    _pathDistanceToWp: func(wp)
+    {
+        # distance to cur wp
+
+        var fp = flightplan();
+        var index = fp.current + 1;
+        
+        # distance direct to current wp
+        var cd = courseAndDistance(fp.currentWP());
+        var d = cd[1];
+
+        for (; index <= wp.index; index +=1) {
+            d += fp.getWP(index).leg_distance;
+        }
+
+        return d;
+    },
+
+    _groundspeedForLeg: func (leg)
+    {
+        var alt = leg.alt_cstr;
+        if ((leg.speed_cstr_type == 'computed-mach') or 
+            (leg.speed_cstr_type == 'computed'))
+        {
+            # convert Mach to GS
+        } else {
+            # convert IAS to GS
+        }
+
+        # should account for forecast winds for crusie legs
+    },
+
+    _predictedDurationForLegSeconds: func(leg)
+    {
+        var d = leg.leg_distance;
+        var gsKnots = _groundspeedForLeg(leg);
+        return (d / gsKnots) * 3600.0;
+    },
+
+    _predictedArrivalTime: func(wp)
+    {
+        return 1000.0;
+    },
+
+    updateDescent: func
+    {
+        var wp = me._nextDescentRestictionWP();
+        if (wp) {
+            setprop(FMC.rootPath ~ 'descent/restriction-waypoint', wp.wp_name);
+            setprop(FMC.rootPath ~ 'descent/restriction-altitude-ft', wp.alt_cstr);
+            setprop(FMC.rootPath ~ 'descent/restriction-speed-kts', wp.speed_cstr);
+        } else {
+            # no down-path restriction
+            setprop(FMC.rootPath ~ 'descent/restriction-waypoint', nil);
+        }
+
+        # compute distance along path to wp
+        var pathDistance = me._pathDistanceToWp(wp);
+        setprop(FMC.rootPath ~ 'descent/restriction-distance-nm', pathDistance);
+
+        var timeZ = me._predictedArrivalTime(wp);
+        setprop(FMC.rootPath ~ 'descent/restriction-time-zulu', timeZ);
+
+        # FPA / vertical bearing computations
+        # 
+        # check if it's destination runway also
+
+    },
+
+    computeEndOfDescent: func
+    {
+        var endAltitude = flightplan().destination.elevation + 1000;
+        # if we have a destination runway, use its threshold elevation
+        # otherwise use destination field-elevation + 1000
+        if (flightplan().destination_runway !- nil) {
+            endAltitude = flightplan().destination_runway.elevation;
+        }
+        setprop(FMC.rootPath ~ 'descent/end-altitude-ft', endAltitude);
+    },
+
+    computeDescent: func
+    {
+        var fp = flightplan();
+        me.computeEndOfDescent();
+    
+        var curAlt = fp.cruiseAltitudeFt;
+        var endAlt = getprop(FMC.rootPath ~ 'descent/end-altitude-ft');
+
+        # if we're in the descent, use current alttidue instead
+        if (me._phase >= PHASE_DESCENT) {
+            curAlt = me._indicatedAlt;
+        }
+
+        var firstDescentRestriction = me._nextDescentRestictionWP();
+        if (firstDescentRestriction != nil) {
+            endAlt = firstDescentRestriction.alt_cstr;
+        }
+
+        var descentChange = curAlt - endAlt;
+        # eg, descent FL340 to 10000, 24000 difference -> 24 * 3 = 72NM out
+        # maybe a bit excessive?
+        var lateralDistanceNm = (descentChange / 1000) * 3;
+
+        # FIXME use correct value for last approach point here
+        # right now this will start from the missed approach which is not what we want
+        var pathIndex = fp.numWaypoints() - 1;
+        if (firstDescentRestriction != nil) {
+            pathIndex = firstDescentRestriction.index;
+        }
+
+        me._descentTopGeod = fp.pathGeod(pathIndex, - lateralDistanceNm);
+
+        setprop(FMC.rootPath ~ 'descent/top-latitude-deg',  me._descentTopGeod.lat);
+        setprop(FMC.rootPath ~ 'descent/top-longitude-deg',  me._descentTopGeod.lon);
+    },
+
+    enterDescentTargetSpeed: func(s)
+    {
+        var spd = CUD.parseKnotsMach(s);
+        if (spd == nil) {
+            print('Invalid descent target speed entry');
+            return;
+        }        
+
+        setprop(FMC.rootPath ~ 'descent/target-speed-kts', spd.knots);
+        setprop(FMC.rootPath ~ 'descent/target-speed-mach', spd.mach);
+
+        if (me._descentMode == MODE_DES_ECON_PATH) {
+            # transition to SPEED_PATH,
+            # anything else to do here?
+            me._descentMode = MODE_DES_SPEED_PATH;
+        }
+    }
 };
 
 var fmc = FMC.new();
@@ -402,6 +595,11 @@ var BoeingFMCDelegate = {
             _plan: fp
         };
         return m;
+    },
+
+    activated: func()
+    {
+        # flight plan activation
     },
 
     waypointsChanged: func()

@@ -982,6 +982,8 @@
           <page type="string" n="6">Systems/CDUPages/performance.nas</page>
           <page type="string" n="7">Systems/CDUPages/maintenance.nas</page>
           <page type="string" n="8">Systems/CDUPages/departure-arrival.nas</page>
+          <page type="string" n="9">Systems/CDUPages/descent.nas</page>
+
           <boot-page type="string">ident</boot-page>
       </settings>
     </cdu>
