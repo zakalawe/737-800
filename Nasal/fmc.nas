@@ -363,7 +363,7 @@ var FMC = {
         if (!flightplan().active) return 0;
 
         if (getprop('autopilot/route-manager/inputs/cost-index') == nil) return 0;
-        if (getprop('autopilot/route-manager/settings/reserve-fuel-lbs') == nil) return 0;
+        if (getprop('autopilot/route-manager/settings/reserve-fuel-kg') == nil) return 0;
         
         # what is this based off? valid cruise altitude, anything else?
         # cruise wind is definitely not needed

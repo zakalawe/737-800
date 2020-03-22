@@ -360,7 +360,7 @@ var CruiseModel =
     },
     
     titleForFuelAtDestination: func {
-        if (!flightplan().destination) return nil;
+        if (flightplan().destination == nil) return nil;
         return '~FUEL AT ' ~ flightplan().destination.id;
     },
     

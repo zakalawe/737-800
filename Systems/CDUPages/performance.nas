@@ -128,14 +128,19 @@ var PerformanceModel =
     },
     
     dataForFuelReserves: func {
-        var rf = (getprop('instrumentation/fmc/settings/reserve-fuel-kk') or 0) / 1000;
+        var rf = (getprop('instrumentation/fmc/settings/reserve-fuel-kg') or 0) / 1000;
         if (rf < 1.0) return CDU.BOX3_1;
         return sprintf('%5.1f', rf);
     },
     
     editFuelReserves: func(scratch) {
+        print('Set reserves' ~ scratch);
         var rf = num(scratch) * 1000;
-        if ((rf < 900) or (rf > 50000)) return 0;
+        if ((rf < 900) or (rf > 50000)) {
+            cdu.postMessage(CDU.INVALID_DATA_ENTRY, "INVALID RESERVES");
+            return 0;
+        }
+
         setprop('instrumentation/fmc/settings/reserve-fuel-kg', rf);
         boeing737.fmc.updatePerformance();
         return 1;

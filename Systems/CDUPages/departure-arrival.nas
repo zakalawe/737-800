@@ -348,12 +348,13 @@ var makeArrivalsPage = func(apt, other = 0)
     depArrIndex.addField(CDU.PropField.new(pos:'L2+9', prop:'autopilot/route-manager/destination/airport'));
     depArrIndex.addField(CDU.StaticField.new(pos:'L5+9', data:'OTHER'));
     
-    depArrIndex.addAction(CDU.Action.new('DEP', 'L1', func {
-            var apt = flightplan().departure;
-            if (apt == nil) return;
-            cdu.displayPage(makeDeparturesPage(apt));
-        } 
-    ));
+    var displayRouteDepartures = func {
+        var apt = flightplan().departure;
+        if (apt == nil) return;
+        cdu.displayPage(makeDeparturesPage(apt));
+    }
+
+    depArrIndex.addAction(CDU.Action.new('DEP', 'L1', displayRouteDepartures));
     
     depArrIndex.addAction(CDU.Action.new('ARR', 'R1', func {
             var apt = flightplan().departure;

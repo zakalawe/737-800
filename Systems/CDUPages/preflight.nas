@@ -595,7 +595,9 @@ var RouteR6Action =
 
     exec: func {
         if (flightplan().departure_runway == nil)
-			cdu.displayPageByTag('departure');
+			# defined in departure-arrivals.nas
+            displayRouteDepartures();
+
         elsif (!flightplan().active) {
             cdu.setupExec( func { flightplan().activate(); }, nil, 0);
         } elsif (!getprop('instrumentation/fmc/pos-init-complete'))
