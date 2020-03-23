@@ -146,24 +146,13 @@ var TakeoffModel =
         return sprintf('%2d', f)~'g';
     },
     
-    permittedTakeoffFlaps: [1, 2, 5, 10, 15, 25],
-
     editFlaps: func(scratch) {
         var f = num(scratch);
-
-        var ok = 0;
-        foreach (var fl; me.permittedTakeoffFlaps) {
-            if (fl == f) ok = 1;
-        }
-
-        if (!ok) {
+        if (!boeing737.fmc.setTakeoffFlaps(f)) {
             cdu.postMessage(CDU.INVALID_DATA_ENTRY, 'INVALID TAKEOFF FLAPS');
             return 0;
         }
 
-        setprop('instrumentation/fmc/inputs/takeoff-flaps', f);
-        boeing737.vspeed.updateFromFMC();
-        boeing737.fmc.updateTakeoffTrim();
         return 1;
     },
 	

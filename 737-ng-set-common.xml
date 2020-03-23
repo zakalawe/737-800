@@ -190,6 +190,13 @@
                   <command>cdu-reload</command>
               </binding>
           </item>
+
+           <item>
+              <label>Reload FMC</label>
+              <binding>
+                  <command>fmc-reload</command>
+              </binding>
+          </item>
         </menu>
       </default>
     </menubar>
@@ -797,12 +804,15 @@
       <file>Aircraft/737-800/Nasal/friction.nas</file>
       <file>Aircraft/737-800/Nasal/liveries.nas</file>
       <file>Aircraft/737-800/Nasal/systems.nas</file>
-	  <file>Aircraft/737-800/Nasal/hydraulics.nas</file>
+	   <file>Aircraft/737-800/Nasal/hydraulics.nas</file>
       <file>Aircraft/737-800/Nasal/tire-smoke.nas</file>
       <file>Aircraft/737-800/Nasal/v-speed.nas</file>
       <file>Aircraft/737-800/Nasal/engine-fire.nas</file>
       	<file>Aircraft/737-800/Nasal/fmc.nas</file>
+        <file>Aircraft/737-800/Nasal/fmc_shell.nas</file>
     </boeing737>
+
+
 
     <autopilot737>
       <file>Aircraft/737-800/Nasal/autopilot.nas</file>

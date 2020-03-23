@@ -101,6 +101,25 @@ var FMC = {
         return getprop('consumables/fuel/total-fuel-kg');
     },
 
+    _permittedTakeoffFlaps: [1, 2, 5, 10, 15, 25],
+
+    # validate the flaps setting and update related values
+    # eg v-speeds
+    setTakeoffFlaps: func (flaps) {
+        var ok = 0;
+        foreach (var fl; me._permittedTakeoffFlaps) {
+            if (fl == flaps) ok = 1;
+        }
+
+        if (!ok) {
+            return 0;
+        }
+
+        setprop(FMC.rootPath ~ 'inputs/takeoff-flaps', flaps);
+        vspeed.updateFromFMC();
+        me.updateTakeoffTrim();
+    },
+
     updatePreflightComplete: func {
         # perf complete, route active, pos init complete
         # takeoff flaps selected, crusie altitude selected
@@ -119,8 +138,8 @@ var FMC = {
         if (flaps == nil) return 0;
 
         # covers crz alt
-        if (!me._root.getNode('pos-init-complete')) return 0;
-        if (!me._root.getNode('perf-complete')) return 0;
+        if (!me._root.getNode('pos-init-complete').getValue()) return 0;
+        if (!me._root.getNode('perf-complete').getValue()) return 0;
 
         return 1;
     },
@@ -525,7 +544,7 @@ var FMC = {
         var endAltitude = flightplan().destination.elevation + 1000;
         # if we have a destination runway, use its threshold elevation
         # otherwise use destination field-elevation + 1000
-        if (flightplan().destination_runway !- nil) {
+        if (flightplan().destination_runway != nil) {
             endAltitude = flightplan().destination_runway.elevation;
         }
         setprop(FMC.rootPath ~ 'descent/end-altitude-ft', endAltitude);
