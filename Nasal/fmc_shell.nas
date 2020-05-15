@@ -1,35 +1,34 @@
 
 
-
-
 reload_FMC = func 
 {    
     debug.dump('reloading FMC');
-    
-    fmc = nil;
-    FMC = nil; # clear out the existing one
-    
-    # clear out the FMC namespace as well
-    globals['fmc_test_NS'] = { };
-
-    # resolve the path in FG_ROOT, and --fg-aircraft dir, etc
-    var abspath = resolvepath("Nasal/fmc.nas");
-    io.load_nasal(abspath, 'boeing737');
-
-    fmc = FMC.new();
-
-# add test methods
-    var abspath = resolvepath("Nasal/fmcTests.nas");
-    # load pages code into a seperate namespace which we defined above
-    # also means we can clean out that namespace later
-    io.load_nasal(abspath, 'fmc_test_NS');
-    globals['fmc_test_NS'].init(fmc);
+    setprop('/nasal/modules/b737_fmc/reload', 1);
 };
 
-var abspath = resolvepath("Nasal/fmcTests.nas");
-io.load_nasal(abspath, 'fmc_test_NS');
+#-- load fmc as reloadable module
+#
 
-globals['fmc_test_NS'].init(fmc);
+# Module name (=namespace name): 
+# - check 737-ng-set-common.xml <nasal> section, 
+# - do NOT use any namespace already in use 
+# - "b737_fmc" seems ok, check prop tree /nasal/modules/b737_fmc/reload 
 
-addcommand('fmc-reload', reload_FMC);
+var fmc_module = modules.Module.new("b737_fmc"); 
+
+fmc_module.setDebug(1); 
+# 0=(mostly) silent; 
+# 1=print setlistener and maketimer calls to console;
+# 2=print also each listener hit, be very careful with this! 
+
+fmc_module.setFilePath(getprop("/sim/aircraft-dir")~"/Nasal");
+fmc_module.setMainFile("fmc.nas");
+fmc_module.load();
+
+# var abspath = resolvepath("Nasal/fmcTests.nas");
+# io.load_nasal(abspath, 'fmc_test_NS');
+
+# globals['fmc_test_NS'].init(fmc);
+
+#addcommand('fmc-reload', reload_FMC);
 

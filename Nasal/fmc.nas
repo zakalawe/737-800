@@ -239,6 +239,8 @@ var FMC = {
 
         # recompute all modes for now
         me.updateClimb();
+        me.computeDescent();
+
         me.updateCruise();
 
         # likely everything has changed :)
@@ -333,19 +335,6 @@ var FMC = {
         }
     },
 
-    _computeVNAVProfile: func {
-        var fp = flightplan();
-
-        var cruiseAlt = fp.cruiseAltitudeFt;
-        var climbKnots = 280;
-        var descentKnots = 280;
-
-        # need to know climb rate to estimate time / distance to ToC
-
-        # similar for descent rate
-
-    },
-
     _computeFuelConsumption: func {
         # use leg altitude / speeds to compute fuel usage per leg
     },
@@ -353,14 +342,20 @@ var FMC = {
     updateCruise: func
     {
        
+       if (flightplan() == nil) {
+           print("B737 FMC: updateCruise: No active flightplan yet");
+           return;
+       }
+
         # compute step point and savings for changed altitude
 
 
     # update TO T/D time / distance
-        # compute along path distance to ToD point
-        # use me._descentTopGeod
-        setprop(FMC.rootPath ~ 'descent/to-top-distance-nm', 0.74);
-        setprop(FMC.rootPath ~ 'descent/to-top-time-sec', 0.74);
+        var d = me._pathDistanceToTOD();
+        var t = me._pathTimeToTOD();
+
+        setprop(FMC.rootPath ~ 'descent/to-top-distance-nm', d);
+        setprop(FMC.rootPath ~ 'descent/to-top-time-sec', t);
     },
 
     # given twp structs with {speed:nnn, altitude:mmmmmm}, select
@@ -475,6 +470,9 @@ var FMC = {
         # distance to cur wp
 
         var fp = flightplan();
+        if ((fp == nil) or (fp.active == 0))
+            return -1.0;
+
         var index = fp.current + 1;
         
         # distance direct to current wp
@@ -486,6 +484,76 @@ var FMC = {
         }
 
         return d;
+    },
+
+    _pathTimeToWP: func(wp, offset)
+    {
+        var fp = flightplan();
+        if ((fp == nil) or (fp.active == 0))
+            return -1.0;
+
+        var index = fp.current + 1;
+        var gs = getprop("/velocities/groundspeed-kts");
+
+        # distance direct to current wp
+        var cd = courseAndDistance(fp.currentWP());
+        var d = cd[1];
+        var t = (d / gs) * 3600.0;
+
+        for (; index <= wp; index +=1) {
+            var leg = fp.getWP(index);
+            t += _predictedDurationForLegSeconds(leg);
+        }
+
+        # and account for any offset
+        if (offset > 0.0) {
+            var gs = me._groundspeedForLeg(fp.getWP(wp));
+            t += (offset / gs) * 3600.0;
+        }
+
+        return t;
+    },
+
+    _pathDistanceToTOD: func 
+    {
+        var todIndex = getprop(FMC.rootPath ~ 'descent/top-wp-index');
+        var todOffset = getprop(FMC.rootPath ~ 'descent/top-wp-offset-nm');
+        return me._pathDistanceToWp(todIndex) + todOffset;
+    },
+
+    _pathTimeToTOD: func 
+    {
+        var todIndex = getprop(FMC.rootPath ~ 'descent/top-wp-index');
+        var todOffset = getprop(FMC.rootPath ~ 'descent/top-wp-offset-nm');
+        return me._pathTimeToWP(todIndex, todOffset);
+    },
+
+    _normalisePathOffset: func(index, offsetNm)
+    {
+        if (offsetNm < 0.0) {
+            # base case: we're at the beginning
+            if (index == 0) {
+                return { wpIndex: 0, offsetNm: offsetNm};
+            }
+
+            var d = flightplan().getWP( index- 1).leg_distance;
+            return self._normalisePathOffset(index - 1, offsetNm + d);
+        }
+
+        # offset is positive
+        var d = flightplan().getWP(index).leg_distance;
+        if (offsetNm < d) {
+            # we're done, found the containing leg
+            return {wpIndex: index, offsetNm: offsetNm};
+        }
+
+        if (index >= (flightplan.numWaypoints() - 1)) {
+            # we're done, off the end of the route
+            return {wpIndex: index, offsetNm: offsetNm};
+        }
+
+        # recurse forward
+        return self._normalisePathOffset(index + 1, offsetNm - d);
     },
 
     _groundspeedForLeg: func (leg)
@@ -500,6 +568,10 @@ var FMC = {
         }
 
         # should account for forecast winds for crusie legs
+        # if (leg.. is Cruise)
+        # add/subtract cruise wind
+
+        return 400.0;
     },
 
     _predictedDurationForLegSeconds: func(leg)
@@ -507,11 +579,6 @@ var FMC = {
         var d = leg.leg_distance;
         var gsKnots = _groundspeedForLeg(leg);
         return (d / gsKnots) * 3600.0;
-    },
-
-    _predictedArrivalTime: func(wp)
-    {
-        return 1000.0;
     },
 
     updateDescent: func
@@ -530,7 +597,7 @@ var FMC = {
         var pathDistance = me._pathDistanceToWp(wp);
         setprop(FMC.rootPath ~ 'descent/restriction-distance-nm', pathDistance);
 
-        var timeZ = me._predictedArrivalTime(wp);
+        var timeZ = me._pathTimeToWP(wp);
         setprop(FMC.rootPath ~ 'descent/restriction-time-zulu', timeZ);
 
         # FPA / vertical bearing computations
@@ -558,7 +625,7 @@ var FMC = {
         var curAlt = fp.cruiseAltitudeFt;
         var endAlt = getprop(FMC.rootPath ~ 'descent/end-altitude-ft');
 
-        # if we're in the descent, use current alttidue instead
+        # if we're in the descent, use current altitude instead
         if (me._phase >= PHASE_DESCENT) {
             curAlt = me._indicatedAlt;
         }
@@ -573,17 +640,24 @@ var FMC = {
         # maybe a bit excessive?
         var lateralDistanceNm = (descentChange / 1000) * 3;
 
-        # FIXME use correct value for last approach point here
-        # right now this will start from the missed approach which is not what we want
-        var pathIndex = fp.numWaypoints() - 1;
-        if (firstDescentRestriction != nil) {
-            pathIndex = firstDescentRestriction.index;
+        # if we're still in the cruise, comppute Top-of-Descent data
+        if (me._phase < PHASE_DESCENT) {
+            # FIXME use correct value for last approach point here
+            # right now this will start from the missed approach which is not what we want
+            var pathIndex = fp.numWaypoints() - 1;
+            if (firstDescentRestriction != nil) {
+                pathIndex = firstDescentRestriction.index;
+            }
+
+            var offset = me._normalisePathOffset(pathIndex, -lateralDistanceNm);
+
+            setprop(FMC.rootPath ~ 'descent/top-wp-index',  offset.wpIndex);
+            setprop(FMC.rootPath ~ 'descent/top-wp-offset-nm',  offset.offsetNm);
+
+            me._descentTopGeod = fp.pathGeod(pathIndex, - lateralDistanceNm);
+            setprop(FMC.rootPath ~ 'descent/top-latitude-deg',  me._descentTopGeod.lat);
+            setprop(FMC.rootPath ~ 'descent/top-longitude-deg',  me._descentTopGeod.lon);
         }
-
-        me._descentTopGeod = fp.pathGeod(pathIndex, - lateralDistanceNm);
-
-        setprop(FMC.rootPath ~ 'descent/top-latitude-deg',  me._descentTopGeod.lat);
-        setprop(FMC.rootPath ~ 'descent/top-longitude-deg',  me._descentTopGeod.lon);
     },
 
     enterDescentTargetSpeed: func(s)
@@ -652,4 +726,80 @@ var BoeingFMCDelegate = {
     }
 };
 
+var _cdu = nil;
+
+var enterLSK = func(entry, lsk)
+{
+    _cdu.setScratchpad(entry);
+    _cdu.lsk(lsk);
+}
+
+var execTest1 = func() 
+{
+    print("Running FMC test 1");
+    _cdu = Boeing.cdu;
+
+    setprop('instrumentation/fmc/settings/ref-airport', 'EDDM');
+    setprop('instrumentation/fmc/pos-init-complete', 1);
+
+    # route page
+
+    var routePage = Boeing.cdu.getPage('route');
+    Boeing.cdu.displayPage(routePage);
+
+    enterLSK('EDDM', 'L1');
+    enterLSK('EGKK', 'R1');
+    enterLSK('KL1278', 'R2');
+
+    # should select 'departure' page
+    _cdu.lsk('R6');
+    print("Page title is:" ~ _cdu.currentPage().title());
+
+    # select runway
+
+
+# perf init pages
+
+    setprop('instrumentation/fmc/gross-weight-lbs', 60 * 1000);
+    
+    # CDU entry of cruise altitude
+    var perfPage = Boeing.cdu.getPage('performance');
+    Boeing.cdu.displayPage(perfPage);
+    
+    enterLSK('FL340', 'R1');
+    Boeing.cdu.button_exec();
+
+    # reserves
+    enterLSK('2.1', 'L4');
+
+    # cost index  
+    enterLSK('200', 'L5');
+
+    # limits page
+    var n1Preflight = Boeing.cdu.getPage('thrust-lim');
+    Boeing.cdu.displayPage(n1Preflight);
+    
+    # assumed temp
+    enterLSK('20', 'L1');
+
+    # select CLB-1
+    Boeing.cdu.lsk('R3');
+
+    # takeoff page
+    boeing737.fmc.setTakeoffFlaps(10);
+};
+
+
 registerFlightPlanDelegate(BoeingFMCDelegate.new);
+
+var unload = func() {
+    unregisterFlightPlanDelegate("boeing737-fmc");
+    boeing737.fmc = nil;
+}
+
+var main = func {
+    registerFlightPlanDelegate(BoeingFMCDelegate.new, "boeing737-fmc");
+    #copy to original namespace (or edit all other source files  to use new module namespace)
+    boeing737.fmc = fmc;
+    fmc.execTest1 = execTest1;
+}

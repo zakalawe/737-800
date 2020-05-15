@@ -5,6 +5,9 @@
     <status>early-production</status>
     <flight-model>jsb</flight-model>
 
+    <compatible-fg-version>2018.*</compatible-fg-version>
+    <compatible-fg-version>2019.*</compatible-fg-version>
+
     <systems>
 
       <electrical>
@@ -194,7 +197,8 @@
            <item>
               <label>Reload FMC</label>
               <binding>
-                  <command>fmc-reload</command>
+                  <command>nasal-module-reload</command>
+                   <module>b737_fmc</module>
               </binding>
           </item>
         </menu>
@@ -808,8 +812,7 @@
       <file>Aircraft/737-800/Nasal/tire-smoke.nas</file>
       <file>Aircraft/737-800/Nasal/v-speed.nas</file>
       <file>Aircraft/737-800/Nasal/engine-fire.nas</file>
-      	<file>Aircraft/737-800/Nasal/fmc.nas</file>
-        <file>Aircraft/737-800/Nasal/fmc_shell.nas</file>
+      <file>Aircraft/737-800/Nasal/fmc_shell.nas</file>
     </boeing737>
 
 

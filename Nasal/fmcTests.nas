@@ -1,8 +1,16 @@
 var _fmc = nil;
+var _cdu = nil;
+
+var enterLSK = func(entry, lsk)
+{
+    _cdu.setScratchpad(entry);
+    _cdu.lsk(lsk);
+}
 
 var execTest1 = func() 
 {
     print("Running FMC test 1");
+    _cdu = Boeing.cdu;
 
     setprop('instrumentation/fmc/settings/ref-airport', 'EDDM');
     setprop('instrumentation/fmc/pos-init-complete', 1);
@@ -12,23 +20,16 @@ var execTest1 = func()
     var routePage = Boeing.cdu.getPage('route');
     Boeing.cdu.displayPage(routePage);
 
-    Boeing.cdu.setScratchpad('EDDM');
-    Boeing.cdu.lsk('L1');
-
-    Boeing.cdu.setScratchpad('EGKK');
-    Boeing.cdu.lsk('R1');
-
-    Boeing.cdu.setScratchpad('KL1278');
-    Boeing.cdu.lsk('R2');
+    enterLSK('EDDM', 'L1');
+    enterLSK('EGKK', 'R1');
+    enterLSK('KL1278', 'R2');
 
     # should select 'departure' page
-    Boeing.cdu.lsk('R6');
-
-    print("Page title is:" ~ Boeing.cdu.currentPage().title());
+    _cdu.lsk('R6');
+    print("Page title is:" ~ _cdu.currentPage().title());
 
     # select runway
 
-    
 
 # perf init pages
 
@@ -38,25 +39,21 @@ var execTest1 = func()
     var perfPage = Boeing.cdu.getPage('performance');
     Boeing.cdu.displayPage(perfPage);
     
-    Boeing.cdu.setScratchpad('FL340');
-    Boeing.cdu.lsk('R1');
+    enterLSK('FL340', 'R1');
     Boeing.cdu.button_exec();
 
     # reserves
-    Boeing.cdu.setScratchpad('2.1');
-    Boeing.cdu.lsk('L4');
+    enterLSK('2.1', 'L4');
 
-    # cost index
-    Boeing.cdu.setScratchpad('200');
-    Boeing.cdu.lsk('L5');   
+    # cost index  
+    enterLSK('200', 'L5');
 
     # limits page
     var n1Preflight = Boeing.cdu.getPage('thrust-lim');
     Boeing.cdu.displayPage(n1Preflight);
     
     # assumed temp
-    Boeing.cdu.setScratchpad('20');
-    Boeing.cdu.lsk('L1');
+    enterLSK('20', 'L1');
 
     # select CLB-1
     Boeing.cdu.lsk('R3');
