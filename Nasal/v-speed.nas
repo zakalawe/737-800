@@ -15,6 +15,9 @@ var v1Speed = props.globals.initNode("/instrumentation/fmc/speeds/v1-kt", 0, "DO
 var vrSpeed = props.globals.initNode("/instrumentation/fmc/speeds/vr-kt", 0, "DOUBLE");
 var v2Speed = props.globals.initNode("/instrumentation/fmc/speeds/v2-kt", 0, "DOUBLE");
 
+var takeoffFlaps = props.globals.initNode("/instrumentation/fmc/inputs/takeoff-flaps", 0, "INT");
+var takeoffElevation = props.globals.initNode("/instrumentation/fmc/inputs/takeoff-elevation-ft", 0, "INT");
+
 var vrefSpeed = props.globals.initNode("/instrumentation/fmc/speeds/vref-kt", 0, "DOUBLE");
 var whiteBugSpeed = props.globals.initNode("/instrumentation/fmc/speeds/white-bug-kt", 0, "DOUBLE");
 var gWeight = props.globals.initNode("/instrumentation/fmc/weights/gw", 0, "DOUBLE");
@@ -119,29 +122,33 @@ var vspeed = {
 
 	clearFMCSpeeds : func()
 	{
-			v1Speed.setValue(0);
-			vrSpeed.setValue(0);
-			v2Speed.setValue(0);
-			vrefSpeed.setValue(0);
-	},
-
-	updateFromFMC : func() {
-		print('Compute V speeds');
 		v1Speed.setValue(0);
 		vrSpeed.setValue(0);
+		v2Speed.setValue(0);
 		vrefSpeed.setValue(0);
+	},
+
+
+	updateFromFMC : func() {
+		print("Did update V-speeds from FMC")
+
+		# clear the entered vlaueds, force re-entry?
+		me.clearFMCSpeeds();
+
 		gWeight.setValue(0);
 		whiteBugSpeed.setValue(0);
 	},
 
 	computeSpeed: func(index) {
-		print('FIXME - compute real speeds');
 		if (index == 0) {
-			return 130;
+			return getprop('/instrumentation/fmc/takeoff/computed-v1-speed') 
+			+ getprop('/instrumentation/fmc/takeoff/computed-v1-offset');
 		} elsif (index == 1) {
-			return 135;
+			return getprop('/instrumentation/fmc/takeoff/computed-vr-speed') 
+			+ getprop('/instrumentation/fmc/takeoff/computed-vr-offset') ;
 		} elsif (index == 2) {
-			return 140;
+			return getprop('/instrumentation/fmc/takeoff/computed-v2-speed') 
+			+ getprop('/instrumentation/fmc/takeoff/computed-v2-offset') ;
 		}
 	},
 
