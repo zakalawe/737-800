@@ -81,6 +81,9 @@ var FMC = {
         # init some data
         m.updateCruise();
 
+        # core FMC update timer
+        maketimer(0.5, func me.updateFlightPhase());
+
         return m;
     },
 
@@ -207,10 +210,13 @@ var FMC = {
                 print('FMC Reached cruise altitude');
                 me._advanceToPhase(FMC.PHASE_CRUISE);
             }
-        } elsif (phase == FMC.PHASE_CRUISE) {
-            # if distance to ToD is < 0.1 name
-            # me.doDescentNow();
 
+            me.updateClimb();
+        } elsif (phase == FMC.PHASE_CRUISE) {
+            me.updateCruise();
+
+        } elsif (phase == FMC.PHASE_DESCENT) {
+            me.updateDescent();
         }
 
     },
@@ -238,6 +244,7 @@ var FMC = {
         me._phase.setIntValue(p);
 
         # recompute all modes for now
+        me.computeClimb();
         me.updateClimb();
         me.computeDescent();
 
@@ -341,7 +348,11 @@ var FMC = {
 
     updateCruise: func
     {
-       
+        # avoid spurious computations
+        if (phase > FMC.PHASE_CRUISE) {
+            return;
+        }
+
        if (flightplan() == nil) {
            print("B737 FMC: updateCruise: No active flightplan yet");
            return;
@@ -352,10 +363,18 @@ var FMC = {
 
     # update TO T/D time / distance
         var d = me._pathDistanceToTOD();
+        if (d < 0.1) {
+            # enter DESenct mode
+            print('FMC at ToD, stsrting DESCENT');
+            me._advanceToPhase(FMC.PHASE_DESCENT);
+        }
+
         var t = me._pathTimeToTOD();
 
         setprop(FMC.rootPath ~ 'descent/to-top-distance-nm', d);
         setprop(FMC.rootPath ~ 'descent/to-top-time-sec', t);
+
+
     },
 
     # given twp structs with {speed:nnn, altitude:mmmmmm}, select
@@ -370,22 +389,87 @@ var FMC = {
         return (a.speed < b.speed) ? a : b;
     },
 
-    updateClimb: func
+    _timeToClimb: func(from, to)
+    {
+        var result = 0; # time in seconds
+        if ((from < 18000) and (to > 18000)) {
+            result = ((18000 - from) / 1800) * 60
+            from = 18000;
+        }
+    
+        if (to > 28000) {
+            # bias this by weight especially
+
+            # 500 FPM above FL280
+            result += ((to - 28000) / 500) * 60;
+            to = 28000;
+        }
+
+        # 1000FPM from 18000 up to C/O alt
+        result += ((to - from) / 1000) * 60
+
+        return result;
+    },
+
+    _climbSpeed: func
     {
         # compute speed
+        # FIXME : use real V2 speed
+        var v2Speed = 155;
 
+        var climbKts = 280;
         var md = me.climbMode();
         if (md == FMC.MODE_CLB_MAX_ANGLE) {
             # use V2 + 80
             # taken from the Tech Guide rules of thumb
+            climbKts = v2Speed + 80;
         } elsif (md == FMC.MODE_CLB_MAX_RATE) {
             # use V2 + 120
             # taken from the Tech Guide rules of thumb
+            climbKts = v2Speed + 120;
         } else {
             # ECON / LRC
-            setprop(FMC.rootPath ~ 'climb/computed-speed-kt', 280);
-            setprop(FMC.rootPath ~ 'climb/computed-speed-mach', 0.74);
+            climbKts = 280;
         }
+
+        return climbKts;
+    },
+
+    computeClimb: func
+    {
+        var fp = flightplan();
+    
+        var curAlt = fp.departure.getElevationFt();;
+        if (phase == FMC.PHASE_CLIMB) {
+            curAlt = me._indicatedAlt.getValue();
+        }
+
+        var cruiseAlt = fp.cruiseAltitudeFt
+        var climbTime = me._timeToClimb(curAlt, cruiseAlt);
+
+        var kts = me._climbSpeed();
+        # fixme compsensate for groundspeed/wind
+        var lateralDistanceNm = (climbTime / 3600.0) * kts;
+
+        var offset = me._normalisePathOffset(0, lateralDistanceNm);
+
+        setprop(FMC.rootPath ~ 'climb/top-wp-index',  offset.wpIndex);
+        setprop(FMC.rootPath ~ 'climb/top-wp-offset-nm',  offset.offsetNm);
+
+        me._climbTopGeod = fp.pathGeod(pathIndex, lateralDistanceNm);
+        setprop(FMC.rootPath ~ 'climb/top-latitude-deg',  me._climbTopGeod.lat);
+        setprop(FMC.rootPath ~ 'climb/top-longitude-deg',  me._climbTopGeod.lon);
+    },
+
+    updateClimb: func
+    {
+        var kts = me._climbSpeed();
+        
+        # overkill to call this each update?
+        computeClimb();
+
+        setprop(FMC.rootPath ~ 'climb/computed-speed-kt', kts);
+        setprop(FMC.rootPath ~ 'climb/computed-speed-mach', 0.74);
 
         # figure out limit speed based on cross-over, active restriction
         var above10000 = (me._indicatedAlt.getValue() >= 10000);
@@ -408,6 +492,8 @@ var FMC = {
             setprop(FMC.rootPath ~ 'climb/active-speed-restriction-kt', r.speed);
             setprop(FMC.rootPath ~ 'climb/active-speed-restriction-ft', r.altitude);
         }
+
+        # time to top of climb?
     },
 
     cruiseMode: func {
@@ -703,6 +789,12 @@ var BoeingFMCDelegate = {
     endOfFlightPlan: func 
     {
 
+    },
+
+    departureChanged: func
+    {
+        # set this so V-speeds offset is correct
+        setprop('instrumentation/fmc/inputs/takeoff-elevation-ft', me._plane.departure.getElevationFt());
     },
 
     currentWaypointChanged: func {
