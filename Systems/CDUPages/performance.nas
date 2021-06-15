@@ -364,7 +364,7 @@ var PerformanceModel =
   CDU.linkPages([perfInit, perfLimits]);
   cdu.addPage(perfInit, "performance");
     
-  var n1Limit = CDU.Page.new(owner:cdu, title:'     N1 LIMIT', tag:'n1-limit');
+  var n1Limit = CDU.Page.new(owner:cdu, title:'     N1 LIMIT');
   n1Limit.setModel(perfModel);
     
   n1Limit.addField(CDU.Field.new(pos:'L1', tag:'SelectedTemperature'));
@@ -375,7 +375,7 @@ var PerformanceModel =
   n1Limit.addAction(CDU.Action.new('PERF INIT', 'L6', func {cdu.displayPageByTag("performance");} ));
   n1Limit.addAction(CDU.Action.new('TAKEOFF', 'R6', func {cdu.displayPageByTag("takeoff");} ));
     
-  var n1Flight = CDU.Page.new(cdu, '    N1 LIMIT');
+  var n1Flight = CDU.Page.new(owner:cdu, title:'    N1 LIMIT');
   n1Flight.setModel(perfModel);
     
   cdu.addPageWithFlightVariant("thrust-lim", n1Limit, n1Flight);

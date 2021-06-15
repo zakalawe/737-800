@@ -5,6 +5,9 @@
     <status>early-production</status>
     <flight-model>jsb</flight-model>
 
+    <compatible-fg-version>2018.*</compatible-fg-version>
+    <compatible-fg-version>2019.*</compatible-fg-version>
+
     <systems>
 
       <electrical>
@@ -188,6 +191,14 @@
               <label>Reload CDU</label>
               <binding>
                   <command>cdu-reload</command>
+              </binding>
+          </item>
+
+           <item>
+              <label>Reload FMC</label>
+              <binding>
+                  <command>nasal-module-reload</command>
+                   <module>b737_fmc</module>
               </binding>
           </item>
         </menu>
@@ -797,12 +808,14 @@
       <file>Aircraft/737-800/Nasal/friction.nas</file>
       <file>Aircraft/737-800/Nasal/liveries.nas</file>
       <file>Aircraft/737-800/Nasal/systems.nas</file>
-	  <file>Aircraft/737-800/Nasal/hydraulics.nas</file>
+	   <file>Aircraft/737-800/Nasal/hydraulics.nas</file>
       <file>Aircraft/737-800/Nasal/tire-smoke.nas</file>
       <file>Aircraft/737-800/Nasal/v-speed.nas</file>
       <file>Aircraft/737-800/Nasal/engine-fire.nas</file>
-      	<file>Aircraft/737-800/Nasal/fmc.nas</file>
+      <file>Aircraft/737-800/Nasal/fmc_shell.nas</file>
     </boeing737>
+
+
 
     <autopilot737>
       <file>Aircraft/737-800/Nasal/autopilot.nas</file>
@@ -982,6 +995,8 @@
           <page type="string" n="6">Systems/CDUPages/performance.nas</page>
           <page type="string" n="7">Systems/CDUPages/maintenance.nas</page>
           <page type="string" n="8">Systems/CDUPages/departure-arrival.nas</page>
+          <page type="string" n="9">Systems/CDUPages/descent.nas</page>
+
           <boot-page type="string">ident</boot-page>
       </settings>
     </cdu>

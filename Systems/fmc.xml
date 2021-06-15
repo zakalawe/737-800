@@ -200,6 +200,141 @@
       </function>
     </fcs_function>
 
+     <fcs_function name="/instrumentation/fmc/takeoff/computed-v1-speed">
+      <function>
+        <description>V1 based on weigth and flaps</description>
+        <table>
+          <independentVar lookup="row">inertia/weight-kg</independentVar>
+          <independentVar lookup="column">instrumentation/fmc/inputs/takeoff-flaps</independentVar>
+          <tableData>
+                    1     5       10      15      25
+            40000 105     101     100     98      96
+            45000 113     109     108     105     103
+            50000 121     116     115     112     110
+            55000 128     123     122     119     117
+            60000 135     129     128     125     123
+            65000 141     135     134     131     129
+            70000 147     141     140     137     135
+            75000 153     147     146     142     140
+            80000 158     152     151     148     145
+            85000 163     157     156     -1      -1
+            90000 169     161     -1      -1      -1
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+      <fcs_function name="/instrumentation/fmc/takeoff/computed-vr-speed">
+      <function>
+        <description>VR based on weigth and flaps</description>
+        <table>
+          <independentVar lookup="row">inertia/weight-kg</independentVar>
+          <independentVar lookup="column">instrumentation/fmc/inputs/takeoff-flaps</independentVar>
+          <tableData>
+                    1     5       10      15      25
+            40000 106     102     101     99      97
+            45000 114     110     108     106     104
+            50000 122     117     116     113     111
+            55000 129     124     124     120     118
+            60000 136     131     129     126     122
+            65000 143     137     136     134     130
+            70000 149     143     141     138     136
+            75000 155     148     147     144     141
+            80000 160     154     152     149     146
+            85000 166     159     157     -1      -1
+            90000 171     166     -1      -1      -1
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+  <fcs_function name="/instrumentation/fmc/takeoff/computed-v2-speed">
+      <function>
+        <description>V2 based on weigth and flaps</description>
+        <table>
+          <independentVar lookup="row">inertia/weight-kg</independentVar>
+          <independentVar lookup="column">instrumentation/fmc/inputs/takeoff-flaps</independentVar>
+          <tableData>
+                    1     5       10      15      25
+            40000 125     120     119     117     115
+            45000 131     126     125     122     120
+            50000 137     132     130     128     126
+            55000 143     137     136     133     131
+            60000 148     143     141     138     136
+            65000 153     147     146     143     140
+            70000 158     152     150     147     145
+            75000 162     156     154     151     149
+            80000 167     160     158     155     153
+            85000 171     164     162     -1      -1
+            90000 175     168     -1      -1      -1
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+
+  <fcs_function name="/instrumentation/fmc/takeoff/computed-v1-speed-offset">
+      <function>
+        <description>V1 offset based on temp and pressure altitude</description>
+        <table>
+          <independentVar lookup="row">environment/temperature-degc</independentVar>
+          <independentVar lookup="column">instrumentation/fmc/takeoff-elevation-ft</independentVar>
+          <tableData>
+                  -2000     0       2000      4000      6000      8000    10000
+            -60   0         0       1           2           3        4        5
+            20    0         0       1           2           3        4        5
+            30    0         0       1           2           4        5        6
+            40    1         1       3           4           5        6        7
+            50    2         3       4           5           6        7        9
+            60    4         5       6           7         999      999      999
+            70    5         6       999         999       999      999      999
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+
+
+  <fcs_function name="/instrumentation/fmc/takeoff/computed-vr-speed-offset">
+      <function>
+        <description>VR offset based on temp and pressure altitude</description>
+        <table>
+          <independentVar lookup="row">environment/temperature-degc</independentVar>
+          <independentVar lookup="column">instrumentation/fmc/takeoff-elevation-ft</independentVar>
+          <tableData>
+                  -2000     0       2000      4000      6000      8000    10000
+            -60   0         0       1           2           3        4        5
+            20    0         0       1           2           3        4        5
+            30    0         0       1           3           4        5        6
+            40    1         1       3           4           5        6        7
+            50    2         3       4           5           6        7        8
+            60    3         4       5           6         999      999      999
+            70    4         5       999         999       999      999      999
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+  <fcs_function name="/instrumentation/fmc/takeoff/computed-v2-speed-offset">
+      <function>
+        <description>V2 offset based on temp and pressure altitude</description>
+        <table>
+          <independentVar lookup="row">environment/temperature-degc</independentVar>
+          <independentVar lookup="column">instrumentation/fmc/takeoff-elevation-ft</independentVar>
+          <tableData>
+                  -2000     0       2000      4000      6000      8000    10000
+            -60   0         0       -1         -1         -2        -2        -3
+            20    0         0       -1         -1         -2        -3        -3
+            30    0         0       -1         -2         -2        -3        -4
+            40    -1        -1      -2         -2         -3        -4        -5
+            50    -2        -2      -3         -3         -4        -5        -6
+            60    -2        -3      -3         -4        999      999      999
+            70    -3        -3     999         999       999      999      999
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
     <fcs_function name="/instrumentation/fmc/cruise/optimum-altitude-ft">
       <function>
           <!-- PD.11.1 -->

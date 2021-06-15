@@ -500,27 +500,8 @@ selectPageForCruiseClimbDescent = func(newAlt)
 
 #############
 
-var DescentModel = 
-{
-    new: func()
-    {
-      m = {parents: [DescentModel, CDU.AbstractModel.new()]};
-      return m;
-    },
-};
-
-var descent = CDU.Page.new(owner:cdu, title:"             DES", model:DescentModel.new());
-
-descent.addAction(CDU.Action.new('FORECAST', 'R5', func {} ));
-descent.addAction(CDU.Action.new('OFFPATH DES', 'L6', func {} ));
-descent.addAction(CDU.Action.new('DES DIR', 'R6', func {} ));
-
-descent.fixedSeparator = [4, 4];
-
-CDU.linkPages([climb, cruise, descent]);
 cdu.addPage(climb, "climb");
 cdu.addPage(cruise, "cruise");
-cdu.addPage(descent, "descent");
 
 #############
 
