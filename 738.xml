@@ -904,7 +904,7 @@
                         </tableData>
                     </table>
                 </function>
-                <output>fcs/spoilers-outb-cmd-low</output>
+                <output>fcs/spoilers-outb-cmd-a</output>
             </fcs_function>
 
             <fcs_function name="Outboard spoiler command high">
@@ -935,8 +935,29 @@
                         </tableData>
                     </table>
                 </function>
+                <output>fcs/spoilers-outb-cmd-b</output>
+            </fcs_function>
+
+            <fcs_function>
+                <function>
+                    <min>
+                        <property>fcs/spoilers-outb-cmd-a</property>
+                        <property>fcs/spoilers-outb-cmd-b</property>
+                    </min>
+                </function>
+                <output>fcs/spoilers-outb-cmd-low</output>
+            </fcs_function>
+
+            <fcs_function>
+                <function>
+                    <max>
+                        <property>fcs/spoilers-outb-cmd-a</property>
+                        <property>fcs/spoilers-outb-cmd-b</property>
+                    </max>
+                </function>
                 <output>fcs/spoilers-outb-cmd-high</output>
             </fcs_function>
+
 
             <pure_gain name="fcs/spoilers-outb-rollpos">
                 <input>fcs/spoilers-outb-rollpos</input>
@@ -1018,7 +1039,7 @@
                         </tableData>
                     </table>
                 </function>
-                <output>fcs/spoilers-inbd-cmd-low</output>
+                <output>fcs/spoilers-inbd-cmd-a</output>
             </fcs_function>
 
             <fcs_function name="Inboard spoiler command high">
@@ -1048,6 +1069,26 @@
                             0.874   38.0876
                         </tableData>
                     </table>
+                </function>
+                <output>fcs/spoilers-inbd-cmd-b</output>
+            </fcs_function>
+
+            <fcs_function>
+                <function>
+                    <min>
+                        <property>fcs/spoilers-inbd-cmd-a</property>
+                        <property>fcs/spoilers-inbd-cmd-b</property>
+                    </min>
+                </function>
+                <output>fcs/spoilers-inbd-cmd-low</output>
+            </fcs_function>
+
+            <fcs_function>
+                <function>
+                    <max>
+                        <property>fcs/spoilers-inbd-cmd-a</property>
+                        <property>fcs/spoilers-inbd-cmd-b</property>
+                    </max>
                 </function>
                 <output>fcs/spoilers-inbd-cmd-high</output>
             </fcs_function>
