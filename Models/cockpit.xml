@@ -139,15 +139,15 @@
     <object-name>handle</object-name>
     <property>/controls/flight/flaps</property>
     <interpolation>
-      <entry><ind>  0.000</ind><dep> 0.0</dep></entry>
-      <entry><ind>  0.125</ind><dep> 8.0</dep></entry>
-      <entry><ind>  0.250</ind><dep> 16.0</dep></entry>
-      <entry><ind>  0.375</ind><dep> 24.0</dep></entry>
-      <entry><ind>  0.500</ind><dep> 32.0</dep></entry>
-      <entry><ind>  0.625</ind><dep> 40.0</dep></entry>
-      <entry><ind>  0.750</ind><dep> 48.0</dep></entry>
-      <entry><ind>  0.875</ind><dep> 56.0</dep></entry>
-      <entry><ind>  1.000</ind><dep> 64.0</dep></entry>
+      <entry><ind>  0.000</ind><dep> 2.5</dep></entry>
+      <entry><ind>  0.125</ind><dep> 10.0</dep></entry>
+      <entry><ind>  0.250</ind><dep> 18.0</dep></entry>
+      <entry><ind>  0.375</ind><dep> 27.0</dep></entry>
+      <entry><ind>  0.500</ind><dep> 35.0</dep></entry>
+      <entry><ind>  0.625</ind><dep> 43.0</dep></entry>
+      <entry><ind>  0.750</ind><dep> 52.0</dep></entry>
+      <entry><ind>  0.875</ind><dep> 63.0</dep></entry>
+      <entry><ind>  1.000</ind><dep> 70.0</dep></entry>
     </interpolation>   
     <center>
       <x-m>0.68</x-m>
